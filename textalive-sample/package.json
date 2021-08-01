@@ -1,0 +1,23 @@
+{
+    "name": "textalive-sample",
+    "private": true,
+    "version": "1.0.0",
+    "description": "いろいろなtextaliveの詰め合わせ",
+    "scripts": {
+        "dev": "parcel src/index.html --dist-dir dev",
+        "build": "parcel build src/index.html --public-url ./ --dist-dir docs --no-source-maps",
+        "clean": "del-cli .cache dev docs"
+    },
+    "keywords": [
+        "textalive"
+    ],
+    "author": "TTIC",
+    "license": "MIT",
+    "dependencies": {
+        "textalive-app-api": "0.3.0"
+    },
+    "devDependencies": {
+        "del-cli": "^4.0.1",
+        "parcel": "^2.0.0-nightly.792"
+    }
+}
