@@ -4,8 +4,8 @@
     "version": "1.0.0",
     "description": "いろいろなtextaliveの詰め合わせ",
     "scripts": {
-        "dev": "parcel src/index.html --dist-dir dev",
-        "build": "parcel build src/index.html --public-url ./ --dist-dir docs --no-source-maps",
+        "dev": "parcel src/index.html --out-dir dev",
+        "build": "parcel build src/index.html --public-url ./ --out-dir docs --no-source-maps",
         "clean": "del-cli .cache dev docs"
     },
     "keywords": [
@@ -18,6 +18,7 @@
     },
     "devDependencies": {
         "del-cli": "^4.0.1",
-        "parcel": "^2.0.0-nightly.792"
+        "parcel-bundler": "^1.12.4",
+        "typescript": "^4.3.5"
     }
 }
