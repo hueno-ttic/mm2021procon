@@ -14,7 +14,8 @@
     "author": "TTIC",
     "license": "MIT",
     "dependencies": {
-        "textalive-app-api": "0.3.0"
+        "textalive-app-api": "0.3.0",
+        "phaser": "^3.24.1"
     },
     "devDependencies": {
         "del-cli": "^4.0.1",

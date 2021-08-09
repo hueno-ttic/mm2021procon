@@ -1,14 +1,14 @@
-
 import Lyric from "./Lyric"
 
-import { Ease, Player, IVideo } from "textalive-app-api";
-
+import { Ease, Player, IVideo, NullGraphicsDriver } from "textalive-app-api";
 
 export default class TextaliveApiManager {
 
     public player;
 
     public lyrics = [];
+
+    public positionTime: Number;
 
     public playBtn;
     public jumpBtn;
@@ -36,8 +36,7 @@ export default class TextaliveApiManager {
 
     }
 
-    public init() {
-        console.log("init");
+    public init():void {
 
         this.player = new Player({
             app: {
@@ -46,8 +45,9 @@ export default class TextaliveApiManager {
                 token: "GYtUEuVODFiceV7w"
             },
             mediaElement: document.querySelector<HTMLElement>("#media")
-        });
+    });
 
+        // バッググラウンドで実行する機能をListenerに登録
         this.player.addListener({
             onAppReady: (app) => this.onAppReady(app),
             onTimerReady: () => this.onTimerReady(),
@@ -56,12 +56,10 @@ export default class TextaliveApiManager {
             onVideoReady: (v) => this.onVideoReady(v)
         });
         console.log(this.player);
-
-        console.log("init2");
     }
 
     // APIへのアクセス準備
-    private onAppReady(app) {
+    private onAppReady(app):void {
 
         console.log("onAppReady");
 
@@ -74,12 +72,12 @@ export default class TextaliveApiManager {
         }
         if (!app.songUrl) {
             // 再生対象となる楽曲URLをセット
-            this.player.createFromSongUrl("https://www.youtube.com/watch?v=XSLhsjepelI");
+            this.player.createFromSongUrl("https://www.youtube.com/watch?v=Se89rQPp5tk");
         }
     }
 
     // APIアクセス時に最初に呼ばれて動画情報をすべてとってきて設定する
-    public onVideoReady(v) {
+    public onVideoReady(v):void {
         // 歌詞のセットアップ
         if (v.firstChar) {
             var c = v.firstChar;
@@ -92,7 +90,7 @@ export default class TextaliveApiManager {
     }
 
     // APIアクセス後に動画情報設定
-    public onTimerReady() {
+    public onTimerReady():void {
         console.log("onTimerReady");
 
         // 楽曲情報
@@ -106,9 +104,7 @@ export default class TextaliveApiManager {
     }
 
     // 再生中に呼び出され続けて画面の状態をupdateする
-    public onTimeUpdate(position) {
-
-        console.log("onTimeUpdate");
+    public onTimeUpdate(position):void {
 
         // 現在再生されている時のBeat情報を取得
         const beat = this.player.findBeat(position);
@@ -117,22 +113,75 @@ export default class TextaliveApiManager {
         }
         this.beatbarEl.style.width = `${Math.ceil(Ease.circIn(beat.progress(position)) * 100)}%`;
 
-        var p = this.player.videoPosition;
+        // 発話の500ms先の歌詞データを取得
+        var p = this.player.videoPosition + 500;
         for (var i = 0; i < this.lyrics.length; i++) {
             if (p > this.lyrics[i].startTime && p < this.lyrics[i].endTime) {
-                console.log("発話中の単語：" + this.lyrics[i].text);
-                console.log("videoPosition : " + this.player.videoPosition);
+                //console.log("発話中の単語：" + this.lyrics[i].text);
+                //console.log("videoPosition : " + this.player.videoPosition);
                 // 画面表示用設定
                 this.phraseEl.textContent = this.lyrics[i].text;
+                //this.updateLyricData(this.lyrics[i]);
+                console.log("lyrics point x : "+this.lyrics[i].x+ "  y : "+this.lyrics[i].y);
             }
         }
+
+        //console.log("setPositionTime "+ position);
+        this.positionTime = position;
+
     }
 
-    public onThrottledTimeUpdate(position) {
-        console.log("onThrottledTimeUpdate");
-        console.log("position : " + position);
-        this.positionEl.textContent = String(Math.floor(position));
-        console.log("onThrottledTimeUpdate Text : " + this.positionEl.textContent);
+    // /**
+    //  * 歌詞の表示場所や表示、非表示情報を更新する 
+    //  */
+    // public updateLyricData (lyric:Lyric):void {
 
+    //     document.getElementById( "target" ).onclick = function( event ) {
+    //         lyric.x = event.pageX ;	// 水平の位置座標
+    //         lyric.y = event.pageY ;	// 垂直の位置座標
+    //     }
+
+    // }
+
+    public onThrottledTimeUpdate(position):void {
+        // console.log("onThrottledTimeUpdate");
+        // console.log("position : " + position);
+        // this.positionEl.textContent = String(Math.floor(position));
+        // console.log("onThrottledTimeUpdate Text : " + this.positionEl.textContent);
+
+    }
+
+    public getCurrentLyric(positoinTime : number): string {
+
+        for (var i = 0; i < this.lyrics.length; i++) {
+            if (positoinTime > this.lyrics[i].startTime && positoinTime < this.lyrics[i].endTime) {
+                //console.log("発話中の単語：" + this.lyrics[i].text);
+                //console.log("videoPosition : " + this.player.videoPosition);
+                // 画面表示用設定
+                var currentText = this.lyrics[i].text;
+                this.phraseEl.textContent = currentText;
+
+                //this.updateLyricData(this.lyrics[i]);
+                console.log("lyrics point x : "+this.lyrics[i].x+ "  y : "+this.lyrics[i].y);
+
+                return currentText;
+            }
+        }
+
+        // 見つからない場合は空文字
+        return "";
+    }
+
+
+    // マウスのクリック情報を取得する
+    // public getClickPoint ():void {
+    //     document.getElementById( "target" ).onclick = function( event ) {
+    //         var x = event.pageX ;	// 水平の位置座標
+    //         var y = event.pageY ;	// 垂直の位置座標
+    //     }
+    // }
+
+    public getPositionTime() : Number{
+        return this.positionTime;
     }
 }
