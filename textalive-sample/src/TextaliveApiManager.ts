@@ -29,9 +29,6 @@ export default class TextaliveApiManager {
         this.rewindBtn = document.querySelector<HTMLElement>("#rewind");
         this.positionEl = document.querySelector<HTMLElement>("#position strong");
 
-        this.artistSpan = document.querySelector<HTMLElement>("#artist span");
-        this.songSpan = document.querySelector<HTMLElement>("#song span");
-        this.phraseEl = document.querySelector<HTMLElement>("#container p");
         this.beatbarEl = document.querySelector<HTMLElement>("#beatbar");
 
     }
@@ -94,8 +91,6 @@ export default class TextaliveApiManager {
         console.log("onTimerReady");
 
         // 楽曲情報
-        this.artistSpan.textContent = this.player.data.song.artist.name;
-        this.songSpan.textContent = this.player.data.song.name;
 
         // 動画が読み込めたのでボタンを表示
         document
@@ -120,7 +115,7 @@ export default class TextaliveApiManager {
                 //console.log("発話中の単語：" + this.lyrics[i].text);
                 //console.log("videoPosition : " + this.player.videoPosition);
                 // 画面表示用設定
-                this.phraseEl.textContent = this.lyrics[i].text;
+                //this.phraseEl.textContent = this.lyrics[i].text;
                 //this.updateLyricData(this.lyrics[i]);
                 console.log("lyrics point x : "+this.lyrics[i].x+ "  y : "+this.lyrics[i].y);
             }
@@ -131,36 +126,20 @@ export default class TextaliveApiManager {
 
     }
 
-    // /**
-    //  * 歌詞の表示場所や表示、非表示情報を更新する 
-    //  */
-    // public updateLyricData (lyric:Lyric):void {
-
-    //     document.getElementById( "target" ).onclick = function( event ) {
-    //         lyric.x = event.pageX ;	// 水平の位置座標
-    //         lyric.y = event.pageY ;	// 垂直の位置座標
-    //     }
-
-    // }
-
     public onThrottledTimeUpdate(position):void {
         // console.log("onThrottledTimeUpdate");
         // console.log("position : " + position);
         // this.positionEl.textContent = String(Math.floor(position));
         // console.log("onThrottledTimeUpdate Text : " + this.positionEl.textContent);
-
     }
 
     public getCurrentLyric(positoinTime : number): string {
 
         for (var i = 0; i < this.lyrics.length; i++) {
             if (positoinTime > this.lyrics[i].startTime && positoinTime < this.lyrics[i].endTime) {
-                //console.log("発話中の単語：" + this.lyrics[i].text);
-                //console.log("videoPosition : " + this.player.videoPosition);
                 // 画面表示用設定
                 var currentText = this.lyrics[i].text;
-                this.phraseEl.textContent = currentText;
-
+                //this.phraseEl.textContent = currentText;
                 //this.updateLyricData(this.lyrics[i]);
                 console.log("lyrics point x : "+this.lyrics[i].x+ "  y : "+this.lyrics[i].y);
 
@@ -171,15 +150,6 @@ export default class TextaliveApiManager {
         // 見つからない場合は空文字
         return "";
     }
-
-
-    // マウスのクリック情報を取得する
-    // public getClickPoint ():void {
-    //     document.getElementById( "target" ).onclick = function( event ) {
-    //         var x = event.pageX ;	// 水平の位置座標
-    //         var y = event.pageY ;	// 垂直の位置座標
-    //     }
-    // }
 
     public getPositionTime() : Number{
         return this.positionTime;

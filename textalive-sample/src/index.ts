@@ -1,7 +1,6 @@
 //必要なimport
 import * as Phaser from "phaser";
-import GameMain from "./scenes/main";
-import TextaliveApiManager from "./TextaliveApiManager"
+import GameMain from "./scenes/GameMain";
 
 //ゲームの基本設定
 const config: Phaser.Types.Core.GameConfig = {
@@ -22,28 +21,13 @@ export class Game extends Phaser.Game {
 }
 
 class Main {
-   // private _player: TextaliveApiManager;
-
     constructor() { }
-
     public initialize() {
-     //   this._player = new TextaliveApiManager();
-
         //windowイベントで、ロードされたらゲーム開始
         window.addEventListener("load", () => {
             console.log("start");
             var gameApp = new Game();
         });
-
-        // // // バッググラウンドで実行する機能をListenerに登録
-        // this._player.player.addListener({
-        //     onAppReady: (app) => this._player.player.onAppReady(app),
-        //     onTimerReady: () => this._player.player.onTimerReady(),
-        //     onTimeUpdate: (pos) => this._player.player.onTimeUpdate(pos),
-        //     onThrottledTimeUpdate: (pos) => this._player.player.onThrottledTimeUpdate(pos),
-        //     onVideoReady: (v) => this._player.player.onVideoReady(v)
-        // });
-       // console.log(this._player.player);
     }
 }
 
