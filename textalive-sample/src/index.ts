@@ -6,8 +6,8 @@ import GameMain from "./scenes/GameMain";
 const config: Phaser.Types.Core.GameConfig = {
     title: "sampleLyric",    //タイトル
     version: "0.0.1",       //バージョン
-    width: 320,             //画面幅
-    height: 240,            //画面高さ
+    width: 600,             //画面幅
+    height: 400,            //画面高さ
     parent: "game",          //DOM上の親
     type: Phaser.AUTO,      //canvasかwebGLかを自動選択
     scene: [GameMain]
