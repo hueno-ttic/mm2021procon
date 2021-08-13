@@ -49,7 +49,6 @@ export default class TextaliveApiManager {
             onAppReady: (app) => this.onAppReady(app),
             onTimerReady: () => this.onTimerReady(),
             onTimeUpdate: (pos) => this.onTimeUpdate(pos),
-            onThrottledTimeUpdate: (pos) => this.onThrottledTimeUpdate(pos),
             onVideoReady: (v) => this.onVideoReady(v)
         });
         console.log(this.player);
@@ -75,13 +74,15 @@ export default class TextaliveApiManager {
 
     // APIアクセス時に最初に呼ばれて動画情報をすべてとってきて設定する
     public onVideoReady(v):void {
+        var lyricIndex = 0;
         // 歌詞のセットアップ
         if (v.firstChar) {
             var c = v.firstChar;
             while (c) {
                 this.lyrics.push(new Lyric(c));
+                this.lyrics[lyricIndex].setIndex( lyricIndex);
                 c = c.next;
-
+                lyricIndex++;
             }
         }
     }
@@ -109,40 +110,43 @@ export default class TextaliveApiManager {
         this.beatbarEl.style.width = `${Math.ceil(Ease.circIn(beat.progress(position)) * 100)}%`;
 
         // 発話の500ms先の歌詞データを取得
-        var p = this.player.videoPosition + 500;
-        for (var i = 0; i < this.lyrics.length; i++) {
-            if (p > this.lyrics[i].startTime && p < this.lyrics[i].endTime) {
-                //console.log("発話中の単語：" + this.lyrics[i].text);
-                //console.log("videoPosition : " + this.player.videoPosition);
-                // 画面表示用設定
-                //this.phraseEl.textContent = this.lyrics[i].text;
-                //this.updateLyricData(this.lyrics[i]);
-                console.log("lyrics point x : "+this.lyrics[i].x+ "  y : "+this.lyrics[i].y);
-            }
-        }
+        // var p = this.player.videoPosition + 500;
+        // for (var i = 0; i < this.lyrics.length; i++) {
+        //     if (p > this.lyrics[i].startTime && p < this.lyrics[i].endTime) {
+        //         //console.log("発話中の単語：" + this.lyrics[i].text);
+        //         //console.log("videoPosition : " + this.player.videoPosition);
+        //         // 画面表示用設定
+        //         //this.phraseEl.textContent = this.lyrics[i].text;
+        //         //this.updateLyricData(this.lyrics[i]);
+        //         //console.log("lyrics point x : "+this.lyrics[i].x+ "  y : "+this.lyrics[i].y);
+        //     }
+        // }
 
         //console.log("setPositionTime "+ position);
         this.positionTime = position;
 
     }
 
-    public onThrottledTimeUpdate(position):void {
-        // console.log("onThrottledTimeUpdate");
-        // console.log("position : " + position);
-        // this.positionEl.textContent = String(Math.floor(position));
-        // console.log("onThrottledTimeUpdate Text : " + this.positionEl.textContent);
-    }
-
-    public getCurrentLyric(positoinTime : number): string {
+    public getCurrentLyric(positoinTime : number): Lyric {
 
         for (var i = 0; i < this.lyrics.length; i++) {
             if (positoinTime > this.lyrics[i].startTime && positoinTime < this.lyrics[i].endTime) {
+                return this.lyrics[i];
+            }
+        }
+
+        // 見つからない場合は空文字
+        return null;
+    }
+
+    public getCurrentLyricText(positoinTime : number): string {
+
+        for (var i = 0; i < this.lyrics.length; i++) {
+            if (positoinTime > this.lyrics[i].startTime && positoinTime < this.lyrics[i].endTime) {
+                //console.log("発話中の単語：" + this.lyrics[i].text);
+                //console.log("videoPosition : " + this.player.videoPosition);
                 // 画面表示用設定
                 var currentText = this.lyrics[i].text;
-                //this.phraseEl.textContent = currentText;
-                //this.updateLyricData(this.lyrics[i]);
-                console.log("lyrics point x : "+this.lyrics[i].x+ "  y : "+this.lyrics[i].y);
-
                 return currentText;
             }
         }
@@ -151,7 +155,34 @@ export default class TextaliveApiManager {
         return "";
     }
 
+    public getCurrentLyricIndex(positoinTime : number): number {
+
+        for (var i = 0; i < this.lyrics.length; i++) {
+            if (positoinTime > this.lyrics[i].startTime && positoinTime < this.lyrics[i].endTime) {
+                //console.log("発話中の単語：" + this.lyrics[i].text);
+                //console.log("videoPosition : " + this.player.videoPosition);
+                // 画面表示用設定
+                var currentIndex = this.lyrics[i].index;
+                //this.phraseEl.textContent = currentText;
+                return currentIndex;
+            }
+        }
+
+        // 見つからない場合は空文字
+        return null;
+    }
+
+
     public getPositionTime() : Number{
         return this.positionTime;
     }
+
+    public getLyricsLength() : Number {
+        return this.lyrics.length;
+    }
+
+    public getLyrics() : Lyric[] {
+        return this.lyrics;
+    }
+
 }

@@ -1,5 +1,8 @@
 export default class Lyric
 {
+
+    public index;
+
     // 歌詞情報
     public text;
     public startTime;
@@ -22,4 +25,14 @@ export default class Lyric
         this.y = 0; // グリッドの座標 y
         this.isDraw = false; // 描画するかどうか
     }
+
+    public setIndex(index) {
+        this.index = index;
+        //console.log("index : " + index)
+    }
+
+    public getIndex() {
+        return this.index;
+    }
+
 }
