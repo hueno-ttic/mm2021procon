@@ -3,3 +3,4 @@ dev/
 docs/
 .parcel-cache/
 .DS_Store
+.cache/

@@ -1,6 +1,8 @@
 //必要なimport
 import * as Phaser from "phaser";
+import CharacterSelectScene from "./scenes/CharacterSelect";
 import GameMain from "./scenes/GameMain";
+import TitleScene from "./scenes/TitleScene";
 
 //ゲームの基本設定
 const config: Phaser.Types.Core.GameConfig = {
@@ -10,7 +12,7 @@ const config: Phaser.Types.Core.GameConfig = {
     height: 400,            //画面高さ
     parent: "game",          //DOM上の親
     type: Phaser.AUTO,      //canvasかwebGLかを自動選択
-    scene: [GameMain]
+    scene: [TitleScene, GameMain, CharacterSelectScene]
 };
 
 //ゲームメインのクラス
