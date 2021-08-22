@@ -158,13 +158,14 @@ export default class GameMain extends Phaser.Scene {
             if (this.api.getIsChorus()) {
                 var color = "blue";
                 this.setLaneColor("first", color);
+                this.setLaneColor("second", color);
+                this.setLaneColor("third", color);
             } else {
-                var color = "red";
-                this.setLaneColor("first", color);
+                this.setLaneColor("first", "red");
+                this.setLaneColor("second", "yellow");
+                this.setLaneColor("third", "green");
             }
 
-
-            // 
             lyricText = this.api.getCurrentLyricText(time);
             lyricIndex = this.api.getCurrentLyricIndex(time);
 
@@ -188,6 +189,10 @@ export default class GameMain extends Phaser.Scene {
                         this.textData[lyricIndex].setStroke("blue", 10);
                         break;
                 }
+
+                if(this.api.getIsChorus()) {
+                    this.textData[lyricIndex].setStroke("blue", 10);
+                }
             }
 
         }
@@ -205,7 +210,7 @@ export default class GameMain extends Phaser.Scene {
                     //                this.textData[i].setVisible(false);
                     this.textData[i].destroy(this);
                     // score計算を行う
-                    this.score = this.calcScore(this.score);
+                    this.score = this.calcScore(i, this.score);
                     this.scoreText.setText("Score : " + this.score);
                 }
             }
@@ -216,14 +221,38 @@ export default class GameMain extends Phaser.Scene {
         }
     }
 
-    //  
-    private calcScore(score: number): number {
+    /**
+     * スコアの計算を行う
+     */ 
+    private calcScore(textIndex: number, score: number): number {
 
-        score = score + 100;
+        var textColor = this.textData[textIndex].style.stroke;        
+        if (this.textData[textIndex].y > 0 && this.textData[textIndex].y < 200) {
+            if (this.firstLaneHeart.texture.key.includes(textColor)) {
+                score = score + 500;
+            } else {
+                score = score + 10;
+            }
+        } else if (this.textData[textIndex].y >= 250 && this.textData[textIndex].y < 400) {
+            if (this.secondLaneHeart.texture.key.includes(textColor)) {
+                score = score + 500;
+            } else {
+                score = score + 10;
+            }
+        } else if (this.textData[textIndex].y >= 450 && this.textData[textIndex].y < 700) {
+            if (this.thirdLaneHeart.texture.key.includes(textColor)) {
+                score = score + 500;
+            } else {
+                score = score + 10;
+            }
+        }
+
         return score;
     }
 
-    // レーンの色を可変にする
+    /**
+     *  レーンの色を可変にする
+     */
     private setLaneColor(laneName: String, color: String) {
 
         var scale = 0.9;
