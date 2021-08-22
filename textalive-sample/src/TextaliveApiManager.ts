@@ -21,6 +21,8 @@ export default class TextaliveApiManager {
     public phraseEl;
     public beatbarEl;
 
+    public isChorus;
+
     constructor() {
 
         this.playBtn = document.querySelector<HTMLElement>("#play");
@@ -28,7 +30,6 @@ export default class TextaliveApiManager {
         this.pauseBtn = document.querySelector<HTMLElement>("#pause");
         this.rewindBtn = document.querySelector<HTMLElement>("#rewind");
         this.positionEl = document.querySelector<HTMLElement>("#position strong");
-
         this.beatbarEl = document.querySelector<HTMLElement>("#beatbar");
 
     }
@@ -109,6 +110,8 @@ export default class TextaliveApiManager {
         }
         this.beatbarEl.style.width = `${Math.ceil(Ease.circIn(beat.progress(position)) * 100)}%`;
 
+        //console.log(this.player.isVideoSeeking());
+
         // 発話の500ms先の歌詞データを取得
         // var p = this.player.videoPosition + 500;
         // for (var i = 0; i < this.lyrics.length; i++) {
@@ -122,7 +125,10 @@ export default class TextaliveApiManager {
         //     }
         // }
 
-        //console.log("setPositionTime "+ position);
+        // サビかどうかを取得(サビならtrue)
+        //console.log(this.player.findBeat(position));
+        this.isChorus = (this.player.findChorus(position) != null);
+
         this.positionTime = position;
 
     }
@@ -185,4 +191,19 @@ export default class TextaliveApiManager {
         return this.lyrics;
     }
 
+    public getMusicLength() : Number {
+        
+        return 0;
+    }
+
+    // public isVideoSeeking() : Boolean {
+    //     return this.player.isVideoSeeking();
+    // }
+
+    /**
+     * 楽曲ががしていたポジションならTrueを返す
+     */
+    public getIsChorus() : Boolean{
+        return this.isChorus;
+    }
 }
