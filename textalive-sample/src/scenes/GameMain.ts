@@ -1,6 +1,6 @@
-import Lyric from "./Lyric";
-import TextaliveApiManager from "./TextaliveApiManager";
-import image from "./assets/*.png";
+import Lyric from "../Lyric";
+import TextaliveApiManager from "../TextaliveApiManager";
+import image from "../assets/*.png";
 
 // クリック箇所のY座標を保存
 var touchY = 5;

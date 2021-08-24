@@ -2,7 +2,7 @@
 import * as Phaser from "phaser";
 import CharacterSelectScene from "./scenes/CharacterSelect";
 import TitleScene from "./scenes/TitleScene";
-import GameMain from "./GameMain";
+import GameMain from "./scenes/GameMain";
 
 //ゲームの基本設定
 const config: Phaser.Types.Core.GameConfig = {
