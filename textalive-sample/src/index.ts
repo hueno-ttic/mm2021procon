@@ -13,6 +13,10 @@ const config: Phaser.Types.Core.GameConfig = {
     height: 700,            //画面高さ
     parent: "game",          //DOM上の親
     type: Phaser.AUTO,      //canvasかwebGLかを自動選択
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
+    },
     scene: [
         TitleScene, GameMain, CharacterSelectScene,
         MusicSelectScene,
