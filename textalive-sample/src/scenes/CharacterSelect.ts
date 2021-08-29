@@ -11,7 +11,7 @@ export default class CharacterSelectScene extends Phaser.Scene {
     text.setInteractive();
 
     text.on('pointerdown', () => {
-      this.scene.start('GameMain');
+      this.scene.start('MusicSelect');
     });
   }
 }
