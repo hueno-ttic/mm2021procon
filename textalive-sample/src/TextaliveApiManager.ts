@@ -1,12 +1,16 @@
 import Lyric from "./Lyric"
+import CharText from "./CharText"
 
 import { Ease, Player, IVideo, NullGraphicsDriver } from "textalive-app-api";
 
 export default class TextaliveApiManager {
 
+    public musicUrl;
+
     public player;
 
-    public lyrics = [];
+    public lyrics: Lyric[] = [];
+    public charText: CharText[] = [];
 
     public positionTime: Number;
 
@@ -23,8 +27,10 @@ export default class TextaliveApiManager {
 
     public isChorus;
 
-    constructor() {
+    public wordList = [];
 
+    constructor(url: string) {
+        this.musicUrl = url;
         this.playBtn = document.querySelector<HTMLElement>("#play");
         this.jumpBtn = document.querySelector<HTMLElement>("#jump");
         this.pauseBtn = document.querySelector<HTMLElement>("#pause");
@@ -34,7 +40,7 @@ export default class TextaliveApiManager {
 
     }
 
-    public init():void {
+    public init(): void {
 
         this.player = new Player({
             app: {
@@ -43,7 +49,7 @@ export default class TextaliveApiManager {
                 token: "GYtUEuVODFiceV7w"
             },
             mediaElement: document.querySelector<HTMLElement>("#media")
-    });
+        });
 
         // バッググラウンドで実行する機能をListenerに登録
         this.player.addListener({
@@ -56,7 +62,7 @@ export default class TextaliveApiManager {
     }
 
     // APIへのアクセス準備
-    private onAppReady(app):void {
+    private onAppReady(app): void {
 
         console.log("onAppReady");
 
@@ -69,27 +75,64 @@ export default class TextaliveApiManager {
         }
         if (!app.songUrl) {
             // 再生対象となる楽曲URLをセット
-            this.player.createFromSongUrl("https://www.youtube.com/watch?v=Se89rQPp5tk");
+            this.player.createFromSongUrl(this.musicUrl);
         }
     }
 
     // APIアクセス時に最初に呼ばれて動画情報をすべてとってきて設定する
-    public onVideoReady(v):void {
+    public onVideoReady(v): void {
         var lyricIndex = 0;
         // 歌詞のセットアップ
+        // 歌詞一文字ごと
         if (v.firstChar) {
             var c = v.firstChar;
             while (c) {
-                this.lyrics.push(new Lyric(c));
-                this.lyrics[lyricIndex].setIndex( lyricIndex);
+                this.charText.push(new CharText(c, lyricIndex));
                 c = c.next;
                 lyricIndex++;
             }
         }
+        // 歌詞の区切りごと
+        let w = this.player.video.firstWord;
+        var wordIndex = 0;
+        while (w) {
+
+            // 歌詞の色変え
+            var num = Math.floor(Math.random() * 3);
+            var color;
+            switch (num) {
+                case 0:
+                    color = "red";
+                    break;
+                case 1:
+                    color = "green";
+                    break;
+                case 2:
+                    color = "yellow";
+                    break;
+                default:
+                    color = "blue";
+                    break;
+            }
+
+            if (this.getIsChorus()) {
+                color = "blue";
+            }
+
+            this.lyrics.push(new Lyric(w, wordIndex, color));
+            //this.wordList[wordIndex] = w.children;
+            w = w.next;
+            wordIndex++;
+        }
+        console.log("****************************");
+        console.log(this.lyrics);
+        console.log("****************************");
+
+
     }
 
     // APIアクセス後に動画情報設定
-    public onTimerReady():void {
+    public onTimerReady(): void {
         console.log("onTimerReady");
 
         // 楽曲情報
@@ -101,7 +144,7 @@ export default class TextaliveApiManager {
     }
 
     // 再生中に呼び出され続けて画面の状態をupdateする
-    public onTimeUpdate(position):void {
+    public onTimeUpdate(position): void {
 
         // 現在再生されている時のBeat情報を取得
         const beat = this.player.findBeat(position);
@@ -133,8 +176,29 @@ export default class TextaliveApiManager {
 
     }
 
-    public getCurrentLyric(positoinTime : number): Lyric {
 
+    public getLyrics() {
+        console.log("**************");
+        console.log(this.lyrics);
+        console.log("**************");
+
+        return this.lyrics;
+    }
+
+    public getCurrentLyric2(positoinTime: number): Lyric {
+
+        console.log(this.lyrics);
+
+
+        // 見つからない場合は空文字
+        return null;
+    }
+
+
+
+    public getCurrentLyric(positoinTime: number): Lyric {
+
+        //console.log(this.lyrics);
         for (var i = 0; i < this.lyrics.length; i++) {
             if (positoinTime > this.lyrics[i].startTime && positoinTime < this.lyrics[i].endTime) {
                 return this.lyrics[i];
@@ -145,7 +209,7 @@ export default class TextaliveApiManager {
         return null;
     }
 
-    public getCurrentLyricText(positoinTime : number): string {
+    public getCurrentLyricText(positoinTime: number): string {
 
         for (var i = 0; i < this.lyrics.length; i++) {
             if (positoinTime > this.lyrics[i].startTime && positoinTime < this.lyrics[i].endTime) {
@@ -161,7 +225,7 @@ export default class TextaliveApiManager {
         return "";
     }
 
-    public getCurrentLyricIndex(positoinTime : number): number {
+    public getCurrentLyricIndex(positoinTime: number): number {
 
         for (var i = 0; i < this.lyrics.length; i++) {
             if (positoinTime > this.lyrics[i].startTime && positoinTime < this.lyrics[i].endTime) {
@@ -179,20 +243,17 @@ export default class TextaliveApiManager {
     }
 
 
-    public getPositionTime() : Number{
+    public getPositionTime(): Number {
         return this.positionTime;
     }
 
-    public getLyricsLength() : Number {
+    public getLyricsLength(): Number {
         return this.lyrics.length;
     }
 
-    public getLyrics() : Lyric[] {
-        return this.lyrics;
-    }
 
-    public getMusicLength() : Number {
-        
+    public getMusicLength(): Number {
+
         return 0;
     }
 
@@ -203,7 +264,7 @@ export default class TextaliveApiManager {
     /**
      * 楽曲ががしていたポジションならTrueを返す
      */
-    public getIsChorus() : Boolean{
+    public getIsChorus(): Boolean {
         return this.isChorus;
     }
 }

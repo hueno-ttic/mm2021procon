@@ -19,10 +19,14 @@ export default class GameMain extends Phaser.Scene {
 
     public indexStart = 0;
 
-    public counter = 15;
+    // 歌詞の進むスピード
+    public counter = 30;
+
+    // 歌詞情報
+    public lyrics;
 
     // 歌詞の出現するY座標
-    public lyricY = 60;
+    public lyricY;
 
     // ハートのX座標
     public heartX = 150;
@@ -45,6 +49,14 @@ export default class GameMain extends Phaser.Scene {
     public secondLaneLine;
     public thirdLaneLine;
 
+    // 歌詞表示部分
+    public lyricLine = [];
+    public lyricLineStartPos = 0;
+
+
+
+    public initFlag = true;
+
 
 
     constructor() {
@@ -53,14 +65,14 @@ export default class GameMain extends Phaser.Scene {
 
     preload(): void {
         console.log("preload()");
-
-        // this.load.baseURL = "http://localhost:1234/assets";
-        // this.load.crossOrigin = 'anonymous';
-        this.api = new TextaliveApiManager();
+        var url = "https://www.youtube.com/watch?v=bMtYf3R0zhY";
+        this.api = new TextaliveApiManager(url);
         this.api.init();
         this.load.image('backImg', image['back_img']);
 
+        // 操作キャラ
         this.load.image('miku', image['mini_miku']);
+
         // ハート
         this.load.image('heart_red', image['heart_red']);
         this.load.image('heart_yellow', image['heart_yellow']);
@@ -77,16 +89,16 @@ export default class GameMain extends Phaser.Scene {
 
     create(): void {
         console.log("create()");
-        console.log(this);
         var backImg = this.add.image(500, 350, 'backImg');
         backImg.alpha = 0.5;
 
         // ミクの設定
+        this.lyricY = this.firstLane;
         this.mikuImg = this.add.image(900, this.lyricY, 'miku');
         this.mikuImg.scaleX = this.mikuImg.scaleX * 0.6;
         this.mikuImg.scaleY = this.mikuImg.scaleY * 0.6;
 
-        // ハートの設定 (初期はred)
+        // ハートオブジェクト
         var scale = 0.9;
         this.firstLaneHeart = this.add.image(this.heartX, this.firstLane, 'heart_red');
         this.firstLaneHeart.scaleX = this.firstLaneHeart.scaleX * scale;
@@ -98,7 +110,7 @@ export default class GameMain extends Phaser.Scene {
         this.thirdLaneHeart.scaleX = this.thirdLaneHeart.scaleX * scale;
         this.thirdLaneHeart.scaleY = this.thirdLaneHeart.scaleY * scale;
 
-        // ラインの枠(初期はred)
+        // ラインのオブジェクト
         var lineScale = 0.9;
         this.firstLaneLine = this.add.image(430, this.firstLane, 'line_red');
         this.firstLaneLine.scaleX = this.firstLaneLine.scaleX * 0.4;
@@ -120,13 +132,13 @@ export default class GameMain extends Phaser.Scene {
         //this.api
 
 
+
     }
 
     update() {
 
         // シークしている確認
         //console.log(this.api.isVideoSeeking())
-
 
         // クリックした際に3レーンのいずれかに移動する
         if (touchY > 0 && touchY < 200) {
@@ -141,11 +153,22 @@ export default class GameMain extends Phaser.Scene {
         this.mikuImg.y = this.lyricY;
 
 
+
         // 曲が流れているときだけ動く
         if (this.api.getPositionTime() != null && this.api.getPositionTime() != 0) {
 
-            // 若干速めに表示するために500ms追加する
-            const time = this.api.getPositionTime() + 500;
+            // 初回だけ曲が流れたタイミングで歌詞データを取得する
+            // (曲が開始しないと曲データがうまくとってこれないため)
+            if (this.initFlag) {
+                this.lyrics = this.api.getLyrics();
+                console.log(this.lyrics);
+
+                this.initFlag = false;
+            }
+            // 歌詞表示
+            this.updateLyricLine();
+
+            const time = this.api.getPositionTime();
             var lyric = this.api.getCurrentLyric(time);
             var lyricText;
             var lyricIndex;
@@ -155,44 +178,26 @@ export default class GameMain extends Phaser.Scene {
             }
 
             // 各ラインの色を変更する
-            if (this.api.getIsChorus()) {
-                var color = "blue";
-                this.setLaneColor("first", color);
-                this.setLaneColor("second", color);
-                this.setLaneColor("third", color);
-            } else {
-                this.setLaneColor("first", "red");
-                this.setLaneColor("second", "yellow");
-                this.setLaneColor("third", "green");
-            }
+            // if (this.api.getIsChorus()) {
+            //     var color = "blue";
+            //     this.setLaneColor("first", color);
+            //     this.setLaneColor("second", color);
+            //     this.setLaneColor("third", color);
+            // } else {
+            //     this.setLaneColor("first", "red");
+            //     this.setLaneColor("second", "yellow");
+            //     this.setLaneColor("third", "green");
+            // }
 
+            // 横に流れる歌詞データの追加
             lyricText = this.api.getCurrentLyricText(time);
             lyricIndex = this.api.getCurrentLyricIndex(time);
-
-            // 歌詞データの追加
-            if (typeof this.textData[lyricIndex] === "undefined" && lyricText != null) {
+            if (typeof this.textData[lyricIndex] === "undefined" && lyricText != null && lyricText != "" && lyricText != " ") {
                 this.textData[lyricIndex] = this.add.text(800, this.lyricY - 20, lyricText, { font: '50px Arial' });
+                //console.log("out index " + lyricIndex + " text : " + lyricText + " time : " + time);
+                this.textData[lyricIndex].setStroke(lyric.color, 10);
 
-                // 歌詞の色変え
-                var num = Math.floor(Math.random() * 3);
-                switch (num) {
-                    case 0:
-                        this.textData[lyricIndex].setStroke("red", 10);
-                        break;
-                    case 1:
-                        this.textData[lyricIndex].setStroke("green", 10);
-                        break;
-                    case 2:
-                        this.textData[lyricIndex].setStroke("yellow", 10);
-                        break;
-                    default:
-                        this.textData[lyricIndex].setStroke("blue", 10);
-                        break;
-                }
-
-                if(this.api.getIsChorus()) {
-                    this.textData[lyricIndex].setStroke("blue", 10);
-                }
+                this.lyricLineStartPos++;
             }
 
         }
@@ -214,19 +219,15 @@ export default class GameMain extends Phaser.Scene {
                     this.scoreText.setText("Score : " + this.score);
                 }
             }
-
-
-            // console.log("テキストの座標：" + this.textData[i].x + "," + this.textData[i].y);
-            // console.log("current text update data : " + lyric);
         }
     }
 
     /**
      * スコアの計算を行う
-     */ 
+     */
     private calcScore(textIndex: number, score: number): number {
 
-        var textColor = this.textData[textIndex].style.stroke;        
+        var textColor = this.textData[textIndex].style.stroke;
         if (this.textData[textIndex].y > 0 && this.textData[textIndex].y < 200) {
             if (this.firstLaneHeart.texture.key.includes(textColor)) {
                 score = score + 500;
@@ -248,6 +249,32 @@ export default class GameMain extends Phaser.Scene {
         }
 
         return score;
+    }
+
+
+    private updateLyricLine() {
+
+        var textLengthLine1 = 0;
+        // 前回の表示を削除
+        for (var i = 0 ; i < this.lyricLine.length; i++) {
+            this.lyricLine[i].destroy(this);
+        }
+        // 表示する歌詞の更新
+        for (var i = this.lyricLineStartPos; i < this.lyrics.length ; i++) {
+            var textLength = this.lyrics[i].getText().length;
+
+            if (this.lyrics[i].getText() != "" && this.lyrics[i].getText() != " ") {
+                
+                this.lyricLine[i] = this.add.text(150 + (textLengthLine1 * 30), 600, this.lyrics[i].getText(), { font: '25px Arial' });
+                this.lyricLine[i].setStroke(this.lyrics[i].color, 5);
+                textLengthLine1 += textLength;
+            }
+            // 一定の長さになったら歌詞の連結をやめる
+            if (textLengthLine1 > 15) {
+                break;
+            }
+        }
+
     }
 
     /**
