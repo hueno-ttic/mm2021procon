@@ -15,22 +15,21 @@ export default class GameMain extends Phaser.Scene {
     public secondLane = 300;
     public thirdLane = 500;
 
+    // APIから取得した歌詞情報
+    public lyrics;
+
+    // 流れる歌詞データを格納しておく
     public textData = [];
-
+    // 流れる歌詞を走査するときの出発点(計算時間短縮のため)
     public indexStart = 0;
-
     // 歌詞の進むスピード
     public counter = 30;
 
-    // 歌詞情報
-    public lyrics;
-
-    // 歌詞の出現するY座標
+    // 歌詞の出現するY座標(キャラの位置と同意)
     public lyricY;
 
     // ハートのX座標
     public heartX = 150;
-
 
     // ゲームのスコア
     public score = 0;
@@ -69,6 +68,9 @@ export default class GameMain extends Phaser.Scene {
         this.api = new TextaliveApiManager(url);
         this.api.init();
         this.load.image('backImg', image['back_img']);
+        //var backImage = document.createElement("https://img.youtube.com/vi/bMtYf3R0zhY/mqdefault.jpg");
+        //backImage.src =  "https://img.youtube.com/vi/bMtYf3R0zhY/mqdefault.jpg";
+        //this.load.image('backImg', backImage);
 
         // 操作キャラ
         this.load.image('miku', image['mini_miku']);
@@ -89,6 +91,7 @@ export default class GameMain extends Phaser.Scene {
 
     create(): void {
         console.log("create()");
+        // 背景
         var backImg = this.add.image(500, 350, 'backImg');
         backImg.alpha = 0.5;
 
@@ -131,14 +134,12 @@ export default class GameMain extends Phaser.Scene {
         // 曲の長さを取得
         //this.api
 
-
-
     }
 
     update() {
 
         // シークしている確認
-        //console.log(this.api.isVideoSeeking())
+        // console.log(this.api.isVideoSeeking())
 
         // クリックした際に3レーンのいずれかに移動する
         if (touchY > 0 && touchY < 200) {
@@ -151,8 +152,6 @@ export default class GameMain extends Phaser.Scene {
 
         // ミクの場所の更新
         this.mikuImg.y = this.lyricY;
-
-
 
         // 曲が流れているときだけ動く
         if (this.api.getPositionTime() != null && this.api.getPositionTime() != 0) {
@@ -196,10 +195,8 @@ export default class GameMain extends Phaser.Scene {
                 this.textData[lyricIndex] = this.add.text(800, this.lyricY - 20, lyricText, { font: '50px Arial' });
                 //console.log("out index " + lyricIndex + " text : " + lyricText + " time : " + time);
                 this.textData[lyricIndex].setStroke(lyric.color, 10);
-
                 this.lyricLineStartPos++;
             }
-
         }
 
         // テキストの描画更新

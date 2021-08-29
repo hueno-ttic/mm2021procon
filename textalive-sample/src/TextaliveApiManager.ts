@@ -22,12 +22,16 @@ export default class TextaliveApiManager {
 
     public artistSpan;
     public songSpan;
-    public phraseEl;
     public beatbarEl;
 
     public isChorus;
 
     public wordList = [];
+
+    public progressBase;
+    public progressSeek;
+    public progressBar;
+    public isProgressSeeking;
 
     constructor(url: string) {
         this.musicUrl = url;
@@ -37,6 +41,13 @@ export default class TextaliveApiManager {
         this.rewindBtn = document.querySelector<HTMLElement>("#rewind");
         this.positionEl = document.querySelector<HTMLElement>("#position strong");
         this.beatbarEl = document.querySelector<HTMLElement>("#beatbar");
+
+        // シークバー
+        this.progressBase = document.querySelector("#progressBase");
+        this.progressSeek = document.querySelector("#progressSeek");
+        this.progressBar = document.querySelector("#progressBar");
+        this.isProgressSeeking = true;
+
 
     }
 
@@ -120,7 +131,7 @@ export default class TextaliveApiManager {
             }
 
             this.lyrics.push(new Lyric(w, wordIndex, color));
-            //this.wordList[wordIndex] = w.children;
+            // this.wordList[wordIndex] = w.children;
             w = w.next;
             wordIndex++;
         }
@@ -133,6 +144,9 @@ export default class TextaliveApiManager {
 
     // APIアクセス後に動画情報設定
     public onTimerReady(): void {
+        //シークバー
+        this.setProgressChorus();
+
         console.log("onTimerReady");
 
         // 楽曲情報
@@ -145,6 +159,14 @@ export default class TextaliveApiManager {
 
     // 再生中に呼び出され続けて画面の状態をupdateする
     public onTimeUpdate(position): void {
+
+
+        if (! this.isProgressSeeking) {
+            this.setProgress(position / this.player.video.duration);
+        }
+
+
+
 
         // 現在再生されている時のBeat情報を取得
         const beat = this.player.findBeat(position);
@@ -213,8 +235,6 @@ export default class TextaliveApiManager {
 
         for (var i = 0; i < this.lyrics.length; i++) {
             if (positoinTime > this.lyrics[i].startTime && positoinTime < this.lyrics[i].endTime) {
-                //console.log("発話中の単語：" + this.lyrics[i].text);
-                //console.log("videoPosition : " + this.player.videoPosition);
                 // 画面表示用設定
                 var currentText = this.lyrics[i].text;
                 return currentText;
@@ -229,11 +249,8 @@ export default class TextaliveApiManager {
 
         for (var i = 0; i < this.lyrics.length; i++) {
             if (positoinTime > this.lyrics[i].startTime && positoinTime < this.lyrics[i].endTime) {
-                //console.log("発話中の単語：" + this.lyrics[i].text);
-                //console.log("videoPosition : " + this.player.videoPosition);
                 // 画面表示用設定
                 var currentIndex = this.lyrics[i].index;
-                //this.phraseEl.textContent = currentText;
                 return currentIndex;
             }
         }
@@ -267,4 +284,22 @@ export default class TextaliveApiManager {
     public getIsChorus(): Boolean {
         return this.isChorus;
     }
+
+    public setProgress(val) {
+        this.progressBar.style.width = `${(val * 100)}%`;
+    }
+
+
+    public setProgressChorus() {
+        if (this.player.video) {
+          let choruses = this.player.getChoruses();
+          for(let i = (choruses.length - 1); i >= 0; i--) {
+            let chorusNode = document.createElement("div");
+            chorusNode.className = "progressChorus";
+            chorusNode.style.left = `${(choruses[i].startTime / this.player.video.duration * 100)}%`;
+            chorusNode.style.width = `${(choruses[i].duration / this.player.video.duration * 100)}%`;
+            this.progressBase.insertBefore(chorusNode, this.progressBase.firstChild);
+          }
+        }
+      }
 }
