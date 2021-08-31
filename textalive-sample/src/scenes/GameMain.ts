@@ -44,6 +44,7 @@ export default class GameMain extends Phaser.Scene {
     public firstLaneHeart;
     public secondLaneHeart;
     public thirdLaneHeart;
+    public r = 0;
 
     // ハートオブジェクト
     public firstLaneLine;
@@ -53,8 +54,6 @@ export default class GameMain extends Phaser.Scene {
     // 歌詞表示部分
     public lyricLine = [];
     public lyricLineStartPos = 0;
-
-
 
     public initFlag = true;
 
@@ -141,6 +140,15 @@ export default class GameMain extends Phaser.Scene {
 
     update() {
 
+        this.firstLaneLine.alpha = Math.abs(Math.sin(this.r));
+        this.secondLaneLine.alpha = Math.abs(Math.sin(this.r));
+        this.thirdLaneLine.alpha = Math.abs(Math.sin(this.r));
+    if (this.r >= 360 ) {
+      this.r = 0;
+    } else {
+      this.r += 0.1;
+    }
+
         // 
         if (this.firstLaneHeartScaleFlag) {
             this.firstLaneHeartScaleCount++;
@@ -226,35 +234,8 @@ export default class GameMain extends Phaser.Scene {
                     this.textData[i].destroy(this);
                     if (!this.firstLaneHeartScaleFlag) {
                         this.firstLaneHeartScaleFlag = true;
-
-                        this.tweens.add({
-                            //tweenを適応させる対象
-                            targets: this.firstLaneHeart,
-                            //tweenさせる値
-                            scale: 1.25,
-                            //tweenにかかる時間
-                            duration: 300,
-                            //tween開始までのディレイ
-                            delay: 0,
-                            //tweenのリピート回数（-1で無限）
-                            repeat: 0,
-                            //easingの指定
-                            ease: 'Linear',
-                        });
-                        this.tweens.add({
-                            //tweenを適応させる対象
-                            targets: this.firstLaneHeart,
-                            //tweenさせる値
-                            scale: (1/1.25)*0.5,
-                            //tweenにかかる時間
-                            duration: 300,
-                            //tween開始までのディレイ
-                            delay: 300,
-                            //tweenのリピート回数（-1で無限）
-                            repeat: 0,
-                            //easingの指定
-                            ease: 'Linear',
-                        });
+                        this.setHeartTween(this.firstLaneHeart);
+                       
                     }
                     // score計算を行う
                     this.score = this.calcScore(i, this.score);
@@ -317,6 +298,37 @@ export default class GameMain extends Phaser.Scene {
             }
         }
 
+    }
+
+    private setHeartTween(heartObject) {
+        this.tweens.add({
+            //tweenを適応させる対象
+            targets: heartObject,
+            //tweenさせる値
+            scale: 1.25,
+            //tweenにかかる時間
+            duration: 300,
+            //tween開始までのディレイ
+            delay: 0,
+            //tweenのリピート回数（-1で無限）
+            repeat: 0,
+            //easingの指定
+            ease: 'Linear',
+        });
+        this.tweens.add({
+            //tweenを適応させる対象
+            targets: heartObject,
+            //tweenさせる値
+            scale: (1/1.25)*0.5,
+            //tweenにかかる時間
+            duration: 300,
+            //tween開始までのディレイ
+            delay: 300,
+            //tweenのリピート回数（-1で無限）
+            repeat: 0,
+            //easingの指定
+            ease: 'Linear',
+        });
     }
 
     /**
