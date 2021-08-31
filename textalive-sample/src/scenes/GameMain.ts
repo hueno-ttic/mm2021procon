@@ -11,9 +11,9 @@ export default class GameMain extends Phaser.Scene {
 
     public api;
 
-    public firstLane = 100;
-    public secondLane = 300;
-    public thirdLane = 500;
+    public firstLane = 120;
+    public secondLane = 320;
+    public thirdLane = 520;
 
     // APIから取得した歌詞情報
     public lyrics;
@@ -29,7 +29,9 @@ export default class GameMain extends Phaser.Scene {
     public lyricY;
 
     // ハートのX座標
-    public heartX = 150;
+    public heartX = 120;
+    public firstLaneHeartScaleFlag = false;
+    public firstLaneHeartScaleCount = 0;
 
     // ゲームのスコア
     public score = 0;
@@ -60,6 +62,7 @@ export default class GameMain extends Phaser.Scene {
 
     constructor() {
         super({ key: 'GameMain' })
+        //this.game.time.desiredFps = 60;
     }
 
     preload(): void {
@@ -97,12 +100,12 @@ export default class GameMain extends Phaser.Scene {
 
         // ミクの設定
         this.lyricY = this.firstLane;
-        this.mikuImg = this.add.image(900, this.lyricY, 'miku');
+        this.mikuImg = this.add.image(1100, this.lyricY, 'miku');
         this.mikuImg.scaleX = this.mikuImg.scaleX * 0.6;
         this.mikuImg.scaleY = this.mikuImg.scaleY * 0.6;
 
         // ハートオブジェクト
-        var scale = 0.9;
+        var scale = 0.5;
         this.firstLaneHeart = this.add.image(this.heartX, this.firstLane, 'heart_red');
         this.firstLaneHeart.scaleX = this.firstLaneHeart.scaleX * scale;
         this.firstLaneHeart.scaleY = this.firstLaneHeart.scaleY * scale;
@@ -115,15 +118,15 @@ export default class GameMain extends Phaser.Scene {
 
         // ラインのオブジェクト
         var lineScale = 0.9;
-        this.firstLaneLine = this.add.image(430, this.firstLane, 'line_red');
-        this.firstLaneLine.scaleX = this.firstLaneLine.scaleX * 0.4;
-        this.firstLaneLine.scaleY = this.firstLaneLine.scaleY * 0.5;
-        this.secondLaneLine = this.add.image(430, this.secondLane, 'line_yellow');
-        this.secondLaneLine.scaleX = this.secondLaneLine.scaleX * 0.4;
-        this.secondLaneLine.scaleY = this.secondLaneLine.scaleY * 0.5;
-        this.thirdLaneLine = this.add.image(430, this.thirdLane, 'line_green');
-        this.thirdLaneLine.scaleX = this.thirdLaneLine.scaleX * 0.4;
-        this.thirdLaneLine.scaleY = this.thirdLaneLine.scaleY * 0.5;
+        this.firstLaneLine = this.add.image(500, this.firstLane, 'line_red');
+        this.firstLaneLine.scaleX = this.firstLaneLine.scaleX * 0.53;
+        this.firstLaneLine.scaleY = this.firstLaneLine.scaleY * 0.62;
+        this.secondLaneLine = this.add.image(500, this.secondLane, 'line_yellow');
+        this.secondLaneLine.scaleX = this.secondLaneLine.scaleX * 0.53;
+        this.secondLaneLine.scaleY = this.secondLaneLine.scaleY * 0.62;
+        this.thirdLaneLine = this.add.image(500, this.thirdLane, 'line_green');
+        this.thirdLaneLine.scaleX = this.thirdLaneLine.scaleX * 0.53;
+        this.thirdLaneLine.scaleY = this.thirdLaneLine.scaleY * 0.62;
 
         // スコアの設定
         var scoreT = this.add.text(30, 625, "Score", { font: '18px Arial' });
@@ -137,6 +140,16 @@ export default class GameMain extends Phaser.Scene {
     }
 
     update() {
+
+        // 
+        if (this.firstLaneHeartScaleFlag) {
+            this.firstLaneHeartScaleCount++;
+            if (this.firstLaneHeartScaleCount > 30) {
+                
+                this.firstLaneHeartScaleFlag = false;
+                this.firstLaneHeartScaleCount = 0;
+            }
+        }
 
         // シークしている確認
         // console.log(this.api.isVideoSeeking())
@@ -211,6 +224,38 @@ export default class GameMain extends Phaser.Scene {
                     this.indexStart++;
                     //                this.textData[i].setVisible(false);
                     this.textData[i].destroy(this);
+                    if (!this.firstLaneHeartScaleFlag) {
+                        this.firstLaneHeartScaleFlag = true;
+
+                        this.tweens.add({
+                            //tweenを適応させる対象
+                            targets: this.firstLaneHeart,
+                            //tweenさせる値
+                            scale: 1.25,
+                            //tweenにかかる時間
+                            duration: 300,
+                            //tween開始までのディレイ
+                            delay: 0,
+                            //tweenのリピート回数（-1で無限）
+                            repeat: 0,
+                            //easingの指定
+                            ease: 'Linear',
+                        });
+                        this.tweens.add({
+                            //tweenを適応させる対象
+                            targets: this.firstLaneHeart,
+                            //tweenさせる値
+                            scale: (1/1.25)*0.5,
+                            //tweenにかかる時間
+                            duration: 300,
+                            //tween開始までのディレイ
+                            delay: 300,
+                            //tweenのリピート回数（-1で無限）
+                            repeat: 0,
+                            //easingの指定
+                            ease: 'Linear',
+                        });
+                    }
                     // score計算を行う
                     this.score = this.calcScore(i, this.score);
                     this.scoreText.setText("Score : " + this.score);
@@ -253,16 +298,16 @@ export default class GameMain extends Phaser.Scene {
 
         var textLengthLine1 = 0;
         // 前回の表示を削除
-        for (var i = 0 ; i < this.lyricLine.length; i++) {
+        for (var i = 0; i < this.lyricLine.length; i++) {
             this.lyricLine[i].destroy(this);
         }
         // 表示する歌詞の更新
-        for (var i = this.lyricLineStartPos; i < this.lyrics.length ; i++) {
+        for (var i = this.lyricLineStartPos; i < this.lyrics.length; i++) {
             var textLength = this.lyrics[i].getText().length;
 
             if (this.lyrics[i].getText() != "" && this.lyrics[i].getText() != " ") {
-                
-                this.lyricLine[i] = this.add.text(150 + (textLengthLine1 * 30), 600, this.lyrics[i].getText(), { font: '25px Arial' });
+
+                this.lyricLine[i] = this.add.text(180 + (textLengthLine1 * 35), 636, this.lyrics[i].getText(), { font: '32px Arial' });
                 this.lyricLine[i].setStroke(this.lyrics[i].color, 5);
                 textLengthLine1 += textLength;
             }

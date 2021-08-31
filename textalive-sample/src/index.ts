@@ -9,8 +9,8 @@ import MusicSelectScene from "./scenes/MusicSelect";
 const config: Phaser.Types.Core.GameConfig = {
     title: "sampleLyric",    //タイトル
     version: "0.0.1",       //バージョン
-    width: 1000,             //画面幅
-    height: 700,            //画面高さ
+    width: 1280,             //画面幅
+    height: 720,            //画面高さ
     parent: "game",          //DOM上の親
     type: Phaser.AUTO,      //canvasかwebGLかを自動選択
     scale: {
