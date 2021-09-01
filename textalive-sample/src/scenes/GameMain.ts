@@ -5,6 +5,9 @@ import image from "../assets/*.png";
 // クリック箇所のY座標を保存
 var touchY = 5;
 
+// クリック箇所のX座標を保存
+var touchX = 500;
+
 export default class GameMain extends Phaser.Scene {
 
     public frameCount = 0;
@@ -57,7 +60,8 @@ export default class GameMain extends Phaser.Scene {
 
     public initFlag = true;
 
-
+    // パーティクルの寿命
+    private particle_lifespan = 0;
 
     constructor() {
         super({ key: 'GameMain' })
@@ -88,6 +92,9 @@ export default class GameMain extends Phaser.Scene {
         this.load.image('line_yellow', image['line_yellow']);
         this.load.image('line_green', image['line_green']);
         this.load.image('line_blue', image['line_blue']);
+
+        // スター
+        this.load.image('Star', image['Star']);
 
     }
 
@@ -140,14 +147,15 @@ export default class GameMain extends Phaser.Scene {
 
     update() {
 
+        // 初期座標の設定
         this.firstLaneLine.alpha = Math.abs(Math.sin(this.r));
         this.secondLaneLine.alpha = Math.abs(Math.sin(this.r));
         this.thirdLaneLine.alpha = Math.abs(Math.sin(this.r));
-    if (this.r >= 360 ) {
-      this.r = 0;
-    } else {
-      this.r += 0.1;
-    }
+        if (this.r >= 360) {
+            this.r = 0;
+        } else {
+            this.r += 0.1;
+        }
 
         // 
         if (this.firstLaneHeartScaleFlag) {
@@ -243,6 +251,41 @@ export default class GameMain extends Phaser.Scene {
                 }
             }
         }
+
+        // パーティクル処理
+        var particles = this.add.particles('Star');
+        var emitter = particles.createEmitter({
+
+            //パーティクルのスケール（2から0へ遷移）
+            scale: { start: 0.2, end: 0 },
+
+            //パーティクルの速度（minからmaxの範囲）
+            speed: { min: 100, max: 50 },
+            
+            blendMode: 'SCREEN',
+
+            frequency: -1,
+
+            //パーティクルの放出数（エミット時に指定するので0を入れておく）
+            quantity: 0,
+
+            //パーティクルの寿命
+            lifespan: 500
+
+        });
+
+        // パーティクルの寿命を上回ったら削除
+        // removeで削除されないので追ってやり方を検討。updateでexplodeしてるのが良くないかも。createでやるように変更予定
+        // 良さげなサンプルがあるので、Gameクラスをどう引っ張ってくるか解決できれば解決できそう
+        // https://phaser.io/examples/v2/particles/click-burst
+        if (this.particle_lifespan > 100) {
+            emitter.remove();
+            this.particle_lifespan = 0;
+        }
+        
+        emitter.explode(0.01, touchX-500, touchY-200);
+        this.particle_lifespan++;    
+        
     }
 
     /**
@@ -392,6 +435,8 @@ var touchHandler = function (e) {
         y = e.clientY;
     }
     touchY = y;
+    touchX = x;
+
     console.log("タッチx座標 : " + x);
     console.log("タッチy座標 : " + y);
 };
