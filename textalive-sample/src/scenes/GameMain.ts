@@ -8,6 +8,12 @@ var touchY = 5;
 // クリック箇所のX座標を保存
 var touchX = 500;
 
+// パーティクルマネージャーの宣言
+var particles;
+
+// エミッタ
+var emitter;
+
 export default class GameMain extends Phaser.Scene {
 
     public frameCount = 0;
@@ -60,9 +66,6 @@ export default class GameMain extends Phaser.Scene {
 
     public initFlag = true;
 
-    // パーティクルの寿命
-    private particle_lifespan = 0;
-
     constructor() {
         super({ key: 'GameMain' })
         //this.game.time.desiredFps = 60;
@@ -95,7 +98,6 @@ export default class GameMain extends Phaser.Scene {
 
         // スター
         this.load.image('Star', image['Star']);
-
     }
 
     create(): void {
@@ -143,6 +145,28 @@ export default class GameMain extends Phaser.Scene {
         // 曲の長さを取得
         //this.api
 
+        // パーティクル処理
+        particles = this.add.particles('Star');
+
+        emitter = particles.createEmitter({
+
+            //パーティクルのスケール（2から0へ遷移）
+            scale: { start: 0.2, end: 0 },
+
+            //パーティクルの速度（minからmaxの範囲）
+            speed: { min: 100, max: 50 },
+            
+            blendMode: 'SCREEN',
+
+            frequency: -1,
+
+            //パーティクルの放出数（エミット時に指定するので0を入れておく）
+            quantity: 0,
+
+            //パーティクルの寿命
+            lifespan: 500
+
+        });
     }
 
     update() {
@@ -251,41 +275,9 @@ export default class GameMain extends Phaser.Scene {
                 }
             }
         }
-
-        // パーティクル処理
-        var particles = this.add.particles('Star');
-        var emitter = particles.createEmitter({
-
-            //パーティクルのスケール（2から0へ遷移）
-            scale: { start: 0.2, end: 0 },
-
-            //パーティクルの速度（minからmaxの範囲）
-            speed: { min: 100, max: 50 },
-            
-            blendMode: 'SCREEN',
-
-            frequency: -1,
-
-            //パーティクルの放出数（エミット時に指定するので0を入れておく）
-            quantity: 0,
-
-            //パーティクルの寿命
-            lifespan: 500
-
-        });
-
-        // パーティクルの寿命を上回ったら削除
-        // removeで削除されないので追ってやり方を検討。updateでexplodeしてるのが良くないかも。createでやるように変更予定
-        // 良さげなサンプルがあるので、Gameクラスをどう引っ張ってくるか解決できれば解決できそう
-        // https://phaser.io/examples/v2/particles/click-burst
-        if (this.particle_lifespan > 100) {
-            emitter.remove();
-            this.particle_lifespan = 0;
-        }
         
-        emitter.explode(0.01, touchX-500, touchY-200);
-        this.particle_lifespan++;    
-        
+        // パーティクルを発動
+        emitter.explode(0.01, touchX, touchY); 
     }
 
     /**
