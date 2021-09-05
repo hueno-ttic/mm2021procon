@@ -8,8 +8,8 @@ export default class CharacterSelectScene extends Phaser.Scene {
     })
   }
 
-  private artistInfo;
-  private artistTexts;
+  private musicInfoText;
+  public selectMusic;
 
   preload(): void {
     this.load.image('music_frame', images['music_frame']);
@@ -47,11 +47,13 @@ export default class CharacterSelectScene extends Phaser.Scene {
     }
 
     var musicList = new MusicList();
-    this.artistTexts = musicList.getArtistTexts();
+    var musicInfoList = musicList.getMusicInfoList();
 
-    this.artistInfo = this.add.text(45, 600, this.artistTexts[1][0]+"/"+this.artistTexts[1][1],{ fontFamily: 'Makinas-4-Square' });
+    this.selectMusic = musicInfoList[1];
+
+    this.musicInfoText = this.add.text(45, 600, this.selectMusic[0]+"/"+this.selectMusic[1],{ fontFamily: 'Makinas-4-Square' });
     
-    this.artistInfo.scale *= 2;
+    this.musicInfoText.scale *= 2;
 
     const text = this.add.text(700, 650, 'クリックしてゲーム画面へ遷移する');
     text.setInteractive();

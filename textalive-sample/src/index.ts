@@ -3,6 +3,7 @@ import * as Phaser from "phaser";
 import CharacterSelectScene from "./scenes/CharacterSelect";
 import TitleScene from "./scenes/TitleScene";
 import GameMain from "./scenes/GameMain";
+import GameResult from "./scenes/GameResult";
 import MusicSelectScene from "./scenes/MusicSelect";
 
 //ゲームの基本設定
@@ -18,8 +19,11 @@ const config: Phaser.Types.Core.GameConfig = {
         autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
     },
     scene: [
-        TitleScene, GameMain, CharacterSelectScene,
+        TitleScene,
+        GameMain,
+        CharacterSelectScene,
         MusicSelectScene,
+        GameResult,
         ]
 };
 
