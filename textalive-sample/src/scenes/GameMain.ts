@@ -9,11 +9,11 @@ export default class GameMain extends Phaser.Scene {
 
     public frameCount = 0;
 
-    public api;
+    public api:TextaliveApiManager;
 
-    public firstLane = 120;
-    public secondLane = 320;
-    public thirdLane = 520;
+    public firstLane :number = 120;
+    public secondLane :number= 320;
+    public thirdLane :number= 520;
 
     // APIから取得した歌詞情報
     public lyrics;
@@ -21,7 +21,7 @@ export default class GameMain extends Phaser.Scene {
     // 流れる歌詞データを格納しておく
     public textData = [];
     // 流れる歌詞を走査するときの出発点(計算時間短縮のため)
-    public indexStart = 0;
+    public indexStart:number = 0;
     // 歌詞の進むスピード
     public counter = 30;
 
@@ -34,7 +34,7 @@ export default class GameMain extends Phaser.Scene {
     public firstLaneHeartScaleCount = 0;
 
     // ゲームのスコア
-    public score = 0;
+    public score:number = 0;
     public scoreText;
 
     // 動作オブジェクト
@@ -44,7 +44,7 @@ export default class GameMain extends Phaser.Scene {
     public firstLaneHeart;
     public secondLaneHeart;
     public thirdLaneHeart;
-    public r = 0;
+    public r:number = 0;
 
     // ハートオブジェクト
     public firstLaneLine;
@@ -55,13 +55,12 @@ export default class GameMain extends Phaser.Scene {
     public lyricLine = [];
     public lyricLineStartPos = 0;
 
-    public initFlag = true;
+    public initFlag:Boolean = true;
 
 
 
     constructor() {
         super({ key: 'GameMain' })
-        //this.game.time.desiredFps = 60;
     }
 
     preload(): void {
@@ -95,7 +94,7 @@ export default class GameMain extends Phaser.Scene {
         console.log("create()");
         // 背景
         var backImg = this.add.image(500, 350, 'backImg');
-        backImg.alpha = 0.5;
+        backImg.alpha = 0.2;
 
         // ミクの設定
         this.lyricY = this.firstLane;
@@ -146,7 +145,7 @@ export default class GameMain extends Phaser.Scene {
     if (this.r >= 360 ) {
       this.r = 0;
     } else {
-      this.r += 0.1;
+      this.r += 0.05;
     }
 
         // 
@@ -319,7 +318,7 @@ export default class GameMain extends Phaser.Scene {
             //tweenを適応させる対象
             targets: heartObject,
             //tweenさせる値
-            scale: (1/1.25)*0.5,
+            scale: (1*0.5)/1.25,
             //tweenにかかる時間
             duration: 300,
             //tween開始までのディレイ

@@ -5,14 +5,14 @@ import { Ease, Player, IVideo, NullGraphicsDriver } from "textalive-app-api";
 
 export default class TextaliveApiManager {
 
-    public musicUrl;
+    private musicUrl : string;
 
-    public player;
+    private player : Player;
 
-    public lyrics: Lyric[] = [];
-    public charText: CharText[] = [];
+    private lyrics: Lyric[] = [];
+    private charText: CharText[] = [];
 
-    public positionTime: Number;
+    private positionTime: Number;
 
     public playBtn;
     public jumpBtn;
@@ -24,9 +24,7 @@ export default class TextaliveApiManager {
     public songSpan;
     public beatbarEl;
 
-    public isChorus;
-
-    public wordList = [];
+    private isChorus : Boolean;
 
     public progressBase;
     public progressSeek;
@@ -131,15 +129,9 @@ export default class TextaliveApiManager {
             }
 
             this.lyrics.push(new Lyric(w, wordIndex, color));
-            // this.wordList[wordIndex] = w.children;
             w = w.next;
             wordIndex++;
         }
-        console.log("****************************");
-        console.log(this.lyrics);
-        console.log("****************************");
-
-
     }
 
     // APIアクセス後に動画情報設定
@@ -200,10 +192,6 @@ export default class TextaliveApiManager {
 
 
     public getLyrics() {
-        console.log("**************");
-        console.log(this.lyrics);
-        console.log("**************");
-
         return this.lyrics;
     }
 
