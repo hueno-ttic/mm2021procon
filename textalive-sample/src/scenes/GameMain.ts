@@ -1,5 +1,6 @@
 import Lyric from "../Lyric";
 import TextaliveApiManager from "../TextaliveApiManager";
+import MusicSelect from "MusicSelect";
 import image from "../assets/*.png";
 
 // クリック箇所のY座標を保存
@@ -57,6 +58,7 @@ export default class GameMain extends Phaser.Scene {
 
     public initFlag:Boolean = true;
 
+    private musicSelectScene :MusicSelect; 
 
 
     constructor() {
@@ -65,7 +67,12 @@ export default class GameMain extends Phaser.Scene {
 
     preload(): void {
         console.log("preload()");
-        var url = "https://www.youtube.com/watch?v=bMtYf3R0zhY";
+        this.musicSelectScene = this.scene.get("MusicSelect") as MusicSelect;
+        
+        console.log(this.musicSelectScene.selectMusic[2]);
+        var url = this.musicSelectScene.selectMusic[2];
+
+        //var url = "https://www.youtube.com/watch?v=bMtYf3R0zhY";
         this.api = new TextaliveApiManager(url);
         this.api.init();
         this.load.image('backImg', image['back_img']);
@@ -162,11 +169,11 @@ export default class GameMain extends Phaser.Scene {
         // console.log(this.api.isVideoSeeking())
 
         // クリックした際に3レーンのいずれかに移動する
-        if (touchY > 0 && touchY < 200) {
+        if (touchY > 0 && touchY < 720/3) {
             this.lyricY = this.firstLane;
-        } else if (touchY >= 250 && touchY < 400) {
+        } else if (touchY >= 720/3 && touchY < 720/3*2) {
             this.lyricY = this.secondLane;
-        } else if (touchY >= 450 && touchY < 700) {
+        } else if (touchY >= 720/3*2 && touchY < 720) {
             this.lyricY = this.thirdLane;
         }
 
