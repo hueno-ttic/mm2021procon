@@ -262,7 +262,7 @@ export default class GameMain extends Phaser.Scene {
                 // 一定区間移動したら歌詞を非表示する
                 if (this.textData[i].x < this.heartX) {
                     this.indexStart++;
-                    //                this.textData[i].setVisible(false);
+                    // this.textData[i].setVisible(false);
                     this.textData[i].destroy(this);
                     if (!this.firstLaneHeartScaleFlag) {
                         this.firstLaneHeartScaleFlag = true;
