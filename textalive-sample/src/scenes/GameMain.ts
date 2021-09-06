@@ -10,11 +10,11 @@ export default class GameMain extends Phaser.Scene {
 
     public frameCount = 0;
 
-    public api:TextaliveApiManager;
+    public api: TextaliveApiManager;
 
-    public firstLane :number = 120;
-    public secondLane :number= 320;
-    public thirdLane :number= 520;
+    public firstLane: number = 120;
+    public secondLane: number = 320;
+    public thirdLane: number = 520;
 
     // APIから取得した歌詞情報
     public lyrics;
@@ -22,7 +22,7 @@ export default class GameMain extends Phaser.Scene {
     // 流れる歌詞データを格納しておく
     public textData = [];
     // 流れる歌詞を走査するときの出発点(計算時間短縮のため)
-    public indexStart:number = 0;
+    public indexStart: number = 0;
     // 歌詞の進むスピード
     public counter = 30;
 
@@ -33,9 +33,13 @@ export default class GameMain extends Phaser.Scene {
     public heartX = 120;
     public firstLaneHeartScaleFlag = false;
     public firstLaneHeartScaleCount = 0;
+    public secondLaneHeartScaleFlag = false;
+    public secondLaneHeartScaleCount = 0;
+    public thirdLaneHeartScaleFlag = false;
+    public thirdLaneHeartScaleCount = 0;
 
     // ゲームのスコア
-    public score:number = 0;
+    public score: number = 0;
     public scoreText;
 
     // 動作オブジェクト
@@ -45,7 +49,7 @@ export default class GameMain extends Phaser.Scene {
     public firstLaneHeart;
     public secondLaneHeart;
     public thirdLaneHeart;
-    public r:number = 0;
+    public r: number = 0;
 
     // ハートオブジェクト
     public firstLaneLine;
@@ -56,9 +60,9 @@ export default class GameMain extends Phaser.Scene {
     public lyricLine = [];
     public lyricLineStartPos = 0;
 
-    public initFlag:Boolean = true;
+    public initFlag: Boolean = true;
 
-    private musicSelectScene :MusicSelect; 
+    private musicSelectScene: MusicSelect;
 
 
     constructor() {
@@ -68,9 +72,10 @@ export default class GameMain extends Phaser.Scene {
     preload(): void {
         console.log("preload()");
         this.musicSelectScene = this.scene.get("MusicSelect") as MusicSelect;
-        
+
         console.log(this.musicSelectScene.selectMusic[2]);
         var url = this.musicSelectScene.selectMusic[2];
+        //url = "https://piapro.jp/t/YW_d/2021020612335"
 
         //var url = "https://www.youtube.com/watch?v=bMtYf3R0zhY";
         this.api = new TextaliveApiManager(url);
@@ -146,22 +151,44 @@ export default class GameMain extends Phaser.Scene {
 
     update() {
 
+        // ロードが終わり次第、楽曲をスタート
+        if (!this.api.player.isPlaying && !this.api.player.isLoading) {
+            this.api.player.requestPlay();
+        }
+        // // 曲が終わったらリザルト画面
+        // if (!this.api.player.isPlaying && !this.api.player.isLoading && !this.api.player.isVideoSeeking) {
+        //     this.scene.start('GameResult');
+        // }
+
         this.firstLaneLine.alpha = Math.abs(Math.sin(this.r));
         this.secondLaneLine.alpha = Math.abs(Math.sin(this.r));
         this.thirdLaneLine.alpha = Math.abs(Math.sin(this.r));
-    if (this.r >= 360 ) {
-      this.r = 0;
-    } else {
-      this.r += 0.05;
-    }
+        if (this.r >= 360) {
+            this.r = 0;
+        } else {
+            this.r += 0.05;
+        }
 
-        // 
+        // ハートの伸縮判定
         if (this.firstLaneHeartScaleFlag) {
             this.firstLaneHeartScaleCount++;
             if (this.firstLaneHeartScaleCount > 30) {
-                
                 this.firstLaneHeartScaleFlag = false;
                 this.firstLaneHeartScaleCount = 0;
+            }
+        }
+        if (this.secondLaneHeartScaleFlag) {
+            this.secondLaneHeartScaleCount++;
+            if (this.secondLaneHeartScaleCount > 30) {
+                this.secondLaneHeartScaleFlag = false;
+                this.secondLaneHeartScaleCount = 0;
+            }
+        }
+        if (this.thirdLaneHeartScaleFlag) {
+            this.thirdLaneHeartScaleCount++;
+            if (this.thirdLaneHeartScaleCount > 30) {
+                this.thirdLaneHeartScaleFlag = false;
+                this.thirdLaneHeartScaleCount = 0;
             }
         }
 
@@ -169,11 +196,11 @@ export default class GameMain extends Phaser.Scene {
         // console.log(this.api.isVideoSeeking())
 
         // クリックした際に3レーンのいずれかに移動する
-        if (touchY > 0 && touchY < 720/3) {
+        if (touchY > 0 && touchY < 720 / 3) {
             this.lyricY = this.firstLane;
-        } else if (touchY >= 720/3 && touchY < 720/3*2) {
+        } else if (touchY >= 720 / 3 && touchY < 720 / 3 * 2) {
             this.lyricY = this.secondLane;
-        } else if (touchY >= 720/3*2 && touchY < 720) {
+        } else if (touchY >= 720 / 3 * 2 && touchY < 720) {
             this.lyricY = this.thirdLane;
         }
 
@@ -194,8 +221,8 @@ export default class GameMain extends Phaser.Scene {
             // 歌詞表示
             this.updateLyricLine();
 
-            const time = this.api.getPositionTime();
-            var lyric = this.api.getCurrentLyric(time);
+            var positionTime = this.api.getPositionTime();
+            var lyric = this.api.getCurrentLyric(positionTime);
             var lyricText;
             var lyricIndex;
             if (lyric != null) {
@@ -216,8 +243,8 @@ export default class GameMain extends Phaser.Scene {
             // }
 
             // 横に流れる歌詞データの追加
-            lyricText = this.api.getCurrentLyricText(time);
-            lyricIndex = this.api.getCurrentLyricIndex(time);
+            lyricText = this.api.getCurrentLyricText(positionTime);
+            lyricIndex = this.api.getCurrentLyricIndex(positionTime);
             if (typeof this.textData[lyricIndex] === "undefined" && lyricText != null && lyricText != "" && lyricText != " ") {
                 this.textData[lyricIndex] = this.add.text(800, this.lyricY - 20, lyricText, { font: '50px Arial' });
                 //console.log("out index " + lyricIndex + " text : " + lyricText + " time : " + time);
@@ -236,13 +263,34 @@ export default class GameMain extends Phaser.Scene {
                 // 一定区間移動したら歌詞を非表示する
                 if (this.textData[i].x < this.heartX) {
                     this.indexStart++;
-                    //                this.textData[i].setVisible(false);
-                    this.textData[i].destroy(this);
-                    if (!this.firstLaneHeartScaleFlag) {
+
+                    var wordY = this.textData[i].y
+                    var nowLine = "";
+                    if (wordY > 0 && wordY < 720 / 3) {
+                        nowLine = "first";
+                    } else if (wordY >= 720 / 3 && wordY < 720 / 3 * 2) {
+                        nowLine = "second";
+                    } else if (wordY >= 720 / 3 * 2 && wordY < 720) {
+                        nowLine = "third";
+                    }
+
+
+                    if (!this.firstLaneHeartScaleFlag && nowLine == "first") {
                         this.firstLaneHeartScaleFlag = true;
                         this.setHeartTween(this.firstLaneHeart);
-                       
                     }
+                    if (!this.secondLaneHeartScaleFlag && nowLine == "second") {
+                        this.secondLaneHeartScaleFlag = true;
+                        this.setHeartTween(this.secondLaneHeart);
+                    }
+                    if (!this.thirdLaneHeartScaleFlag && nowLine == "third") {
+                        this.thirdLaneHeartScaleFlag = true;
+                        this.setHeartTween(this.thirdLaneHeart);
+                    }
+
+                    // 歌詞の削除
+                    this.textData[i].destroy(this);
+
                     // score計算を行う
                     this.score = this.calcScore(i, this.score);
                     this.scoreText.setText("Score : " + this.score);
@@ -325,7 +373,7 @@ export default class GameMain extends Phaser.Scene {
             //tweenを適応させる対象
             targets: heartObject,
             //tweenさせる値
-            scale: (1*0.5)/1.25,
+            scale: (1 * 0.5) / 1.25,
             //tweenにかかる時間
             duration: 300,
             //tween開始までのディレイ
@@ -380,6 +428,10 @@ export default class GameMain extends Phaser.Scene {
                 break;
         }
 
+
+    }
+
+    public createVisualazer() {
 
     }
 }

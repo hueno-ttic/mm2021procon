@@ -5,14 +5,14 @@ import { Ease, Player, IVideo, NullGraphicsDriver } from "textalive-app-api";
 
 export default class TextaliveApiManager {
 
-    private musicUrl : string;
+    private musicUrl: string;
 
-    private player : Player;
+    public player: Player;
 
     private lyrics: Lyric[] = [];
     private charText: CharText[] = [];
 
-    private positionTime: Number;
+    private positionTime: number;
 
     public playBtn;
     public jumpBtn;
@@ -24,7 +24,7 @@ export default class TextaliveApiManager {
     public songSpan;
     public beatbarEl;
 
-    private isChorus : Boolean;
+    private isChorus: Boolean;
 
     public progressBase;
     public progressSeek;
@@ -57,7 +57,9 @@ export default class TextaliveApiManager {
                 appName: "TextAliveSample",
                 token: "GYtUEuVODFiceV7w"
             },
-            mediaElement: document.querySelector<HTMLElement>("#media")
+            mediaElement: document.querySelector<HTMLElement>("#media"),
+            valenceArousalEnabled : true, // 覚醒度と感情価の取得
+            vocalAmplitudeEnabled : true // 声量情報の取得
         });
 
         // バッググラウンドで実行する機能をListenerに登録
@@ -72,7 +74,6 @@ export default class TextaliveApiManager {
 
     // APIへのアクセス準備
     private onAppReady(app): void {
-
         console.log("onAppReady");
 
         if (!app.managed) {
@@ -84,6 +85,16 @@ export default class TextaliveApiManager {
         }
         if (!app.songUrl) {
             // 再生対象となる楽曲URLをセット
+            // this.player.createFromSongUrl("https://piapro.jp/t/YW_d/20210206123357", {
+            //     video: {
+            //         // 音楽地図訂正履歴: https://songle.jp/songs/2121405/history
+            //         beatId: 3953908,
+            //         repetitiveSegmentId: 2099661,
+            //         // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2FYW_d%2F20210206123357
+            //         lyricId: 52061,
+            //         lyricDiffId: 5123,
+            //     },
+            // });
             this.player.createFromSongUrl(this.musicUrl);
         }
     }
@@ -128,10 +139,17 @@ export default class TextaliveApiManager {
                 color = "blue";
             }
 
-            this.lyrics.push(new Lyric(w, wordIndex, color));
+            // 歌詞ごとの覚醒度と感情価を設定
+            var valenceArousal = this.player.getValenceArousal(w.startTime);
+            
+            // 単語情報を格納
+            this.lyrics.push(new Lyric(w, wordIndex, color, valenceArousal));
+            
+            // 次の単語へ
             w = w.next;
             wordIndex++;
         }
+        console.log(this.lyrics);
     }
 
     // APIアクセス後に動画情報設定
@@ -152,13 +170,9 @@ export default class TextaliveApiManager {
     // 再生中に呼び出され続けて画面の状態をupdateする
     public onTimeUpdate(position): void {
 
-
-        if (! this.isProgressSeeking) {
+        if (!this.isProgressSeeking) {
             this.setProgress(position / this.player.video.duration);
         }
-
-
-
 
         // 現在再生されている時のBeat情報を取得
         const beat = this.player.findBeat(position);
@@ -198,24 +212,19 @@ export default class TextaliveApiManager {
     public getCurrentLyric2(positoinTime: number): Lyric {
 
         console.log(this.lyrics);
-
-
-        // 見つからない場合は空文字
+        // 見つからない場合はnull
         return null;
     }
 
 
 
     public getCurrentLyric(positoinTime: number): Lyric {
-
-        //console.log(this.lyrics);
         for (var i = 0; i < this.lyrics.length; i++) {
             if (positoinTime > this.lyrics[i].startTime && positoinTime < this.lyrics[i].endTime) {
                 return this.lyrics[i];
             }
         }
-
-        // 見つからない場合は空文字
+        // 見つからない場合はnull
         return null;
     }
 
@@ -248,11 +257,11 @@ export default class TextaliveApiManager {
     }
 
 
-    public getPositionTime(): Number {
+    public getPositionTime(): number {
         return this.positionTime;
     }
 
-    public getLyricsLength(): Number {
+    public getLyricsLength(): number {
         return this.lyrics.length;
     }
 
@@ -280,14 +289,14 @@ export default class TextaliveApiManager {
 
     public setProgressChorus() {
         if (this.player.video) {
-          let choruses = this.player.getChoruses();
-          for(let i = (choruses.length - 1); i >= 0; i--) {
-            let chorusNode = document.createElement("div");
-            chorusNode.className = "progressChorus";
-            chorusNode.style.left = `${(choruses[i].startTime / this.player.video.duration * 100)}%`;
-            chorusNode.style.width = `${(choruses[i].duration / this.player.video.duration * 100)}%`;
-            this.progressBase.insertBefore(chorusNode, this.progressBase.firstChild);
-          }
+            let choruses = this.player.getChoruses();
+            for (let i = (choruses.length - 1); i >= 0; i--) {
+                let chorusNode = document.createElement("div");
+                chorusNode.className = "progressChorus";
+                chorusNode.style.left = `${(choruses[i].startTime / this.player.video.duration * 100)}%`;
+                chorusNode.style.width = `${(choruses[i].duration / this.player.video.duration * 100)}%`;
+                this.progressBase.insertBefore(chorusNode, this.progressBase.firstChild);
+            }
         }
-      }
+    }
 }
