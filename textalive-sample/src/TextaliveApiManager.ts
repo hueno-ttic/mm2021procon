@@ -84,17 +84,6 @@ export default class TextaliveApiManager {
             this.rewindBtn.addEventListener("click", () => this.player.video && this.player.requestMediaSeek(0));
         }
         if (!app.songUrl) {
-            // 再生対象となる楽曲URLをセット
-            // this.player.createFromSongUrl("https://piapro.jp/t/YW_d/20210206123357", {
-            //     video: {
-            //         // 音楽地図訂正履歴: https://songle.jp/songs/2121405/history
-            //         beatId: 3953908,
-            //         repetitiveSegmentId: 2099661,
-            //         // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2FYW_d%2F20210206123357
-            //         lyricId: 52061,
-            //         lyricDiffId: 5123,
-            //     },
-            // });
             this.player.createFromSongUrl(this.musicUrl);
         }
     }
