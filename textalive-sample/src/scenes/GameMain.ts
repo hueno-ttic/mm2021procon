@@ -33,6 +33,10 @@ export default class GameMain extends Phaser.Scene {
     public heartX = 120;
     public firstLaneHeartScaleFlag = false;
     public firstLaneHeartScaleCount = 0;
+    public secondLaneHeartScaleFlag = false;
+    public secondLaneHeartScaleCount = 0;
+    public thirdLaneHeartScaleFlag = false;
+    public thirdLaneHeartScaleCount = 0;
 
     // ゲームのスコア
     public score:number = 0;
@@ -138,10 +142,6 @@ export default class GameMain extends Phaser.Scene {
         scoreT.setStroke("black", 10);
         this.scoreText = this.add.text(30, 650, String(this.score), { font: '18px Arial' });
         this.scoreText.setStroke("black", 10);
-
-        // 曲の長さを取得
-        //this.api
-
     }
 
     update() {
@@ -149,19 +149,32 @@ export default class GameMain extends Phaser.Scene {
         this.firstLaneLine.alpha = Math.abs(Math.sin(this.r));
         this.secondLaneLine.alpha = Math.abs(Math.sin(this.r));
         this.thirdLaneLine.alpha = Math.abs(Math.sin(this.r));
-    if (this.r >= 360 ) {
-      this.r = 0;
-    } else {
-      this.r += 0.05;
-    }
+        if (this.r >= 360 ) {
+            this.r = 0;
+        } else {
+            this.r += 0.05;
+        }
 
-        // 
+        // ハートの伸縮判定
         if (this.firstLaneHeartScaleFlag) {
             this.firstLaneHeartScaleCount++;
-            if (this.firstLaneHeartScaleCount > 30) {
-                
+            if (this.firstLaneHeartScaleCount > 30) {        
                 this.firstLaneHeartScaleFlag = false;
                 this.firstLaneHeartScaleCount = 0;
+            }
+        }
+        if (this.secondLaneHeartScaleFlag) {
+            this.secondLaneHeartScaleCount++;
+            if (this.secondLaneHeartScaleCount > 30) {
+                this.secondLaneHeartScaleFlag = false;
+                this.secondLaneHeartScaleCount = 0;
+            }
+        }
+        if (this.thirdLaneHeartScaleFlag) {
+            this.thirdLaneHeartScaleCount++;
+            if (this.thirdLaneHeartScaleCount > 30) {
+                this.thirdLaneHeartScaleFlag = false;
+                this.thirdLaneHeartScaleCount = 0;
             }
         }
 
@@ -236,13 +249,30 @@ export default class GameMain extends Phaser.Scene {
                 // 一定区間移動したら歌詞を非表示する
                 if (this.textData[i].x < this.heartX) {
                     this.indexStart++;
-                    //                this.textData[i].setVisible(false);
-                    this.textData[i].destroy(this);
-                    if (!this.firstLaneHeartScaleFlag) {
+                    var wordY = this.textData[i].y
+                    var nowLine = "";
+                    if (wordY > 0 && wordY < 720 / 3) {
+                        nowLine = "first";
+                    } else if (wordY >= 720 / 3 && wordY < 720 / 3 * 2) {
+                        nowLine = "second";
+                    } else if (wordY >= 720 / 3 * 2 && wordY < 720) {
+                        nowLine = "third";
+                    }
+                    if (!this.firstLaneHeartScaleFlag && nowLine == "first") {
                         this.firstLaneHeartScaleFlag = true;
                         this.setHeartTween(this.firstLaneHeart);
-                       
                     }
+                    if (!this.secondLaneHeartScaleFlag && nowLine == "second") {
+                        this.secondLaneHeartScaleFlag = true;
+                        this.setHeartTween(this.secondLaneHeart);
+                    }
+                    if (!this.thirdLaneHeartScaleFlag && nowLine == "third") {
+                        this.thirdLaneHeartScaleFlag = true;
+                        this.setHeartTween(this.thirdLaneHeart);
+                    }
+
+                    // 歌詞の削除
+                    this.textData[i].destroy(this);
                     // score計算を行う
                     this.score = this.calcScore(i, this.score);
                     this.scoreText.setText("Score : " + this.score);
