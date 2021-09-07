@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "parcel src/index.html --out-dir dev",
         "build": "parcel build src/index.html --public-url ./ --out-dir docs --no-source-maps",
-        "clean": "del-cli .cache dev docs"
+        "clean": "del-cli .cache dev docs",
+        "precommit": "lint-staged"
     },
     "keywords": [
         "textalive"
@@ -14,12 +15,25 @@
     "author": "TTIC",
     "license": "MIT",
     "dependencies": {
-        "textalive-app-api": "0.3.0",
-        "phaser": "^3.24.1"
+        "phaser": "^3.24.1",
+        "textalive-app-api": "0.3.0"
     },
     "devDependencies": {
         "del-cli": "^4.0.1",
+        "husky": "^7.0.2",
+        "lint-staged": "^11.1.2",
         "parcel-bundler": "^1.12.4",
+        "prettier": "^2.3.2",
+        "tslint": "^6.1.3",
+        "tslint-config-prettier": "^1.18.0",
+        "tslint-plugin-prettier": "^2.3.0",
         "typescript": "^4.3.5"
+    },
+    "lint-staged": {
+        "*.{ts,tsx}": [
+            "tsc --noEmit",
+            "tslint -p tsconfig.json -c tslint.json --fix",
+            "git add"
+        ]
     }
 }
