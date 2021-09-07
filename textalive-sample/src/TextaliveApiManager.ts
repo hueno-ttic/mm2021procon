@@ -6,7 +6,7 @@ import { Ease, Player, IVideo, NullGraphicsDriver } from 'textalive-app-api';
 export default class TextaliveApiManager {
   private musicUrl: string;
 
-  private player: Player;
+  public player: Player;
 
   private lyrics: Lyric[] = [];
   private charText: CharText[] = [];
