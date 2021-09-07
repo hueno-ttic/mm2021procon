@@ -54,6 +54,8 @@ export default class TextaliveApiManager {
         token: 'GYtUEuVODFiceV7w',
       },
       mediaElement: document.querySelector<HTMLElement>('#media'),
+      valenceArousalEnabled : true, // 覚醒度と感情価の取得
+      vocalAmplitudeEnabled : true // 声量情報の取得
     });
 
     // バッググラウンドで実行する機能をListenerに登録
@@ -136,7 +138,11 @@ export default class TextaliveApiManager {
         color = 'blue';
       }
 
-      this.lyrics.push(new Lyric(w, wordIndex, color));
+      // 歌詞ごとの覚醒度と感情価を設定
+      var valenceArousal = this.player.getValenceArousal(w.startTime);
+      // 単語情報を格納
+      this.lyrics.push(new Lyric(w, wordIndex, color, valenceArousal));
+      // 次の単語へ
       w = w.next;
       wordIndex++;
     }
@@ -171,21 +177,6 @@ export default class TextaliveApiManager {
     this.beatbarEl.style.width = `${Math.ceil(
       Ease.circIn(beat.progress(position)) * 100
     )}%`;
-
-    // console.log(this.player.isVideoSeeking());
-
-    // 発話の500ms先の歌詞データを取得
-    // var p = this.player.videoPosition + 500;
-    // for (var i = 0; i < this.lyrics.length; i++) {
-    //     if (p > this.lyrics[i].startTime && p < this.lyrics[i].endTime) {
-    //         //console.log("発話中の単語：" + this.lyrics[i].text);
-    //         //console.log("videoPosition : " + this.player.videoPosition);
-    //         // 画面表示用設定
-    //         //this.phraseEl.textContent = this.lyrics[i].text;
-    //         //this.updateLyricData(this.lyrics[i]);
-    //         //console.log("lyrics point x : "+this.lyrics[i].x+ "  y : "+this.lyrics[i].y);
-    //     }
-    // }
 
     // サビかどうかを取得(サビならtrue)
     // console.log(this.player.findBeat(position));
