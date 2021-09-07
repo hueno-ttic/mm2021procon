@@ -146,6 +146,11 @@ export default class GameMain extends Phaser.Scene {
 
     update() {
 
+        // ロードが終わり次第、楽曲をスタート
+        if (!this.api.player.isPlaying && !this.api.player.isLoading) {
+            this.api.player.requestPlay();
+        }
+
         this.firstLaneLine.alpha = Math.abs(Math.sin(this.r));
         this.secondLaneLine.alpha = Math.abs(Math.sin(this.r));
         this.thirdLaneLine.alpha = Math.abs(Math.sin(this.r));
