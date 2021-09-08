@@ -6,6 +6,15 @@ import image from "../assets/*.png";
 // クリック箇所のY座標を保存
 var touchY = 5;
 
+// クリック箇所のX座標を保存
+var touchX = 500;
+
+// パーティクルマネージャーの宣言
+var particles;
+
+// エミッタ
+var emitter;
+
 export default class GameMain extends Phaser.Scene {
 
     public frameCount = 0;
@@ -60,8 +69,8 @@ export default class GameMain extends Phaser.Scene {
     public lyricLine = [];
     public lyricLineStartPos = 0;
 
-    public initFlag:Boolean = true;
-
+    public initFlag: Boolean = true;
+    
     private musicSelectScene :MusicSelect; 
 
 
@@ -99,6 +108,8 @@ export default class GameMain extends Phaser.Scene {
         this.load.image('line_green', image['line_green']);
         this.load.image('line_blue', image['line_blue']);
 
+        // タッチエフェクトに利用するスター
+        this.load.image('star', image['star']);
     }
 
     create(): void {
@@ -142,6 +153,31 @@ export default class GameMain extends Phaser.Scene {
         scoreT.setStroke("black", 10);
         this.scoreText = this.add.text(30, 650, String(this.score), { font: '18px Arial' });
         this.scoreText.setStroke("black", 10);
+
+        // パーティクル処理
+        particles = this.add.particles('star');
+
+        emitter = particles.createEmitter({
+
+            //パーティクルのスケール（2から0へ遷移）
+            scale: {
+                start: 0.5, end: 0
+            },
+
+            //パーティクルの速度（minからmaxの範囲）
+            speed: { min: 500, max: 50 },
+
+            blendMode: 'SCREEN',
+
+            frequency: -1,
+
+            //パーティクルの放出数（エミット時に指定するので0を入れておく）
+            quantity: 0,
+
+            //パーティクルの寿命
+            lifespan: 400
+
+        });
     }
 
     update() {
@@ -154,7 +190,7 @@ export default class GameMain extends Phaser.Scene {
         this.firstLaneLine.alpha = Math.abs(Math.sin(this.r));
         this.secondLaneLine.alpha = Math.abs(Math.sin(this.r));
         this.thirdLaneLine.alpha = Math.abs(Math.sin(this.r));
-        if (this.r >= 360 ) {
+        if (this.r >= 360) {
             this.r = 0;
         } else {
             this.r += 0.05;
@@ -163,7 +199,7 @@ export default class GameMain extends Phaser.Scene {
         // ハートの伸縮判定
         if (this.firstLaneHeartScaleFlag) {
             this.firstLaneHeartScaleCount++;
-            if (this.firstLaneHeartScaleCount > 30) {        
+            if (this.firstLaneHeartScaleCount > 30) {
                 this.firstLaneHeartScaleFlag = false;
                 this.firstLaneHeartScaleCount = 0;
             }
@@ -187,11 +223,11 @@ export default class GameMain extends Phaser.Scene {
         // console.log(this.api.isVideoSeeking())
 
         // クリックした際に3レーンのいずれかに移動する
-        if (touchY > 0 && touchY < 720/3) {
+        if (touchY > 0 && touchY < 720 / 3) {
             this.lyricY = this.firstLane;
-        } else if (touchY >= 720/3 && touchY < 720/3*2) {
+        } else if (touchY >= 720 / 3 && touchY < 720 / 3 * 2) {
             this.lyricY = this.secondLane;
-        } else if (touchY >= 720/3*2 && touchY < 720) {
+        } else if (touchY >= 720 / 3 * 2 && touchY < 720) {
             this.lyricY = this.thirdLane;
         }
 
@@ -284,6 +320,7 @@ export default class GameMain extends Phaser.Scene {
                 }
             }
         }
+
     }
 
     /**
@@ -433,8 +470,12 @@ var touchHandler = function (e) {
         y = e.clientY;
     }
     touchY = y;
+    touchX = x;
     console.log("タッチx座標 : " + x);
     console.log("タッチy座標 : " + y);
+
+    // パーティクルを発動
+    emitter.explode(8, touchX, touchY);
 };
 
 // タッチイベント
