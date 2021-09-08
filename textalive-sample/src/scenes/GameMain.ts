@@ -97,7 +97,7 @@ export default class GameMain extends Phaser.Scene {
         this.load.image('line_blue', image['line_blue']);
 
         // スター
-        this.load.image('Star', image['Star']);
+        this.load.image('star', image['star']);
     }
 
     create(): void {
@@ -146,15 +146,17 @@ export default class GameMain extends Phaser.Scene {
         //this.api
 
         // パーティクル処理
-        particles = this.add.particles('Star');
+        particles = this.add.particles('star');
 
         emitter = particles.createEmitter({
 
             //パーティクルのスケール（2から0へ遷移）
-            scale: { start: 0.2, end: 0 },
+            scale: {
+                start: 0.5, end: 0
+            },
 
             //パーティクルの速度（minからmaxの範囲）
-            speed: { min: 100, max: 50 },
+            speed: { min: 500, max: 50 },
             
             blendMode: 'SCREEN',
 
@@ -164,9 +166,11 @@ export default class GameMain extends Phaser.Scene {
             quantity: 0,
 
             //パーティクルの寿命
-            lifespan: 500
+            lifespan: 400
 
         });
+
+
     }
 
     update() {
@@ -250,6 +254,7 @@ export default class GameMain extends Phaser.Scene {
                 this.textData[lyricIndex].setStroke(lyric.color, 10);
                 this.lyricLineStartPos++;
             }
+
         }
 
         // テキストの描画更新
@@ -275,9 +280,7 @@ export default class GameMain extends Phaser.Scene {
                 }
             }
         }
-        
-        // パーティクルを発動
-        emitter.explode(0.01, touchX, touchY); 
+
     }
 
     /**
@@ -431,6 +434,9 @@ var touchHandler = function (e) {
 
     console.log("タッチx座標 : " + x);
     console.log("タッチy座標 : " + y);
+
+    // パーティクルを発動
+    emitter.explode(8, touchX, touchY);
 };
 
 // タッチイベント
