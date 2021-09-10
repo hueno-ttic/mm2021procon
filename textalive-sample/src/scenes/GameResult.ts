@@ -6,12 +6,12 @@ export default class GameResultScene extends Phaser.Scene {
     }
   
     create(): void {
-      const text = this.add.text(250, 200, 'スタートに戻る');
+      const text = this.add.text(250, 200, '曲選択に戻る');
   
       text.setInteractive();
   
       text.on('pointerdown', () => {
-        this.scene.start('TitleScene');
+        this.scene.start('MusicSelect');
       });
     }
   }
