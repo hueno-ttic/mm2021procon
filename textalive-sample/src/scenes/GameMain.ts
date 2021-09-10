@@ -15,6 +15,12 @@ var particles;
 // エミッタ
 var emitter;
 
+// タッチエフェクトの処理
+var circleScale = 0;
+var circleImg;
+var circleSwitch = false;
+var circleOffset = 0; // 円の中心を示す値
+
 export default class GameMain extends Phaser.Scene {
 
     public frameCount = 0;
@@ -73,7 +79,9 @@ export default class GameMain extends Phaser.Scene {
     
     private musicSelectScene :MusicSelect; 
 
-
+    // タッチエフェクトの表示時間
+    private circleVisibleCounter = 0;
+    
     constructor() {
         super({ key: 'GameMain' })
     }
@@ -108,8 +116,9 @@ export default class GameMain extends Phaser.Scene {
         this.load.image('line_green', image['line_green']);
         this.load.image('line_blue', image['line_blue']);
 
-        // タッチエフェクトに利用するスター
+        // タッチエフェクトに利用するアセット
         this.load.image('star', image['star']);
+        this.load.image('circle', image['circle']);
     }
 
     create(): void {
@@ -123,6 +132,7 @@ export default class GameMain extends Phaser.Scene {
         this.mikuImg = this.add.image(1100, this.lyricY, 'miku');
         this.mikuImg.scaleX = this.mikuImg.scaleX * 0.6;
         this.mikuImg.scaleY = this.mikuImg.scaleY * 0.6;
+
 
         // ハートオブジェクト
         var scale = 0.5;
@@ -178,6 +188,8 @@ export default class GameMain extends Phaser.Scene {
             lifespan: 400
 
         });
+
+        circleImg = this.add.image(touchX - circleOffset, touchY - circleOffset,'circle');
     }
 
     update() {
@@ -319,6 +331,21 @@ export default class GameMain extends Phaser.Scene {
                     this.scoreText.setText("Score : " + this.score);
                 }
             }
+        }
+
+        // 円の表示秒数の間カウント
+        if (this.circleVisibleCounter <= 6 && circleSwitch) {
+            this.circleVisibleCounter++;
+            circleScale += 0.08;
+            circleImg.setAlpha(1.0);
+            circleImg.scale = circleScale;
+
+        }
+        else {
+            this.circleVisibleCounter = 0;
+            circleScale = 0.01;
+            circleImg.setVisible(false);
+            circleSwitch = false;
         }
 
     }
@@ -476,6 +503,11 @@ var touchHandler = function (e) {
 
     // パーティクルを発動
     emitter.explode(8, touchX, touchY);
+    
+    // タッチエフェクトを表示
+    circleImg.setPosition(touchX-circleOffset,touchY-circleOffset);
+    circleImg.setVisible(true);
+    circleSwitch = true;
 };
 
 // タッチイベント
