@@ -1,17 +1,18 @@
 import Lyric from './Lyric';
 import CharText from './CharText';
 
-import { Ease, Player, IVideo, NullGraphicsDriver } from 'textalive-app-api';
+import { Ease, Player, IVideo, NullGraphicsDriver, PlayerEventListener} from 'textalive-app-api';
 
 export default class TextaliveApiManager {
   private musicUrl: string;
 
   public player: Player;
+  public playerEventListener: PlayerEventListener;
 
   private lyrics: Lyric[] = [];
   private charText: CharText[] = [];
 
-  private positionTime: Number;
+  private positionTime: number;
 
   playBtn;
   jumpBtn;
@@ -22,6 +23,7 @@ export default class TextaliveApiManager {
   artistSpan;
   songSpan;
   beatbarEl;
+  videoEnd: Boolean = false;
 
   private isChorus: Boolean;
 
@@ -58,12 +60,14 @@ export default class TextaliveApiManager {
       vocalAmplitudeEnabled : true // 声量情報の取得
     });
 
+
     // バッググラウンドで実行する機能をListenerに登録
     this.player.addListener({
       onAppReady:app => this.onAppReady(app),
       onTimerReady: () => this.onTimerReady(),
       onTimeUpdate:pos => this.onTimeUpdate(pos),
       onVideoReady:v => this.onVideoReady(v),
+      onThrottledTimeUpdate:pos => this.onThrottledTimeUpdate(pos)
     });
     console.log(this.player);
   }
@@ -97,6 +101,11 @@ export default class TextaliveApiManager {
       // 再生対象となる楽曲URLをセット
       this.player.createFromSongUrl(this.musicUrl);
     }
+  }
+
+  // 動画の再生位置が変更されたときに呼ばれる
+  onThrottledTimeUpdate(position) {
+    this.positionTime = position;
   }
 
   // APIアクセス時に最初に呼ばれて動画情報をすべてとってきて設定する
@@ -182,7 +191,6 @@ export default class TextaliveApiManager {
     // console.log(this.player.findBeat(position));
     this.isChorus = this.player.findChorus(position) != null;
 
-    this.positionTime = position;
   }
 
   getLyrics() {
@@ -243,7 +251,7 @@ export default class TextaliveApiManager {
     return null;
   }
 
-  getPositionTime(): Number {
+  getPositionTime(): number {
     return this.positionTime;
   }
 

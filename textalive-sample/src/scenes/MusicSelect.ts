@@ -58,6 +58,11 @@ export default class CharacterSelectScene extends Phaser.Scene {
     const text = this.add.text(700, 650, 'クリックしてゲーム画面へ遷移する');
     text.setInteractive();
     text.on('pointerdown', () => {
+
+      console.log("this.scene.isActive('GameMain') : " + this.scene.isActive('GameMain'));
+      if(this.scene.isActive('GameMain')) {
+         this.scene.remove('GameMain');
+      }
       this.scene.start('GameMain');
     });
   }

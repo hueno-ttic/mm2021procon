@@ -21,6 +21,8 @@ export default class GameMain extends Phaser.Scene {
 
     public api:TextaliveApiManager;
 
+    public musicStart = false;
+
     public firstLane :number = 120;
     public secondLane :number= 320;
     public thirdLane :number= 520;
@@ -78,8 +80,7 @@ export default class GameMain extends Phaser.Scene {
         super({ key: 'GameMain' })
     }
 
-    preload(): void {
-        console.log("preload()");
+    init(): void {
         this.musicSelectScene = this.scene.get("MusicSelect") as MusicSelect;
         
         console.log(this.musicSelectScene.selectMusic[2]);
@@ -88,6 +89,11 @@ export default class GameMain extends Phaser.Scene {
         //var url = "https://www.youtube.com/watch?v=bMtYf3R0zhY";
         this.api = new TextaliveApiManager(url);
         this.api.init();
+    }
+
+    preload(): void {
+        console.log("preload()");
+    
         this.load.image('backImg', image['back_img']);
         //var backImage = document.createElement("https://img.youtube.com/vi/bMtYf3R0zhY/mqdefault.jpg");
         //backImage.src =  "https://img.youtube.com/vi/bMtYf3R0zhY/mqdefault.jpg";
@@ -183,8 +189,16 @@ export default class GameMain extends Phaser.Scene {
     update() {
 
         // ロードが終わり次第、楽曲をスタート
-        if (!this.api.player.isPlaying && !this.api.player.isLoading) {
+        if (!this.api.player.isPlaying && !this.api.player.isLoading && !this.musicStart) {
             this.api.player.requestPlay();
+            this.musicStart = true;
+        }
+
+        if (typeof this.api.player.data.song != "undefined") {
+            if (this.api.player.data.song.length-0.5 < (this.api.getPositionTime()/1000)) {
+                console.log("完了画面へ");
+                this.scene.start('GameResult');
+            }
         }
 
         this.firstLaneLine.alpha = Math.abs(Math.sin(this.r));
