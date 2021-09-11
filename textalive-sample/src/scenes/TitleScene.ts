@@ -30,7 +30,7 @@ export default class TitleScene extends Phaser.Scene {
     this.back_title = this.add.image(640, 570, 'back_title');
     this.back_title.setInteractive();
     this.back_title.on('pointerdown', () => {
-      this.scene.start('CharacterSelect');
+      this.scene.start('MusicSelect');
     });
     this.back_title.scaleY = this.back_title.scaleY * 0.7;
     
@@ -38,7 +38,7 @@ export default class TitleScene extends Phaser.Scene {
     this.click_start.scale = this.click_start.scale*0.7;
 
     this.click_start.on('pointerdown', () => {
-      this.scene.start('CharacterSelect');
+      this.scene.start('MusicSelect');
     });
 
     // TODO 最上面に透明な画像を被せて、キャラクターセレクト画面への遷移処理の実装を1回だけにする
