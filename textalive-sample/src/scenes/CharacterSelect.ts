@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 export default class CharacterSelectScene extends Phaser.Scene {
   constructor() {
     super({

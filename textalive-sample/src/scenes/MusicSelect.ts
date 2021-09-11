@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import images from "../assets/music_select/*.png";
 import MusicList from "./MusicList";
 
