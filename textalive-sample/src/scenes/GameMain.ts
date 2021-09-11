@@ -313,16 +313,16 @@ export default class GameMain extends Phaser.Scene {
                     } else if (wordY >= 720 / 3 * 2 && wordY < 720) {
                         nowLine = "third";
                     }
-                    if (!this.laneHeartObjectArray[0].scaleFlag && nowLine == "first") {
-                        this.laneHeartObjectArray[0].scaleFlag = true;
+                    if (!this.laneHeartObjectArray[0].playAnimationFlag && nowLine == "first") {
+                        this.laneHeartObjectArray[0].playStretchHeart();
                         this.setHeartTween(this.laneHeartObjectArray[0].image);
                     }
-                    if (!this.laneHeartObjectArray[1].scaleFlag && nowLine == "second") {
-                        this.laneHeartObjectArray[1].scaleFlag = true;
+                    if (!this.laneHeartObjectArray[1].playAnimationFlag && nowLine == "second") {
+                        this.laneHeartObjectArray[1].playStretchHeart();
                         this.setHeartTween(this.laneHeartObjectArray[1].image);
                     }
-                    if (!this.laneHeartObjectArray[2].scaleFlag && nowLine == "third") {
-                        this.laneHeartObjectArray[2].scaleFlag = true;
+                    if (!this.laneHeartObjectArray[2].playAnimationFlag && nowLine == "third") {
+                        this.laneHeartObjectArray[2].playStretchHeart();
                         this.setHeartTween(this.laneHeartObjectArray[2].image);
                     }
 

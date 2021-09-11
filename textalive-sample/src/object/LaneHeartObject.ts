@@ -7,8 +7,8 @@ export interface LaneHeartObjectCreateParam {
 
 export default class LaneHeartObject {
     private _image: Phaser.GameObjects.Image;
-    private _scaleCount: number;
-    private _scaleFlag: boolean;
+    private _animationFrameCount: number;
+    private _playAnimationFlag: boolean;
 
     static readonly STRETCH_ANIMATION_FRAME: number = 15;
 
@@ -18,8 +18,8 @@ export default class LaneHeartObject {
 
     public init(): void {
         this._image = null;
-        this._scaleCount = 0;
-        this._scaleFlag = false;
+        this._animationFrameCount = 0;
+        this._playAnimationFlag = false;
     }
 
     public update(): void {
@@ -32,14 +32,24 @@ export default class LaneHeartObject {
         this.image.scaleY *= param.scale;
     }
 
+    // 伸縮アニメーションを開始
+    public playStretchHeart(): void {
+        this._playAnimationFlag = true;
+    }
+
+    // 伸縮アニメーションを初期化
+    public resetStretchHeart(): void {
+        this._playAnimationFlag = false;
+        this._animationFrameCount = 0;
+    }
+
     // 伸縮アニメーション処理
     private stretchHeart(): void {
         // ハートの伸縮判定
-        if (this._scaleFlag) {
-            this._scaleCount++;
-            if (this._scaleCount > LaneHeartObject.STRETCH_ANIMATION_FRAME) {
-                this._scaleFlag = false;
-                this._scaleCount = 0;
+        if (this._playAnimationFlag) {
+            this._animationFrameCount++;
+            if (this._animationFrameCount > LaneHeartObject.STRETCH_ANIMATION_FRAME) {
+                this.resetStretchHeart()
             }
         }
     }
@@ -55,12 +65,8 @@ export default class LaneHeartObject {
         this._image = image;
     }
 
-    get scaleFlag(): boolean {
-        return this._scaleFlag;
-    }
-
-    set scaleFlag(flag: boolean) {
-        this._scaleFlag = flag;
+    get playAnimationFlag(): boolean {
+        return this._playAnimationFlag;
     }
 
 }
