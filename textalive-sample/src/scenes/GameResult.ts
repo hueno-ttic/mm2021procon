@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 export default class GameResultScene extends Phaser.Scene {
     constructor() {
       super({

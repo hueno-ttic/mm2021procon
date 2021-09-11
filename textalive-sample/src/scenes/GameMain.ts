@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import Lyric from "../Lyric";
 import TextaliveApiManager from "../TextaliveApiManager";
 import MusicSelect from "MusicSelect";
