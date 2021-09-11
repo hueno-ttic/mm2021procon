@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import Lyric from "../Lyric";
+import LaneHeartObject from '../object/LaneHeartObject';
 import TextaliveApiManager from "../TextaliveApiManager";
 import MusicSelect from "MusicSelect";
 import image from "../assets/*.png";
@@ -48,14 +49,12 @@ export default class GameMain extends Phaser.Scene {
     // 歌詞の出現するY座標(キャラの位置と同意)
     public lyricY;
 
+    // ハートオブジェクト
+    private laneHeartObjectArray: Array<LaneHeartObject>;
+    static readonly LANE_HEART_OBJECT_ARRAY_SIZE: number = 3;
+
     // ハートのX座標
     public heartX = 120;
-    public firstLaneHeartScaleFlag = false;
-    public firstLaneHeartScaleCount = 0;
-    public secondLaneHeartScaleFlag = false;
-    public secondLaneHeartScaleCount = 0;
-    public thirdLaneHeartScaleFlag = false;
-    public thirdLaneHeartScaleCount = 0;
 
     // ゲームのスコア
     public score:number = 0;
@@ -65,12 +64,7 @@ export default class GameMain extends Phaser.Scene {
     public mikuImg;
 
     // ラインオブジェクト
-    public firstLaneHeart;
-    public secondLaneHeart;
-    public thirdLaneHeart;
     public r:number = 0;
-
-    // ハートオブジェクト
     public firstLaneLine;
     public secondLaneLine;
     public thirdLaneLine;
@@ -99,6 +93,11 @@ export default class GameMain extends Phaser.Scene {
         //var url = "https://www.youtube.com/watch?v=bMtYf3R0zhY";
         this.api = new TextaliveApiManager(url);
         this.api.init();
+
+        this.laneHeartObjectArray = new Array(GameMain.LANE_HEART_OBJECT_ARRAY_SIZE);
+        for(let i = 0; i < GameMain.LANE_HEART_OBJECT_ARRAY_SIZE; i++) {
+            this.laneHeartObjectArray[i] = new LaneHeartObject();
+        }
     }
 
     preload(): void {
@@ -144,15 +143,18 @@ export default class GameMain extends Phaser.Scene {
 
         // ハートオブジェクト
         var scale = 0.5;
-        this.firstLaneHeart = this.add.image(this.heartX, this.firstLane, 'heart_red');
-        this.firstLaneHeart.scaleX = this.firstLaneHeart.scaleX * scale;
-        this.firstLaneHeart.scaleY = this.firstLaneHeart.scaleY * scale;
-        this.secondLaneHeart = this.add.image(this.heartX, this.secondLane, 'heart_yellow');
-        this.secondLaneHeart.scaleX = this.secondLaneHeart.scaleX * scale;
-        this.secondLaneHeart.scaleY = this.secondLaneHeart.scaleY * scale;
-        this.thirdLaneHeart = this.add.image(this.heartX, this.thirdLane, 'heart_green');
-        this.thirdLaneHeart.scaleX = this.thirdLaneHeart.scaleX * scale;
-        this.thirdLaneHeart.scaleY = this.thirdLaneHeart.scaleY * scale;
+        const laneHeartImageParam: [number, number, string][] = [
+            [this.heartX, this.firstLane, 'heart_red'],
+            [this.heartX, this.secondLane, 'heart_yellow'],
+            [this.heartX, this.thirdLane, 'heart_green'],
+        ];
+        for (let i = 0; i < this.laneHeartObjectArray.length; i++) {
+            let image = this.add.image(laneHeartImageParam[i][0], laneHeartImageParam[i][1], laneHeartImageParam[i][2]);
+            this.laneHeartObjectArray[i].create({
+                image: image,
+                scale: scale
+            });
+        }
 
         // ラインのオブジェクト
         var lineScale = 0.9;
@@ -225,27 +227,9 @@ export default class GameMain extends Phaser.Scene {
             this.r += 0.05;
         }
 
-        // ハートの伸縮判定
-        if (this.firstLaneHeartScaleFlag) {
-            this.firstLaneHeartScaleCount++;
-            if (this.firstLaneHeartScaleCount > 15) {
-                this.firstLaneHeartScaleFlag = false;
-                this.firstLaneHeartScaleCount = 0;
-            }
-        }
-        if (this.secondLaneHeartScaleFlag) {
-            this.secondLaneHeartScaleCount++;
-            if (this.secondLaneHeartScaleCount > 15) {
-                this.secondLaneHeartScaleFlag = false;
-                this.secondLaneHeartScaleCount = 0;
-            }
-        }
-        if (this.thirdLaneHeartScaleFlag) {
-            this.thirdLaneHeartScaleCount++;
-            if (this.thirdLaneHeartScaleCount > 15) {
-                this.thirdLaneHeartScaleFlag = false;
-                this.thirdLaneHeartScaleCount = 0;
-            }
+        // ハートの伸縮
+        for (let i = 0; i < this.laneHeartObjectArray.length; i++) {
+            this.laneHeartObjectArray[i].update();
         }
 
         // シークしている確認
@@ -329,17 +313,17 @@ export default class GameMain extends Phaser.Scene {
                     } else if (wordY >= 720 / 3 * 2 && wordY < 720) {
                         nowLine = "third";
                     }
-                    if (!this.firstLaneHeartScaleFlag && nowLine == "first") {
-                        this.firstLaneHeartScaleFlag = true;
-                        this.setHeartTween(this.firstLaneHeart);
+                    if (!this.laneHeartObjectArray[0].scaleFlag && nowLine == "first") {
+                        this.laneHeartObjectArray[0].scaleFlag = true;
+                        this.setHeartTween(this.laneHeartObjectArray[0].image);
                     }
-                    if (!this.secondLaneHeartScaleFlag && nowLine == "second") {
-                        this.secondLaneHeartScaleFlag = true;
-                        this.setHeartTween(this.secondLaneHeart);
+                    if (!this.laneHeartObjectArray[1].scaleFlag && nowLine == "second") {
+                        this.laneHeartObjectArray[1].scaleFlag = true;
+                        this.setHeartTween(this.laneHeartObjectArray[1].image);
                     }
-                    if (!this.thirdLaneHeartScaleFlag && nowLine == "third") {
-                        this.thirdLaneHeartScaleFlag = true;
-                        this.setHeartTween(this.thirdLaneHeart);
+                    if (!this.laneHeartObjectArray[2].scaleFlag && nowLine == "third") {
+                        this.laneHeartObjectArray[2].scaleFlag = true;
+                        this.setHeartTween(this.laneHeartObjectArray[2].image);
                     }
 
                     // 歌詞の削除
@@ -375,19 +359,19 @@ export default class GameMain extends Phaser.Scene {
 
         var textColor = this.textData[textIndex].style.stroke;
         if (this.textData[textIndex].y > 0 && this.textData[textIndex].y < 200) {
-            if (this.firstLaneHeart.texture.key.includes(textColor)) {
+            if (this.laneHeartObjectArray[0].image.texture.key.includes(textColor)) {
                 score = score + 500;
             } else {
                 score = score + 10;
             }
         } else if (this.textData[textIndex].y >= 250 && this.textData[textIndex].y < 400) {
-            if (this.secondLaneHeart.texture.key.includes(textColor)) {
+            if (this.laneHeartObjectArray[1].image.texture.key.includes(textColor)) {
                 score = score + 500;
             } else {
                 score = score + 10;
             }
         } else if (this.textData[textIndex].y >= 450 && this.textData[textIndex].y < 700) {
-            if (this.thirdLaneHeart.texture.key.includes(textColor)) {
+            if (this.laneHeartObjectArray[2].image.texture.key.includes(textColor)) {
                 score = score + 500;
             } else {
                 score = score + 10;
@@ -462,30 +446,32 @@ export default class GameMain extends Phaser.Scene {
         var scale = 0.9;
         switch (laneName) {
             case "first":
-                this.firstLaneHeart.destroy(this);
-                this.firstLaneHeart = this.add.image(this.heartX, this.firstLane, 'heart_' + color);
-                this.firstLaneHeart.scaleX = this.firstLaneHeart.scaleX * scale;
-                this.firstLaneHeart.scaleY = this.firstLaneHeart.scaleY * scale;
+                this.laneHeartObjectArray[0].image.destroy(true);
+                this.laneHeartObjectArray[0].image = this.add.image(this.heartX, this.firstLane, 'heart_' + color);
+                this.laneHeartObjectArray[0].image.scaleX *= scale;
+                this.laneHeartObjectArray[0].image.scaleY *= scale;
+
                 this.firstLaneLine.destroy(this);
                 this.firstLaneLine = this.add.image(430, this.firstLane, 'line_' + color);
                 this.firstLaneLine.scaleX = this.firstLaneLine.scaleX * 0.4;
                 this.firstLaneLine.scaleY = this.firstLaneLine.scaleY * 0.5;
                 break;
             case "second":
-                this.secondLaneHeart.destroy(this);
-                this.secondLaneHeart = this.add.image(this.heartX, this.secondLane, 'heart_' + color);
-                this.secondLaneHeart.scaleX = this.secondLaneHeart.scaleX * scale;
-                this.secondLaneHeart.scaleY = this.secondLaneHeart.scaleY * scale;
+                this.laneHeartObjectArray[1].image.destroy(true);
+                this.laneHeartObjectArray[1].image = this.add.image(this.heartX, this.secondLane, 'heart_' + color);
+                this.laneHeartObjectArray[1].image.scaleX *= scale;
+                this.laneHeartObjectArray[1].image.scaleY *= scale;
+
                 this.secondLaneLine.destroy(this);
                 this.secondLaneLine = this.add.image(430, this.secondLane, 'line_' + color);
                 this.secondLaneLine.scaleX = this.secondLaneLine.scaleX * 0.4;
                 this.secondLaneLine.scaleY = this.secondLaneLine.scaleY * 0.5;
                 break;
             case "third":
-                this.thirdLaneHeart.destroy(this);
-                this.thirdLaneHeart = this.add.image(this.heartX, this.thirdLane, 'heart_' + color);
-                this.thirdLaneHeart.scaleX = this.thirdLaneHeart.scaleX * scale;
-                this.thirdLaneHeart.scaleY = this.thirdLaneHeart.scaleY * scale;
+                this.laneHeartObjectArray[2].image.destroy(true);
+                this.laneHeartObjectArray[2].image = this.add.image(this.heartX, this.thirdLane, 'heart_' + color);
+                this.laneHeartObjectArray[2].image.scaleX *= scale;
+                this.laneHeartObjectArray[2].image.scaleY *= scale;
 
                 this.thirdLaneLine.destroy(this);
                 this.thirdLaneLine = this.add.image(430, this.thirdLane, 'line_' + color);
