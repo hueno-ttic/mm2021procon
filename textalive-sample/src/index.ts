@@ -32,10 +32,6 @@ export class Game extends Phaser.Game {
   constructor() {
     super(config);
   }
-
-  run () {
-    
-  }
 }
 
 class Main {
@@ -45,7 +41,6 @@ class Main {
     window.addEventListener('load', () => {
       console.log('start');
       let gameApp = new Game();
-      gameApp.run();  
     });
   }
 }
