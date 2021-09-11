@@ -21,6 +21,7 @@ var circleImg;
 var circleSwitch = false;
 var circleOffset = 0; // 円の中心を示す値
 
+
 export default class GameMain extends Phaser.Scene {
 
     public frameCount = 0;
@@ -136,8 +137,8 @@ export default class GameMain extends Phaser.Scene {
         // ミクの設定
         this.lyricY = this.firstLane;
         this.mikuImg = this.add.image(1100, this.lyricY, 'miku');
-        this.mikuImg.scaleX = this.mikuImg.scaleX * 0.6;
-        this.mikuImg.scaleY = this.mikuImg.scaleY * 0.6;
+        this.mikuImg.scaleX = this.mikuImg.scaleX * 0.5*0.15;
+        this.mikuImg.scaleY = this.mikuImg.scaleY * 0.5*0.15;
 
 
         // ハートオブジェクト
@@ -196,6 +197,7 @@ export default class GameMain extends Phaser.Scene {
         });
 
         circleImg = this.add.image(touchX - circleOffset, touchY - circleOffset,'circle');
+
     }
 
     update() {
@@ -258,7 +260,20 @@ export default class GameMain extends Phaser.Scene {
         }
 
         // ミクの場所の更新
-        this.mikuImg.y = this.lyricY;
+        this.tweens.add({
+            //tweenを適応させる対象
+            targets: this.mikuImg,
+            //tweenさせる値
+            y: this.lyricY,
+            //tweenにかかる時間
+            duration: 100,
+            //tween開始までのディレイ
+            delay: 0,
+            //tweenのリピート回数（-1で無限）
+            repeat: 0,
+            //easingの指定
+            ease: 'Linear',
+        });
 
         // 曲が流れているときだけ動く
         if (this.api.getPositionTime() != null && this.api.getPositionTime() != 0) {
@@ -282,18 +297,6 @@ export default class GameMain extends Phaser.Scene {
                 lyricText = lyric.text;
                 lyricIndex = lyric.index;
             }
-
-            // 各ラインの色を変更する
-            // if (this.api.getIsChorus()) {
-            //     var color = "blue";
-            //     this.setLaneColor("first", color);
-            //     this.setLaneColor("second", color);
-            //     this.setLaneColor("third", color);
-            // } else {
-            //     this.setLaneColor("first", "red");
-            //     this.setLaneColor("second", "yellow");
-            //     this.setLaneColor("third", "green");
-            // }
 
             // 横に流れる歌詞データの追加
             lyricText = this.api.getCurrentLyricText(time);

@@ -1,3 +1,4 @@
+import Phaser from "phaser";
 import images from "../assets/title/*.png";
 export default class TitleScene extends Phaser.Scene {
   constructor() {
