@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import images from "../assets/music_select/*.png";
 import MusicList from "./MusicList";
 
-export default class CharacterSelectScene extends Phaser.Scene {
+export default class MusicSelectScene extends Phaser.Scene {
   constructor() {
     super({
       key: 'MusicSelect',
