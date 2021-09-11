@@ -228,21 +228,21 @@ export default class GameMain extends Phaser.Scene {
         // ハートの伸縮判定
         if (this.firstLaneHeartScaleFlag) {
             this.firstLaneHeartScaleCount++;
-            if (this.firstLaneHeartScaleCount > 30) {
+            if (this.firstLaneHeartScaleCount > 15) {
                 this.firstLaneHeartScaleFlag = false;
                 this.firstLaneHeartScaleCount = 0;
             }
         }
         if (this.secondLaneHeartScaleFlag) {
             this.secondLaneHeartScaleCount++;
-            if (this.secondLaneHeartScaleCount > 30) {
+            if (this.secondLaneHeartScaleCount > 15) {
                 this.secondLaneHeartScaleFlag = false;
                 this.secondLaneHeartScaleCount = 0;
             }
         }
         if (this.thirdLaneHeartScaleFlag) {
             this.thirdLaneHeartScaleCount++;
-            if (this.thirdLaneHeartScaleCount > 30) {
+            if (this.thirdLaneHeartScaleCount > 15) {
                 this.thirdLaneHeartScaleFlag = false;
                 this.thirdLaneHeartScaleCount = 0;
             }
@@ -428,9 +428,9 @@ export default class GameMain extends Phaser.Scene {
             //tweenを適応させる対象
             targets: heartObject,
             //tweenさせる値
-            scale: 1.25,
+            scale: 1.2,
             //tweenにかかる時間
-            duration: 300,
+            duration: 150,
             //tween開始までのディレイ
             delay: 0,
             //tweenのリピート回数（-1で無限）
@@ -442,11 +442,11 @@ export default class GameMain extends Phaser.Scene {
             //tweenを適応させる対象
             targets: heartObject,
             //tweenさせる値
-            scale: (1*0.5)/1.25,
+            scale: (1*0.6)/1.2,
             //tweenにかかる時間
-            duration: 300,
+            duration: 200,
             //tween開始までのディレイ
-            delay: 300,
+            delay: 150,
             //tweenのリピート回数（-1で無限）
             repeat: 0,
             //easingの指定
