@@ -4,6 +4,7 @@ import LaneHeartObject from '../object/LaneHeartObject';
 import TextaliveApiManager from "../TextaliveApiManager";
 import MusicSelect from "MusicSelect";
 import image from "../assets/*.png";
+import artistImage from "../assets/live_artist/*.png";
 
 // クリック箇所のY座標を保存
 var touchY = 5;
@@ -109,7 +110,7 @@ export default class GameMain extends Phaser.Scene {
         //this.load.image('backImg', backImage);
 
         // 操作キャラ
-        this.load.image('miku', image['mini_miku']);
+        this.load.image('miku', artistImage['live-artist_miku_sd_01_182p']);
 
         // ハート
         this.load.image('heart_red', image['heart_red']);
@@ -137,9 +138,6 @@ export default class GameMain extends Phaser.Scene {
         // ミクの設定
         this.lyricY = this.firstLane;
         this.mikuImg = this.add.image(1100, this.lyricY, 'miku');
-        this.mikuImg.scaleX = this.mikuImg.scaleX * 0.5*0.15;
-        this.mikuImg.scaleY = this.mikuImg.scaleY * 0.5*0.15;
-
 
         // ハートオブジェクト
         var scale = 0.5;
