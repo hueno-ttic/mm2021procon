@@ -5,12 +5,7 @@ import TimeProgressBarObject from '../object/TimeProgressBarObject';
 import TextaliveApiManager from "../TextaliveApiManager";
 import MusicSelect from "MusicSelect";
 import image from "../assets/*.png";
-
-// クリック箇所のY座標を保存
-var touchY = 5;
-
-// クリック箇所のX座標を保存
-var touchX = 500;
+import artistImage from "../assets/live_artist/*.png";
 
 // パーティクルマネージャーの宣言
 var particles;
@@ -36,6 +31,9 @@ export default class GameMain extends Phaser.Scene {
     public firstLane :number = 120;
     public secondLane :number= 320;
     public thirdLane :number= 520;
+
+    public gameTouchX;
+    public gameTouchY; 
 
     // APIから取得した歌詞情報
     public lyrics;
@@ -115,7 +113,7 @@ export default class GameMain extends Phaser.Scene {
         //this.load.image('backImg', backImage);
 
         // 操作キャラ
-        this.load.image('miku', image['mini_miku']);
+        this.load.image('miku', artistImage['live-artist_miku_sd_01_182p']);
 
         // ハート
         this.load.image('heart_red', image['heart_red']);
@@ -146,9 +144,6 @@ export default class GameMain extends Phaser.Scene {
         // ミクの設定
         this.lyricY = this.firstLane;
         this.mikuImg = this.add.image(1100, this.lyricY, 'miku');
-        this.mikuImg.scaleX = this.mikuImg.scaleX * 0.5*0.15;
-        this.mikuImg.scaleY = this.mikuImg.scaleY * 0.5*0.15;
-
 
         // ハートオブジェクト
         var scale = 0.5;
@@ -208,7 +203,7 @@ export default class GameMain extends Phaser.Scene {
 
         });
 
-        circleImg = this.add.image(touchX - circleOffset, touchY - circleOffset,'circle');
+        circleImg = this.add.image(500 - circleOffset, 5 - circleOffset,'circle');
 
         this.timeProgressBar.create({
             scene: this,
@@ -220,6 +215,22 @@ export default class GameMain extends Phaser.Scene {
     }
 
     update() {
+
+
+        let pointer = this.input.activePointer;
+
+        if (pointer.isDown) {
+            this.gameTouchX = pointer.x;
+            this.gameTouchY = pointer.y;
+
+            // パーティクルを発動
+            emitter.explode(8, this.gameTouchX, this.gameTouchY);
+    
+            // タッチエフェクトを表示
+            circleImg.setPosition(this.gameTouchX-circleOffset, this.gameTouchY-circleOffset);
+            circleImg.setVisible(true);
+            circleSwitch = true;
+        }
 
         // ロードが終わり次第、楽曲をスタート
         if (!this.api.player.isPlaying && !this.api.player.isLoading && !this.musicStart) {
@@ -256,11 +267,11 @@ export default class GameMain extends Phaser.Scene {
         // console.log(this.api.isVideoSeeking())
 
         // クリックした際に3レーンのいずれかに移動する
-        if (touchY > 0 && touchY < 720 / 3) {
+        if (this.gameTouchY > 0 && this.gameTouchY < 720 / 3) {
             this.lyricY = this.firstLane;
-        } else if (touchY >= 720 / 3 && touchY < 720 / 3 * 2) {
+        } else if (this.gameTouchY >= 720 / 3 && this.gameTouchY < 720 / 3 * 2) {
             this.lyricY = this.secondLane;
-        } else if (touchY >= 720 / 3 * 2 && touchY < 720) {
+        } else if (this.gameTouchY >= 720 / 3 * 2 && this.gameTouchY < 720) {
             this.lyricY = this.thirdLane;
         }
 
@@ -508,35 +519,3 @@ export default class GameMain extends Phaser.Scene {
 
     }
 }
-
-var touchHandler = function (e) {
-    var x = 0, y = 0;
-    if (e.touches && e.touches[0]) {
-
-        x = e.touches[0].clientX;
-        y = e.touches[0].clientY;
-
-    }
-    else if (e.clientX && e.clientY) {
-
-        x = e.clientX;
-        y = e.clientY;
-    }
-    touchY = y;
-    touchX = x;
-    console.log("タッチx座標 : " + x);
-    console.log("タッチy座標 : " + y);
-
-    // パーティクルを発動
-    emitter.explode(8, touchX, touchY);
-    
-    // タッチエフェクトを表示
-    circleImg.setPosition(touchX-circleOffset,touchY-circleOffset);
-    circleImg.setVisible(true);
-    circleSwitch = true;
-};
-
-// タッチイベント
-window.addEventListener('touchstart', touchHandler, false);
-// クリックイベント
-window.addEventListener('click', touchHandler, false);
