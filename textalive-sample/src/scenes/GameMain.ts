@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Lyric from "../Lyric";
 import LaneHeartObject from '../object/LaneHeartObject';
+import TimeProgressBarObject from '../object/TimeProgressBarObject';
 import TextaliveApiManager from "../TextaliveApiManager";
 import MusicSelect from "MusicSelect";
 import image from "../assets/*.png";
@@ -79,7 +80,10 @@ export default class GameMain extends Phaser.Scene {
 
     // タッチエフェクトの表示時間
     private circleVisibleCounter = 0;
-    
+
+    // プログレスバー
+    private timeProgressBar: TimeProgressBarObject;
+
     constructor() {
         super({ key: 'GameMain' })
     }
@@ -98,6 +102,8 @@ export default class GameMain extends Phaser.Scene {
         for(let i = 0; i < GameMain.LANE_HEART_OBJECT_ARRAY_SIZE; i++) {
             this.laneHeartObjectArray[i] = new LaneHeartObject();
         }
+
+        this.timeProgressBar = new TimeProgressBarObject();
     }
 
     preload(): void {
@@ -126,6 +132,9 @@ export default class GameMain extends Phaser.Scene {
         // タッチエフェクトに利用するアセット
         this.load.image('star', image['star']);
         this.load.image('circle', image['circle']);
+
+        // プログレスバー
+        TimeProgressBarObject.preload(this.load);
     }
 
     create(): void {
@@ -201,6 +210,13 @@ export default class GameMain extends Phaser.Scene {
 
         circleImg = this.add.image(touchX - circleOffset, touchY - circleOffset,'circle');
 
+        this.timeProgressBar.create({
+            scene: this,
+            posX: 580,
+            posY: 625 + TimeProgressBarObject.BAR_SIZE.y * 0.5,
+            textalivePlayer: this.api
+        });
+
     }
 
     update() {
@@ -209,6 +225,10 @@ export default class GameMain extends Phaser.Scene {
         if (!this.api.player.isPlaying && !this.api.player.isLoading && !this.musicStart) {
             this.api.player.requestPlay();
             this.musicStart = true;
+
+            // プログレスバーを表示
+            this.timeProgressBar.maxValue = this.api.player.data.song.length * 1000;
+            this.timeProgressBar.setVisible(true);
         }
 
         if (typeof this.api.player.data.song != "undefined") {
@@ -349,6 +369,8 @@ export default class GameMain extends Phaser.Scene {
             circleImg.setVisible(false);
             circleSwitch = false;
         }
+
+        this.timeProgressBar.update();
 
     }
 
