@@ -17,7 +17,7 @@ export default class TimeProgressBarObject {
     private _progressImage: Phaser.GameObjects.Image;
     private _textaliveApiManager: TextaliveApiManager
 
-    public static readonly BAR_SIZE: Phaser.Math.Vector2 = new Phaser.Math.Vector2(600, 20);
+    public static readonly BAR_SIZE: Phaser.Math.Vector2 = new Phaser.Math.Vector2(780, 10);
     private static readonly IMAGE_DEPTH_VALUE_MIN:number = 0;
     private static readonly IMAGE_DEPTH_VALUE_MAX:number = 1;
 
@@ -34,8 +34,8 @@ export default class TimeProgressBarObject {
     }
 
     public static preload(loader: Phaser.Loader.LoaderPlugin): void {
-        loader.image('progress_bg', image['line_blue']);
-        loader.image('progress_progress', image['line_red']);
+        loader.image('progress_bg', image['bar_bg']);
+        loader.image('progress_progress', image['bar_gauge']);
     }
 
     public create(param: TimeProgressBarObjectCreateParam): void {
