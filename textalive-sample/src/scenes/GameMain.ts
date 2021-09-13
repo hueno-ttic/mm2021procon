@@ -4,6 +4,7 @@ import LaneHeartObject from '../object/LaneHeartObject';
 import TimeProgressBarObject from '../object/TimeProgressBarObject';
 import TextaliveApiManager from "../TextaliveApiManager";
 import MusicSelect from "MusicSelect";
+import TimeInfoObject from '../object/TimeInfoObject';
 import image from "../assets/*.png";
 import artistImage from "../assets/live_artist/*.png";
 
@@ -82,6 +83,9 @@ export default class GameMain extends Phaser.Scene {
     // プログレスバー
     private timeProgressBar: TimeProgressBarObject;
 
+    // 曲の進行時間
+    private timeInfo: TimeInfoObject;
+
     constructor() {
         super({ key: 'GameMain' })
     }
@@ -102,6 +106,7 @@ export default class GameMain extends Phaser.Scene {
         }
 
         this.timeProgressBar = new TimeProgressBarObject();
+        this.timeInfo = new TimeInfoObject();
     }
 
     preload(): void {
@@ -207,10 +212,19 @@ export default class GameMain extends Phaser.Scene {
 
         this.timeProgressBar.create({
             scene: this,
-            posX: 580,
-            posY: 625 + TimeProgressBarObject.BAR_SIZE.y * 0.5,
+            posX: 570,
+            posY: 690,
             textalivePlayer: this.api
         });
+        this.timeProgressBar.setVisible(true);
+
+        this.timeInfo.create({
+            scene: this,
+            posX: 87,
+            posY: 690,
+            textalivePlayer: this.api
+        });
+        this.timeInfo.setVisible(true);
 
     }
 
@@ -239,7 +253,10 @@ export default class GameMain extends Phaser.Scene {
 
             // プログレスバーを表示
             this.timeProgressBar.maxValue = this.api.player.data.song.length * 1000;
-            this.timeProgressBar.setVisible(true);
+
+            // 曲の進行時間
+            this.timeInfo.songLength =  this.api.player.data.song.length * 1000;
+            this.timeInfo.dispTime = true;
         }
 
         if (typeof this.api.player.data.song != "undefined") {
@@ -382,6 +399,7 @@ export default class GameMain extends Phaser.Scene {
         }
 
         this.timeProgressBar.update();
+        this.timeInfo.update();
 
     }
 
