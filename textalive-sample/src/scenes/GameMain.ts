@@ -34,16 +34,15 @@ export default class GameMain extends Phaser.Scene {
     public secondLane :number= 320;
     public thirdLane :number= 520;
 
-    // 観客
-    public firstLaneAudience :Array<AudienceObject>;
-    public secondLaneAudience :Array<AudienceObject>;
-    public thirdLaneAudience :Array<AudienceObject>;
-    static readonly AUDIENCE_SET_NUM = 6;
+    public lanePosition = [];
 
     // レーンごとのスコア
-    public firstLaneScore :number = 0;
-    public secondLaneScore :number= 0;
-    public thirdLaneScore :number= 0;
+    public laneScoreSet: Array<number>;
+    static readonly LANE_SIZE: number = 3;
+    
+    // 観客
+    public audience :Array<Array<AudienceObject>>;
+    static readonly AUDIENCE_SET_SIZE:number = 6;
 
     // タッチした際の座標
     public gameTouchX;
@@ -119,13 +118,23 @@ export default class GameMain extends Phaser.Scene {
         }
 
         // 観客
-        this.firstLaneAudience = new Array(GameMain.AUDIENCE_SET_NUM);
-        this.secondLaneAudience = new Array(GameMain.AUDIENCE_SET_NUM);
-        this.thirdLaneAudience = new Array(GameMain.AUDIENCE_SET_NUM);
-        for (let i = 0 ; i < GameMain.AUDIENCE_SET_NUM; i++) {
-            this.firstLaneAudience[i] = new AudienceObject(i);
-            this.secondLaneAudience[i] = new AudienceObject(i);
-            this.thirdLaneAudience[i] = new AudienceObject(i);
+        this.audience = new Array();
+        for (let j = 0; j < GameMain.LANE_SIZE; j++) {
+            this.audience[j] = new Array (GameMain.AUDIENCE_SET_SIZE);
+            for (let i = 0 ; i < GameMain.AUDIENCE_SET_SIZE; i++) {
+                this.audience[j][i] = new AudienceObject(j,i);
+            }
+        }
+        // レーンのy座標
+        this.lanePosition[0] = 120;
+        this.lanePosition[1] = 320;
+        this.lanePosition[2] = 520;
+
+
+        // スコアの初期化
+        this.laneScoreSet = new Array();
+        for (let i = 0 ; i < GameMain.LANE_SIZE; i++) {
+            this.laneScoreSet[i] = 0
         }
 
         this.timeProgressBar = new TimeProgressBarObject();
@@ -134,11 +143,9 @@ export default class GameMain extends Phaser.Scene {
 
     preload(): void {
         console.log("preload()");
-    
+        
+        // 背景画像
         this.load.image('backImg', image['back_img']);
-        //var backImage = document.createElement("https://img.youtube.com/vi/bMtYf3R0zhY/mqdefault.jpg");
-        //backImage.src =  "https://img.youtube.com/vi/bMtYf3R0zhY/mqdefault.jpg";
-        //this.load.image('backImg', backImage);
 
         // 操作キャラ
         this.load.image('miku', artistImage['live-artist_miku_sd_01_182p']);
@@ -211,10 +218,10 @@ export default class GameMain extends Phaser.Scene {
         this.scoreText.setStroke("black", 10);
 
         // 観客の設定
-        for (let i = 0 ; i < GameMain.AUDIENCE_SET_NUM; i++) {
-            this.firstLaneAudience[i].createAudience(this.add.image(880 - (110 * i), this.firstLane, 'audience'));
-            this.secondLaneAudience[i].createAudience(this.add.image(880 - (110 * i), this.secondLane, 'audience'));
-            this.thirdLaneAudience[i].createAudience(this.add.image(880 - (110 * i), this.thirdLane, 'audience'));
+        for (let j = 0; j < GameMain.LANE_SIZE; j++){
+           for (let i = 0 ; i < GameMain.AUDIENCE_SET_SIZE; i++) {
+                this.audience[j][i].createAudience(this.add.image(880 - (110 * i), this.lanePosition[j], 'audience'));
+            }
         }
 
         // パーティクル処理
@@ -264,27 +271,13 @@ export default class GameMain extends Phaser.Scene {
 
     update() {
 
-        // console.log("1列目の得点："+this.firstLaneScore);
-        // console.log("2列目の得点："+this.secondLaneScore);
-        // console.log("3列目の得点："+this.thirdLaneScore);
-
-        // 10点ごとに観客のalphaが0.1増える
-        for (let i = 0; i < GameMain.AUDIENCE_SET_NUM ; i++) {
-            if (this.firstLaneAudience[i].updateAlpha(this.firstLaneScore)) {
-                break;
+        for (let j = 0; j < GameMain.LANE_SIZE; j++) {
+            for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE ; i++) {
+                if (this.audience[j][i].updateAlpha(this.laneScoreSet[j])) {
+                    break;
+                }
             }
         }
-        for (let i = 0; i < GameMain.AUDIENCE_SET_NUM ; i++) {
-            if (this.secondLaneAudience[i].updateAlpha(this.secondLaneScore)) {
-                break;
-            }
-        }
-        for (let i = 0; i < GameMain.AUDIENCE_SET_NUM ; i++) {
-            if (this.thirdLaneAudience[i].updateAlpha(this.thirdLaneScore)) {
-                break;
-            }
-        }
-
 
         let pointer = this.input.activePointer;
 
@@ -467,38 +460,26 @@ export default class GameMain extends Phaser.Scene {
         if (this.textData[textIndex].y > 0 && this.textData[textIndex].y < 200) {
             if (this.laneHeartObjectArray[0].image.texture.key.includes(textColor)) {
                 score = score + 50;
-                this.firstLaneScore += 50;
-                // 観客の移動
-                this.firstLaneAudience.x = this.firstLaneAudience.x - 5;
+                this.laneScoreSet[0] += 50;
             } else {
                 score = score + 10;
-                this.firstLaneScore += 10;
-                // 観客の移動
-                this.firstLaneAudience.x = this.firstLaneAudience.x - 1;
+                this.laneScoreSet[0] += 10;
             }
         } else if (this.textData[textIndex].y >= 250 && this.textData[textIndex].y < 400) {
             if (this.laneHeartObjectArray[1].image.texture.key.includes(textColor)) {
                 score = score + 50;
-                this.secondLaneScore += 50;
-                // 観客の移動
-                this.secondLaneAudience.x = this.secondLaneAudience.x - 5;        
+                this.laneScoreSet[1] += 50;
             } else {
                 score = score + 10;
-                this.secondLaneScore += 10;
-                // 観客の移動
-                this.secondLaneAudience.x = this.secondLaneAudience.x - 1;
+                this.laneScoreSet[1] += 10;
             }
         } else if (this.textData[textIndex].y >= 450 && this.textData[textIndex].y < 700) {
             if (this.laneHeartObjectArray[2].image.texture.key.includes(textColor)) {
                 score = score + 50;
-                this.thirdLaneScore += 50;
-                // 観客の移動
-                this.thirdLaneAudience.x = this.thirdLaneAudience.x - 5;
+                this.laneScoreSet[2] += 50;
             } else {
                 score = score + 10;
-                this.thirdLaneScore += 10;
-                // 観客の移動
-                this.thirdLaneAudience.x = this.thirdLaneAudience.x - 1;
+                this.laneScoreSet[2] += 10;
             }
         }
 

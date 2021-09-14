@@ -7,19 +7,16 @@ export default class AudienceObject {
     public audienceY = 0;
     public textAliveApi;
     public gameMain;
-    public index;
+    public laneIndex;
+    public audienceIndex;
 
-
-    // constructor(gameMain : GameMain) {
-    //     this.gameMain = gameMain;
-    // }
-
-    constructor(index:number) {
-        this.index = index;
+    constructor(laneIndex:number, index:number) {
+        this.laneIndex = laneIndex;
+        this.audienceIndex = index;
     }
 
     // 観客を設置する
-    public createAudience(image) {
+    public createAudience(image: Phaser.GameObjects.Image) {
         this.audience = image;
         this.audience.scale *= 0.75;
         // alpha値の初期化
@@ -35,13 +32,13 @@ export default class AudienceObject {
 
     // スコアに合わせ更新する
     public updateAlpha(score) :Boolean {
-        console.log("index " +this.index+" alpha : "+this.audience.alpha + "score : "+score);
-        // すでにくっきり表示されている
-        if (this.audience.alpha >= 1) {
+        //console.log("index " +this.audienceIndex+" alpha : "+this.audience.alpha + "score : "+score);
+        // 後ろのビジュアライザーが見える程度(alpha = 0.5)に観客がくっきり表示されているか
+        if (this.audience.alpha >= 0.5) {
             return false;
         }
-
-        this.audience.alpha = score/(this.index+1) * 0.005;
+        // 得点に応じて観客をはっきり表示させる
+        this.audience.alpha = score/(this.audienceIndex+1) * 0.002; 
         return true;
     }
 }
