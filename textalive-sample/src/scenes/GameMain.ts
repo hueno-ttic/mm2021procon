@@ -130,7 +130,6 @@ export default class GameMain extends Phaser.Scene {
         this.lanePosition[1] = 320;
         this.lanePosition[2] = 520;
 
-
         // スコアの初期化
         this.laneScoreSet = new Array();
         for (let i = 0 ; i < GameMain.LANE_SIZE; i++) {
@@ -270,15 +269,7 @@ export default class GameMain extends Phaser.Scene {
     }
 
     update() {
-
-        for (let j = 0; j < GameMain.LANE_SIZE; j++) {
-            for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE ; i++) {
-                if (this.audience[j][i].updateAlpha(this.laneScoreSet[j])) {
-                    break;
-                }
-            }
-        }
-
+        // タッチイベントの取得
         let pointer = this.input.activePointer;
 
         if (pointer.isDown) {
@@ -355,6 +346,16 @@ export default class GameMain extends Phaser.Scene {
             //easingの指定
             ease: 'Linear',
         });
+
+        // 観客の表示情報を更新
+        for (let j = 0; j < GameMain.LANE_SIZE; j++) {
+            for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE ; i++) {
+                if (this.audience[j][i].updateAlpha(this.laneScoreSet[j])) {
+                    break;
+                }
+            }
+        }
+
 
         // 曲が流れているときだけ動く
         if (this.api.getPositionTime() != null && this.api.getPositionTime() != 0) {
