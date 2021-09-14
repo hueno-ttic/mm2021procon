@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Lyric from "../Lyric";
 import LaneHeartObject from '../object/LaneHeartObject';
+import AudienceObject from '../object/AudienceObject';
 import TimeProgressBarObject from '../object/TimeProgressBarObject';
 import TextaliveApiManager from "../TextaliveApiManager";
 import MusicSelect from "MusicSelect";
@@ -33,6 +34,17 @@ export default class GameMain extends Phaser.Scene {
     public secondLane :number= 320;
     public thirdLane :number= 520;
 
+    public lanePosition = [];
+
+    // レーンごとのスコア
+    public laneScoreSet: Array<number>;
+    static readonly LANE_SIZE: number = 3;
+    
+    // 観客
+    public audience :Array<Array<AudienceObject>>;
+    static readonly AUDIENCE_SET_SIZE:number = 6;
+
+    // タッチした際の座標
     public gameTouchX;
     public gameTouchY; 
 
@@ -105,17 +117,34 @@ export default class GameMain extends Phaser.Scene {
             this.laneHeartObjectArray[i] = new LaneHeartObject();
         }
 
+        // 観客
+        this.audience = new Array();
+        for (let j = 0; j < GameMain.LANE_SIZE; j++) {
+            this.audience[j] = new Array (GameMain.AUDIENCE_SET_SIZE);
+            for (let i = 0 ; i < GameMain.AUDIENCE_SET_SIZE; i++) {
+                this.audience[j][i] = new AudienceObject(j,i);
+            }
+        }
+        // レーンのy座標
+        this.lanePosition[0] = 120;
+        this.lanePosition[1] = 320;
+        this.lanePosition[2] = 520;
+
+        // スコアの初期化
+        this.laneScoreSet = new Array();
+        for (let i = 0 ; i < GameMain.LANE_SIZE; i++) {
+            this.laneScoreSet[i] = 0
+        }
+
         this.timeProgressBar = new TimeProgressBarObject();
         this.timeInfo = new TimeInfoObject();
     }
 
     preload(): void {
         console.log("preload()");
-    
+        
+        // 背景画像
         this.load.image('backImg', image['back_img']);
-        //var backImage = document.createElement("https://img.youtube.com/vi/bMtYf3R0zhY/mqdefault.jpg");
-        //backImage.src =  "https://img.youtube.com/vi/bMtYf3R0zhY/mqdefault.jpg";
-        //this.load.image('backImg', backImage);
 
         // 操作キャラ
         this.load.image('miku', artistImage['live-artist_miku_sd_01_182p']);
@@ -131,6 +160,10 @@ export default class GameMain extends Phaser.Scene {
         this.load.image('line_yellow', image['line_yellow']);
         this.load.image('line_green', image['line_green']);
         this.load.image('line_blue', image['line_blue']);
+
+        //観客
+        this.load.image('audience', image['audience']);
+        this.load.image('bar1', image['bar1']);
 
         // タッチエフェクトに利用するアセット
         this.load.image('star', image['star']);
@@ -183,6 +216,13 @@ export default class GameMain extends Phaser.Scene {
         this.scoreText = this.add.text(30, 650, String(this.score), { font: '18px Arial' });
         this.scoreText.setStroke("black", 10);
 
+        // 観客の設定
+        for (let j = 0; j < GameMain.LANE_SIZE; j++){
+           for (let i = 0 ; i < GameMain.AUDIENCE_SET_SIZE; i++) {
+                this.audience[j][i].createAudience(this.add.image(880 - (110 * i), this.lanePosition[j], 'audience'));
+            }
+        }
+
         // パーティクル処理
         particles = this.add.particles('star');
 
@@ -229,8 +269,7 @@ export default class GameMain extends Phaser.Scene {
     }
 
     update() {
-
-
+        // タッチイベントの取得
         let pointer = this.input.activePointer;
 
         if (pointer.isDown) {
@@ -307,6 +346,16 @@ export default class GameMain extends Phaser.Scene {
             //easingの指定
             ease: 'Linear',
         });
+
+        // 観客の表示情報を更新
+        for (let j = 0; j < GameMain.LANE_SIZE; j++) {
+            for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE ; i++) {
+                if (this.audience[j][i].updateAlpha(this.laneScoreSet[j])) {
+                    break;
+                }
+            }
+        }
+
 
         // 曲が流れているときだけ動く
         if (this.api.getPositionTime() != null && this.api.getPositionTime() != 0) {
@@ -411,27 +460,32 @@ export default class GameMain extends Phaser.Scene {
         var textColor = this.textData[textIndex].style.stroke;
         if (this.textData[textIndex].y > 0 && this.textData[textIndex].y < 200) {
             if (this.laneHeartObjectArray[0].image.texture.key.includes(textColor)) {
-                score = score + 500;
+                score = score + 50;
+                this.laneScoreSet[0] += 50;
             } else {
                 score = score + 10;
+                this.laneScoreSet[0] += 10;
             }
         } else if (this.textData[textIndex].y >= 250 && this.textData[textIndex].y < 400) {
             if (this.laneHeartObjectArray[1].image.texture.key.includes(textColor)) {
-                score = score + 500;
+                score = score + 50;
+                this.laneScoreSet[1] += 50;
             } else {
                 score = score + 10;
+                this.laneScoreSet[1] += 10;
             }
         } else if (this.textData[textIndex].y >= 450 && this.textData[textIndex].y < 700) {
             if (this.laneHeartObjectArray[2].image.texture.key.includes(textColor)) {
-                score = score + 500;
+                score = score + 50;
+                this.laneScoreSet[2] += 50;
             } else {
                 score = score + 10;
+                this.laneScoreSet[2] += 10;
             }
         }
 
         return score;
     }
-
 
     private updateLyricLine() {
 
