@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Lyric from "../Lyric";
 import LaneHeartObject from '../object/LaneHeartObject';
+import AudienceObject from '../object/AudienceObject';
 import TimeProgressBarObject from '../object/TimeProgressBarObject';
 import TextaliveApiManager from "../TextaliveApiManager";
 import MusicSelect from "MusicSelect";
@@ -32,6 +33,18 @@ export default class GameMain extends Phaser.Scene {
     public secondLane :number= 320;
     public thirdLane :number= 520;
 
+    // 観客
+    public firstLaneAudience :Array<AudienceObject>;
+    public secondLaneAudience :Array<AudienceObject>;
+    public thirdLaneAudience :Array<AudienceObject>;
+    static readonly AUDIENCE_SET_NUM = 6;
+
+    // レーンごとのスコア
+    public firstLaneScore :number = 0;
+    public secondLaneScore :number= 0;
+    public thirdLaneScore :number= 0;
+
+    // タッチした際の座標
     public gameTouchX;
     public gameTouchY; 
 
@@ -101,6 +114,16 @@ export default class GameMain extends Phaser.Scene {
             this.laneHeartObjectArray[i] = new LaneHeartObject();
         }
 
+        // 観客
+        this.firstLaneAudience = new Array(GameMain.AUDIENCE_SET_NUM);
+        this.secondLaneAudience = new Array(GameMain.AUDIENCE_SET_NUM);
+        this.thirdLaneAudience = new Array(GameMain.AUDIENCE_SET_NUM);
+        for (let i = 0 ; i < GameMain.AUDIENCE_SET_NUM; i++) {
+            this.firstLaneAudience[i] = new AudienceObject(i);
+            this.secondLaneAudience[i] = new AudienceObject(i);
+            this.thirdLaneAudience[i] = new AudienceObject(i);
+        }
+
         this.timeProgressBar = new TimeProgressBarObject();
     }
 
@@ -126,6 +149,10 @@ export default class GameMain extends Phaser.Scene {
         this.load.image('line_yellow', image['line_yellow']);
         this.load.image('line_green', image['line_green']);
         this.load.image('line_blue', image['line_blue']);
+
+        //観客
+        this.load.image('audience', image['audience']);
+        this.load.image('bar1', image['bar1']);
 
         // タッチエフェクトに利用するアセット
         this.load.image('star', image['star']);
@@ -178,6 +205,13 @@ export default class GameMain extends Phaser.Scene {
         this.scoreText = this.add.text(30, 650, String(this.score), { font: '18px Arial' });
         this.scoreText.setStroke("black", 10);
 
+        // 観客の設定
+        for (let i = 0 ; i < GameMain.AUDIENCE_SET_NUM; i++) {
+            this.firstLaneAudience[i].createAudience(this.add.image(880 - (110 * i), this.firstLane, 'audience'));
+            this.secondLaneAudience[i].createAudience(this.add.image(880 - (110 * i), this.secondLane, 'audience'));
+            this.thirdLaneAudience[i].createAudience(this.add.image(880 - (110 * i), this.thirdLane, 'audience'));
+        }
+
         // パーティクル処理
         particles = this.add.particles('star');
 
@@ -215,6 +249,27 @@ export default class GameMain extends Phaser.Scene {
     }
 
     update() {
+
+        // console.log("1列目の得点："+this.firstLaneScore);
+        // console.log("2列目の得点："+this.secondLaneScore);
+        // console.log("3列目の得点："+this.thirdLaneScore);
+
+        // 10点ごとに観客のalphaが0.1増える
+        for (let i = 0; i < GameMain.AUDIENCE_SET_NUM ; i++) {
+            if (this.firstLaneAudience[i].updateAlpha(this.firstLaneScore)) {
+                break;
+            }
+        }
+        for (let i = 0; i < GameMain.AUDIENCE_SET_NUM ; i++) {
+            if (this.secondLaneAudience[i].updateAlpha(this.secondLaneScore)) {
+                break;
+            }
+        }
+        for (let i = 0; i < GameMain.AUDIENCE_SET_NUM ; i++) {
+            if (this.thirdLaneAudience[i].updateAlpha(this.thirdLaneScore)) {
+                break;
+            }
+        }
 
 
         let pointer = this.input.activePointer;
@@ -393,27 +448,44 @@ export default class GameMain extends Phaser.Scene {
         var textColor = this.textData[textIndex].style.stroke;
         if (this.textData[textIndex].y > 0 && this.textData[textIndex].y < 200) {
             if (this.laneHeartObjectArray[0].image.texture.key.includes(textColor)) {
-                score = score + 500;
+                score = score + 50;
+                this.firstLaneScore += 50;
+                // 観客の移動
+                this.firstLaneAudience.x = this.firstLaneAudience.x - 5;
             } else {
                 score = score + 10;
+                this.firstLaneScore += 10;
+                // 観客の移動
+                this.firstLaneAudience.x = this.firstLaneAudience.x - 1;
             }
         } else if (this.textData[textIndex].y >= 250 && this.textData[textIndex].y < 400) {
             if (this.laneHeartObjectArray[1].image.texture.key.includes(textColor)) {
-                score = score + 500;
+                score = score + 50;
+                this.secondLaneScore += 50;
+                // 観客の移動
+                this.secondLaneAudience.x = this.secondLaneAudience.x - 5;        
             } else {
                 score = score + 10;
+                this.secondLaneScore += 10;
+                // 観客の移動
+                this.secondLaneAudience.x = this.secondLaneAudience.x - 1;
             }
         } else if (this.textData[textIndex].y >= 450 && this.textData[textIndex].y < 700) {
             if (this.laneHeartObjectArray[2].image.texture.key.includes(textColor)) {
-                score = score + 500;
+                score = score + 50;
+                this.thirdLaneScore += 50;
+                // 観客の移動
+                this.thirdLaneAudience.x = this.thirdLaneAudience.x - 5;
             } else {
                 score = score + 10;
+                this.thirdLaneScore += 10;
+                // 観客の移動
+                this.thirdLaneAudience.x = this.thirdLaneAudience.x - 1;
             }
         }
 
         return score;
     }
-
 
     private updateLyricLine() {
 

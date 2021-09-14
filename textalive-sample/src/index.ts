@@ -23,6 +23,10 @@ const config: Phaser.Types.Core.GameConfig = {
     MusicSelectScene,
     GameResult,
   ],
+  fps: {
+    target: 30,
+    forceSetTimeOut: true
+  }
 };
 
 // ゲームメインのクラス
