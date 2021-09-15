@@ -1,5 +1,5 @@
 import TextaliveApiManager from "../TextaliveApiManager";
-import UIImageButtonObject from "./UIImageButton";
+import UIImageButtonObject from "./UIImageButtonObject";
 
 export interface UIPauseButtonObjectCreateParam {
     scene: Phaser.Scene;

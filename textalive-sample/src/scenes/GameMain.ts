@@ -6,7 +6,7 @@ import TimeProgressBarObject from '../object/TimeProgressBarObject';
 import TextaliveApiManager from "../TextaliveApiManager";
 import MusicSelect from "MusicSelect";
 import TimeInfoObject from '../object/TimeInfoObject';
-import UIPauseButtonObject from '../object/UIPauseButton';
+import UIPauseButtonObject from '../object/UIPauseButtonObject';
 
 import image from "../assets/*.png";
 import artistImage from "../assets/live_artist/*.png";
