@@ -91,6 +91,12 @@ export default class TimeProgressBarObject {
 
     set nowValue(value: number) {
         value = Math.max(value, 0);
+
+        // textalive-app-api Player.requestPlay() を実行すると一瞬、Player.timer.position の値が不正になる為、表示不具合回避のための処理
+        if (this.maxValue < value) {
+            return;
+        }
+
         this._nowValue = Math.min(value, this.maxValue);
         this.updateImage();
     }
