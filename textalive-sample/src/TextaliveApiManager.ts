@@ -14,38 +14,12 @@ export default class TextaliveApiManager {
 
   private positionTime: number;
 
-  playBtn;
-  jumpBtn;
-  pauseBtn;
-  rewindBtn;
-  positionEl;
-
-  artistSpan;
-  songSpan;
-  beatbarEl;
   videoEnd: Boolean = false;
 
   private isChorus: Boolean;
 
-  progressBase;
-  progressSeek;
-  progressBar;
-  isProgressSeeking;
-
   constructor(url: string) {
     this.musicUrl = url;
-    this.playBtn = document.querySelector<HTMLElement>('#play');
-    this.jumpBtn = document.querySelector<HTMLElement>('#jump');
-    this.pauseBtn = document.querySelector<HTMLElement>('#pause');
-    this.rewindBtn = document.querySelector<HTMLElement>('#rewind');
-    this.positionEl = document.querySelector<HTMLElement>('#position strong');
-    this.beatbarEl = document.querySelector<HTMLElement>('#beatbar');
-
-    // シークバー
-    this.progressBase = document.querySelector('#progressBase');
-    this.progressSeek = document.querySelector('#progressSeek');
-    this.progressBar = document.querySelector('#progressBar');
-    this.isProgressSeeking = true;
   }
 
   init(): void {
@@ -76,27 +50,6 @@ export default class TextaliveApiManager {
   private onAppReady(app): void {
     console.log('onAppReady');
 
-    if (!app.managed) {
-      document.querySelector<HTMLElement>('#control').style.display = 'block';
-      this.playBtn.addEventListener(
-        'click',
-        () => this.player.video && this.player.requestPlay()
-      );
-      this.jumpBtn.addEventListener(
-        'click',
-        () =>
-          this.player.video &&
-          this.player.requestMediaSeek(this.player.video.firstPhrase.startTime)
-      );
-      this.pauseBtn.addEventListener(
-        'click',
-        () => this.player.video && this.player.requestPause()
-      );
-      this.rewindBtn.addEventListener(
-        'click',
-        () => this.player.video && this.player.requestMediaSeek(0)
-      );
-    }
     if (!app.songUrl) {
       // 再生対象となる楽曲URLをセット
       this.player.createFromSongUrl(this.musicUrl);
@@ -159,33 +112,16 @@ export default class TextaliveApiManager {
 
   // APIアクセス後に動画情報設定
   onTimerReady(): void {
-    // シークバー
-    this.setProgressChorus();
-
     console.log('onTimerReady');
-
-    // 楽曲情報
-
-    // 動画が読み込めたのでボタンを表示
-    document
-      .querySelectorAll('button')
-      .forEach(btn => (btn.disabled = false));
   }
 
   // 再生中に呼び出され続けて画面の状態をupdateする
   onTimeUpdate(position): void {
-    if (!this.isProgressSeeking) {
-      this.setProgress(position / this.player.video.duration);
-    }
-
     // 現在再生されている時のBeat情報を取得
     const beat = this.player.findBeat(position);
     if (!beat) {
       return;
     }
-    this.beatbarEl.style.width = `${Math.ceil(
-      Ease.circIn(beat.progress(position)) * 100
-    )}%`;
 
     // サビかどうかを取得(サビならtrue)
     // console.log(this.player.findBeat(position));
@@ -274,27 +210,4 @@ export default class TextaliveApiManager {
     return this.isChorus;
   }
 
-  setProgress(val) {
-    this.progressBar.style.width = `${val * 100}%`;
-  }
-
-  setProgressChorus() {
-    if (this.player.video) {
-      const choruses = this.player.getChoruses();
-      for (let i = choruses.length - 1; i >= 0; i--) {
-        const chorusNode = document.createElement('div');
-        chorusNode.className = 'progressChorus';
-        chorusNode.style.left = `${
-          (choruses[i].startTime / this.player.video.duration) * 100
-        }%`;
-        chorusNode.style.width = `${
-          (choruses[i].duration / this.player.video.duration) * 100
-        }%`;
-        this.progressBase.insertBefore(
-          chorusNode,
-          this.progressBase.firstChild
-        );
-      }
-    }
-  }
 }
