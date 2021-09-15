@@ -33,6 +33,7 @@ export default class TextaliveApiManager {
       valenceArousalEnabled : true, // 覚醒度と感情価の取得
       vocalAmplitudeEnabled : true // 声量情報の取得
     });
+    document.querySelector<HTMLElement>('#media').hidden = true;
 
 
     // バッググラウンドで実行する機能をListenerに登録
