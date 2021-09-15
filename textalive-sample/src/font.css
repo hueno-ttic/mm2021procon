@@ -1,12 +1,12 @@
 /** font */
 
 @font-face {
-    font-family: 'Makinas-4-Square';
+    font-family: Makinas-4-Square;
     src: url('./assets/font/Makinas-4-Square.otf');
 }
 
 @font-face {
-    font-family: 'Netron';
+    font-family: Netron;
     src: url('./assets/font/Netron.ttf');
 }
 
