@@ -84,6 +84,7 @@ export default class GameMain extends Phaser.Scene {
     // 歌詞表示部分
     public lyricLine = [];
     public lyricLineStartPos = 0;
+    public textLineLength = 0;
 
     public initFlag: Boolean = true;
     
@@ -365,11 +366,20 @@ export default class GameMain extends Phaser.Scene {
             if (this.initFlag) {
                 this.lyrics = this.api.getLyrics();
                 console.log(this.lyrics);
-
+                // 最初に表示する分の歌詞だけ表示状態にする
+                for (let i = 0; i < this.lyrics.length; i++) {
+                    this.lyricLine[i] = this.add.text(0, 636, this.lyrics[i].getText(), { font: '32px Arial' });
+                    this.lyricLine[i].x = 180 + (this.textLineLength * 35);
+                    this.lyricLine[i].setStroke(this.lyrics[i].color, 5);
+                    this.lyricLine[i].setVisible(true);
+                    this.textLineLength += this.lyrics[i].getText().length;
+                    if (this.textLineLength > 15) {
+                        break;
+                    }
+                }
+                // 初期化処理の終了フラグ
                 this.initFlag = false;
             }
-            // 歌詞表示
-            this.updateLyricLine();
 
             const time = this.api.getPositionTime();
             var lyric = this.api.getCurrentLyric(time);
@@ -380,14 +390,15 @@ export default class GameMain extends Phaser.Scene {
                 lyricIndex = lyric.index;
             }
 
+            // 歌詞表示
+            this.updateLyricLine(lyricIndex);
+
             // 横に流れる歌詞データの追加
             lyricText = this.api.getCurrentLyricText(time);
             lyricIndex = this.api.getCurrentLyricIndex(time);
             if (typeof this.textData[lyricIndex] === "undefined" && lyricText != null && lyricText != "" && lyricText != " ") {
                 this.textData[lyricIndex] = this.add.text(800, this.lyricY - 20, lyricText, { font: '50px Arial' });
-                //console.log("out index " + lyricIndex + " text : " + lyricText + " time : " + time);
                 this.textData[lyricIndex].setStroke(lyric.color, 10);
-                this.lyricLineStartPos++;
             }
         }
 
@@ -487,29 +498,38 @@ export default class GameMain extends Phaser.Scene {
         return score;
     }
 
-    private updateLyricLine() {
+    // 下部に表示している歌詞情報の更新
+    private updateLyricLine(currentLyricIndex) {
 
-        var textLengthLine1 = 0;
-        // 前回の表示を削除
-        for (var i = 0; i < this.lyricLine.length; i++) {
-            this.lyricLine[i].destroy(this);
+        // 直前に打ち出した歌詞がない、または歌詞が進んでない場合はreturn
+        if ( typeof currentLyricIndex == "undefined" ||typeof this.lyrics[currentLyricIndex] == "undefined"
+            || currentLyricIndex <= this.lyricLineStartPos-1 ) {
+            return;
         }
-        // 表示する歌詞の更新
-        for (var i = this.lyricLineStartPos; i < this.lyrics.length; i++) {
-            var textLength = this.lyrics[i].getText().length;
+        // 直前に打ち出した歌詞データ
+        let nextVisibleText = this.lyrics[currentLyricIndex];
+        // 直前の歌詞を無くした歌詞表示エリアの長さを計算
+        this.textLineLength -= nextVisibleText.getText().length;
 
-            if (this.lyrics[i].getText() != "" && this.lyrics[i].getText() != " ") {
+        // 打ち出した歌詞は削除
+        this.lyricLine[currentLyricIndex].destroy(this);
+        this.lyricLineStartPos++;
 
-                this.lyricLine[i] = this.add.text(180 + (textLengthLine1 * 35), 636, this.lyrics[i].getText(), { font: '32px Arial' });
-                this.lyricLine[i].setStroke(this.lyrics[i].color, 5);
-                textLengthLine1 += textLength;
-            }
-            // 一定の長さになったら歌詞の連結をやめる
-            if (textLengthLine1 > 15) {
+        // 打ち出した分だけ既存の歌詞を進める
+        for (let i = currentLyricIndex; i < this.lyricLine.length; i++) {
+            this.lyricLine[i].x -= (nextVisibleText.getText().length * 35);
+        }
+
+        // 残りの歌詞を追加する
+        for (let i = this.lyricLine.length; i < this.lyrics.length; i++) {
+            this.lyricLine[i] = this.add.text(0, 636, this.lyrics[i].getText(), { font: '32px Arial' });
+            this.lyricLine[i].x = 180 + (this.textLineLength*35) ;
+            this.lyricLine[i].setStroke(this.lyrics[i].color, 5);
+            this.textLineLength += this.lyrics[i].getText().length;
+            if (this.textLineLength > 15) {
                 break;
             }
         }
-
     }
 
     private setHeartTween(heartObject) {
