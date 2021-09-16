@@ -347,12 +347,14 @@ export default class GameMain extends Phaser.Scene {
         // console.log(this.api.isVideoSeeking())
 
         // クリックした際に3レーンのいずれかに移動する
-        if (this.gameTouchY > 0 && this.gameTouchY < 720 / 3) {
-            this.lyricY = this.firstLane;
-        } else if (this.gameTouchY >= 720 / 3 && this.gameTouchY < 720 / 3 * 2) {
-            this.lyricY = this.secondLane;
-        } else if (this.gameTouchY >= 720 / 3 * 2 && this.gameTouchY < 720) {
-            this.lyricY = this.thirdLane;
+        const moveLanePos = [this.firstLane, this.secondLane, this.thirdLane];
+        for (let i = 0; i < this.lanePosition.length; i++) {
+            const laneHeightHalf = this.firstLaneLine.height * this.firstLaneLine.scaleY / 2;
+            const lanePos = this.lanePosition[i];
+            if (lanePos - laneHeightHalf < this.gameTouchY && this.gameTouchY < lanePos + laneHeightHalf) {
+                this.lyricY = moveLanePos[i];
+                break;
+            }
         }
 
         // ミクの場所の更新
