@@ -6,8 +6,11 @@ import TimeProgressBarObject from '../object/TimeProgressBarObject';
 import TextaliveApiManager from "../TextaliveApiManager";
 import MusicSelect from "MusicSelect";
 import TimeInfoObject from '../object/TimeInfoObject';
+import UIPauseButtonObject from '../object/UIPauseButtonObject';
+
 import image from "../assets/*.png";
 import artistImage from "../assets/live_artist/*.png";
+import uiImage from "../assets/ui/*.png"
 
 // パーティクルマネージャーの宣言
 var particles;
@@ -99,6 +102,9 @@ export default class GameMain extends Phaser.Scene {
     // 曲の進行時間
     private timeInfo: TimeInfoObject;
 
+    // ポーズボタン
+    private pauseButton: UIPauseButtonObject;
+
     constructor() {
         super({ key: 'GameMain' })
     }
@@ -139,6 +145,9 @@ export default class GameMain extends Phaser.Scene {
 
         this.timeProgressBar = new TimeProgressBarObject();
         this.timeInfo = new TimeInfoObject();
+
+        // ボタン
+        this.pauseButton = new UIPauseButtonObject();
     }
 
     preload(): void {
@@ -172,6 +181,10 @@ export default class GameMain extends Phaser.Scene {
 
         // プログレスバー
         TimeProgressBarObject.preload(this.load);
+
+        // ボタン
+        this.load.image('button_play', uiImage['start']);
+        this.load.image('button_pause', uiImage['pause']);
     }
 
     create(): void {
@@ -266,6 +279,16 @@ export default class GameMain extends Phaser.Scene {
             textalivePlayer: this.api
         });
         this.timeInfo.setVisible(true);
+
+        this.pauseButton.create({
+            scene: this,
+            pauseImageKey: "button_pause",
+            playImageKey: "button_play",
+            posX: 1050,
+            posY: 670,
+            textaliveManager: this.api
+        });
+        this.pauseButton.setVisible(true);
 
     }
 

@@ -70,8 +70,16 @@ export default class TimeInfoObject {
 
     public update(): void {
         if (this._dispTime) {
+            this.updateText();
+        }
+    }
+
+    private updateText(): void {
+        // textalive-app-api Player.requestPlay() を実行すると一瞬、Player.timer.position の値が不正になる為、表示不具合回避のための処理
+        if (!(this._songLength < this._textaliveApiManager.player.timer.position)) {
             this._nowTimeText.setText(this.makeTimeString(this._textaliveApiManager.player.timer.position));
         }
+        this._songLengthText.setText(this.makeTimeString(this._songLength));
     }
 
     private makeTimeString(time_ms: number): string {
@@ -99,7 +107,6 @@ export default class TimeInfoObject {
 
     set dispTime(value: boolean) {
         this._dispTime = value;
-        this._nowTimeText.setText(this.makeTimeString(this._textaliveApiManager.player.timer.position));
-        this._songLengthText.setText(this.makeTimeString(this._songLength));
+        this.updateText();
     }
 }
