@@ -99,6 +99,14 @@ export default class GameMain extends Phaser.Scene {
     // 曲の進行時間
     private timeInfo: TimeInfoObject;
 
+    // チュートリアル関連
+    private tutorialDescription: Phaser.GameObjects.Image;
+    private tutorialFrame: Phaser.GameObjects.Image;
+    private tapstart: Phaser.GameObjects.Image;
+    private tutorialFlag: Boolean;
+    private tutorialCounter: number;
+    private gameStartCounter: number;
+
     constructor() {
         super({ key: 'GameMain' })
     }
@@ -139,6 +147,11 @@ export default class GameMain extends Phaser.Scene {
 
         this.timeProgressBar = new TimeProgressBarObject();
         this.timeInfo = new TimeInfoObject();
+
+        // チュートリアルの初期設定
+        this.tutorialFlag = false;
+        this.tutorialCounter = 0;
+        this.gameStartCounter = 0;
     }
 
     preload(): void {
@@ -146,6 +159,11 @@ export default class GameMain extends Phaser.Scene {
         
         // 背景画像
         this.load.image('backImg', image['back_img']);
+
+        // チュートリアル素材
+        this.load.image('tutorialDescription', image['TutorialDescription']);
+        this.load.image('frame', image['TutorialSquare']);
+        this.load.image('tapstart', image['Tapstart']);
 
         // 操作キャラ
         this.load.image('miku', artistImage['live-artist_miku_sd_01_182p']);
@@ -267,11 +285,36 @@ export default class GameMain extends Phaser.Scene {
         });
         this.timeInfo.setVisible(true);
 
+        // チュートリアル
+        this.tutorialDescription = this.add.image(640, 360, 'tutorialDescription');
+        this.tutorialFrame = this.add.image(160, 225, 'frame');
+        this.tapstart = this.add.image(640, 650, 'tapstart');
+
     }
 
     update() {
         // タッチイベントの取得
         let pointer = this.input.activePointer;
+
+        // チュートリアル判定
+        this.tutorialCounter++;
+        console.log(this.tutorialCounter)
+        if (pointer.isDown && this.tutorialCounter > 50) {
+            this.tutorialDescription.setVisible(false);
+            this.tutorialFrame.setVisible(false);
+            this.tapstart.setVisible(false);
+            this.tutorialFlag = true;
+        }
+        // チュートリアルが終わったかどうかの判定
+        if (!this.tutorialFlag) {
+            this.tapstart.alpha = Math.abs(Math.sin(this.r));
+            if (this.r >= 360 ) {
+              this.r = 0;
+            } else {
+              this.r += 0.05;
+            }
+            return;
+        }
 
         if (pointer.isDown) {
             this.gameTouchX = pointer.x;
@@ -287,7 +330,8 @@ export default class GameMain extends Phaser.Scene {
         }
 
         // ロードが終わり次第、楽曲をスタート
-        if (!this.api.player.isPlaying && !this.api.player.isLoading && !this.musicStart) {
+        this.gameStartCounter++;
+        if (!this.api.player.isPlaying && !this.api.player.isLoading && !this.musicStart && this.gameStartCounter > 100) {
             this.api.player.requestPlay();
             this.musicStart = true;
 

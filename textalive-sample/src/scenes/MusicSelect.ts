@@ -64,7 +64,7 @@ export default class MusicSelectScene extends Phaser.Scene {
       if(this.scene.isActive('GameMain')) {
          this.scene.remove('GameMain');
       }
-      this.scene.start('Tutorial');
+      this.scene.start('GameMain');
     });
   }
 }
