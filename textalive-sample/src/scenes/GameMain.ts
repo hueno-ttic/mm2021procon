@@ -6,8 +6,11 @@ import TimeProgressBarObject from '../object/TimeProgressBarObject';
 import TextaliveApiManager from "../TextaliveApiManager";
 import MusicSelect from "MusicSelect";
 import TimeInfoObject from '../object/TimeInfoObject';
+import UIPauseButtonObject from '../object/UIPauseButtonObject';
+
 import image from "../assets/*.png";
 import artistImage from "../assets/live_artist/*.png";
+import uiImage from "../assets/ui/*.png"
 
 // パーティクルマネージャーの宣言
 var particles;
@@ -99,6 +102,7 @@ export default class GameMain extends Phaser.Scene {
     // 曲の進行時間
     private timeInfo: TimeInfoObject;
 
+
     // チュートリアル関連
     private tutorialDescription: Phaser.GameObjects.Image;
     private tutorialFrame: Phaser.GameObjects.Image;
@@ -106,6 +110,9 @@ export default class GameMain extends Phaser.Scene {
     private tutorialFlag: Boolean;
     private tutorialCounter: number;
     private gameStartCounter: number;
+
+    // ポーズボタン
+    private pauseButton: UIPauseButtonObject;
 
     constructor() {
         super({ key: 'GameMain' })
@@ -152,6 +159,8 @@ export default class GameMain extends Phaser.Scene {
         this.tutorialFlag = false;
         this.tutorialCounter = 0;
         this.gameStartCounter = 0;
+        // ボタン
+        this.pauseButton = new UIPauseButtonObject();
     }
 
     preload(): void {
@@ -190,6 +199,10 @@ export default class GameMain extends Phaser.Scene {
 
         // プログレスバー
         TimeProgressBarObject.preload(this.load);
+
+        // ボタン
+        this.load.image('button_play', uiImage['start']);
+        this.load.image('button_pause', uiImage['pause']);
     }
 
     create(): void {
@@ -285,11 +298,21 @@ export default class GameMain extends Phaser.Scene {
         });
         this.timeInfo.setVisible(true);
 
+        this.pauseButton.create({
+            scene: this,
+            pauseImageKey: "button_pause",
+            playImageKey: "button_play",
+            posX: 1050,
+            posY: 670,
+            textaliveManager: this.api
+        });
+        this.pauseButton.setVisible(true);
+
         // チュートリアル
         this.tutorialDescription = this.add.image(640, 360, 'tutorialDescription');
         this.tutorialFrame = this.add.image(160, 225, 'frame');
         this.tapstart = this.add.image(640, 650, 'tapstart');
-
+        
     }
 
     update() {
@@ -298,7 +321,6 @@ export default class GameMain extends Phaser.Scene {
 
         // チュートリアル判定
         this.tutorialCounter++;
-        console.log(this.tutorialCounter)
         if (pointer.isDown && this.tutorialCounter > 50) {
             this.tutorialDescription.setVisible(false);
             this.tutorialFrame.setVisible(false);
@@ -368,12 +390,14 @@ export default class GameMain extends Phaser.Scene {
         // console.log(this.api.isVideoSeeking())
 
         // クリックした際に3レーンのいずれかに移動する
-        if (this.gameTouchY > 0 && this.gameTouchY < 720 / 3) {
-            this.lyricY = this.firstLane;
-        } else if (this.gameTouchY >= 720 / 3 && this.gameTouchY < 720 / 3 * 2) {
-            this.lyricY = this.secondLane;
-        } else if (this.gameTouchY >= 720 / 3 * 2 && this.gameTouchY < 720) {
-            this.lyricY = this.thirdLane;
+        const moveLanePos = [this.firstLane, this.secondLane, this.thirdLane];
+        for (let i = 0; i < this.lanePosition.length; i++) {
+            const laneHeightHalf = this.firstLaneLine.height * this.firstLaneLine.scaleY / 2;
+            const lanePos = this.lanePosition[i];
+            if (lanePos - laneHeightHalf < this.gameTouchY && this.gameTouchY < lanePos + laneHeightHalf) {
+                this.lyricY = moveLanePos[i];
+                break;
+            }
         }
 
         // ミクの場所の更新
