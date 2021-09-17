@@ -1,6 +1,10 @@
 import Phaser from "phaser";
-import images from "../assets/title/*.png";
+import FlowingStarsManager from '../object/FlowingStarsObject';
+
+import image from "../assets/*.png"
+import titleImage from "../assets/title/*.png";
 import music from "../assets/sound/music/*.ogg";
+
 export default class TitleScene extends Phaser.Scene {
   constructor() {
     super({
@@ -16,18 +20,26 @@ export default class TitleScene extends Phaser.Scene {
   private click_start;
   private r = 0;
 
+  private flowingStars: FlowingStarsManager;
+
+  init(): void {
+    this.flowingStars = new FlowingStarsManager();
+  }
+
   preload(): void {
     // imageの読み込み
-    this.load.image('back_ground', images['back_ground']);
-    this.load.image('project_mirai', images['project_mirai']);
-    this.load.image('sub_title', images['sub_title']);
-    this.load.image('back_title', images['back_title']);
-    this.load.image('click_start', images['click_start']);
+    this.load.image('back_ground', titleImage['back_ground']);
+    this.load.image('project_mirai', titleImage['project_mirai']);
+    this.load.image('sub_title', titleImage['sub_title']);
+    this.load.image('back_title', titleImage['back_title']);
+    this.load.image('click_start', titleImage['click_start']);
+    this.load.image('bg_star', image['star']);
     this.load.audio('title_music', music['title']);
   }
 
   create(): void {
-    this.add.image(500, 350, 'back_ground');
+    let bg = this.add.image(500, 350, 'back_ground');
+    bg.setDepth(-10);
 
     var gameTitle = this.add.image(640, 230, 'project_mirai');
     gameTitle.setDisplaySize(950, 90);
@@ -54,11 +66,17 @@ export default class TitleScene extends Phaser.Scene {
     if (this.titleMusic) {
       this.titleMusic.play();
     }
+
+    this.flowingStars.create({
+      scene: this,
+      starImageKey: 'bg_star',
+      imageDepth: -1
+    });
+    this.flowingStars.setVisible(true);
     // TODO 最上面に透明な画像を被せて、キャラクターセレクト画面への遷移処理の実装を1回だけにする
   }
   
   update() {
-
     this.back_title.alpha = Math.abs(Math.sin(this.r));
     this.click_start.alpha = Math.abs(Math.sin(this.r));
     if (this.r >= 360) {
@@ -66,5 +84,7 @@ export default class TitleScene extends Phaser.Scene {
     } else {
       this.r += 0.05;
     }
+
+    this.flowingStars.update();
   }
 }
