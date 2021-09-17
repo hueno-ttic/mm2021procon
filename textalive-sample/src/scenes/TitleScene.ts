@@ -73,7 +73,6 @@ export default class TitleScene extends Phaser.Scene {
       imageDepth: -1
     });
     this.flowingStars.setVisible(true);
-    // TODO 最上面に透明な画像を被せて、キャラクターセレクト画面への遷移処理の実装を1回だけにする
   }
   
   update() {
