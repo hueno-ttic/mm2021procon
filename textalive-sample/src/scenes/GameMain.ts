@@ -183,7 +183,7 @@ export default class GameMain extends Phaser.Scene {
         this.load.image('star', image['star']);
         this.load.image('circle', image['circle']);
 
-        this.load.audio('touch_se', soundSe['cancel']);
+        this.load.audio('touch_se', soundSe['decide']);
 
         // プログレスバー
         TimeProgressBarObject.preload(this.load);
