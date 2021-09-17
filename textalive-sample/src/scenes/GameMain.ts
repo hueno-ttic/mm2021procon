@@ -11,6 +11,7 @@ import UIPauseButtonObject from '../object/UIPauseButtonObject';
 import image from "../assets/*.png";
 import artistImage from "../assets/live_artist/*.png";
 import uiImage from "../assets/ui/*.png"
+import soundSe from "../assets/sound/se/*.wav"
 
 // パーティクルマネージャーの宣言
 var particles;
@@ -96,6 +97,9 @@ export default class GameMain extends Phaser.Scene {
     // タッチエフェクトの表示時間
     private circleVisibleCounter = 0;
 
+    // タッチ時のSE
+    private touchSe: Phaser.Sound.BaseSound;
+
     // プログレスバー
     private timeProgressBar: TimeProgressBarObject;
 
@@ -179,6 +183,8 @@ export default class GameMain extends Phaser.Scene {
         this.load.image('star', image['star']);
         this.load.image('circle', image['circle']);
 
+        this.load.audio('touch_se', soundSe['decide']);
+
         // プログレスバー
         TimeProgressBarObject.preload(this.load);
 
@@ -189,6 +195,8 @@ export default class GameMain extends Phaser.Scene {
 
     create(): void {
         console.log("create()");
+        // --------------------------------
+        // オブジェクトの生成
         // 背景
         var backImg = this.add.image(500, 350, 'backImg');
         backImg.alpha = 0.2;
@@ -264,6 +272,8 @@ export default class GameMain extends Phaser.Scene {
 
         circleImg = this.add.image(500 - circleOffset, 5 - circleOffset,'circle');
 
+        this.touchSe = this.sound.add('touch_se', { volume: 0.5 });
+
         this.timeProgressBar.create({
             scene: this,
             posX: 570,
@@ -289,6 +299,11 @@ export default class GameMain extends Phaser.Scene {
             textaliveManager: this.api
         });
         this.pauseButton.setVisible(true);
+
+
+        // --------------------------------
+        // Input処理
+        this.input.on("pointerdown", () => {this.pointerdown();});
 
     }
 
@@ -634,5 +649,11 @@ export default class GameMain extends Phaser.Scene {
         }
 
 
+    }
+
+    private pointerdown(): void {
+        if (this.touchSe) {
+            this.touchSe.play();
+        }
     }
 }
