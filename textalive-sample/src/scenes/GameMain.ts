@@ -7,10 +7,13 @@ import TextaliveApiManager from "../TextaliveApiManager";
 import MusicSelect from "MusicSelect";
 import TimeInfoObject from '../object/TimeInfoObject';
 import UIPauseButtonObject from '../object/UIPauseButtonObject';
+import Tutorial from '../object/TutorialObject';
 
 import image from "../assets/*.png";
 import artistImage from "../assets/live_artist/*.png";
 import uiImage from "../assets/ui/*.png"
+import soundSe from "../assets/sound/se/*.wav"
+import TutorialObject from "../object/TutorialObject";
 
 // パーティクルマネージャーの宣言
 var particles;
@@ -96,6 +99,9 @@ export default class GameMain extends Phaser.Scene {
     // タッチエフェクトの表示時間
     private circleVisibleCounter = 0;
 
+    // タッチ時のSE
+    private touchSe: Phaser.Sound.BaseSound;
+
     // プログレスバー
     private timeProgressBar: TimeProgressBarObject;
 
@@ -110,6 +116,8 @@ export default class GameMain extends Phaser.Scene {
     private tutorialFlag: Boolean;
     private tutorialCounter: number;
     private gameStartCounter: number;
+
+    private tutorial: Tutorial;
 
     // ポーズボタン
     private pauseButton: UIPauseButtonObject;
@@ -155,10 +163,9 @@ export default class GameMain extends Phaser.Scene {
         this.timeProgressBar = new TimeProgressBarObject();
         this.timeInfo = new TimeInfoObject();
 
-        // チュートリアルの初期設定
-        this.tutorialFlag = false;
-        this.tutorialCounter = 0;
-        this.gameStartCounter = 0;
+        // チュートリアル
+        this.tutorial = new TutorialObject();
+        
         // ボタン
         this.pauseButton = new UIPauseButtonObject();
     }
@@ -197,6 +204,8 @@ export default class GameMain extends Phaser.Scene {
         this.load.image('star', image['star']);
         this.load.image('circle', image['circle']);
 
+        this.load.audio('touch_se', soundSe['decide']);
+
         // プログレスバー
         TimeProgressBarObject.preload(this.load);
 
@@ -207,6 +216,8 @@ export default class GameMain extends Phaser.Scene {
 
     create(): void {
         console.log("create()");
+        // --------------------------------
+        // オブジェクトの生成
         // 背景
         var backImg = this.add.image(500, 350, 'backImg');
         backImg.alpha = 0.2;
@@ -282,6 +293,8 @@ export default class GameMain extends Phaser.Scene {
 
         circleImg = this.add.image(500 - circleOffset, 5 - circleOffset,'circle');
 
+        this.touchSe = this.sound.add('touch_se', { volume: 0.5 });
+
         this.timeProgressBar.create({
             scene: this,
             posX: 570,
@@ -306,13 +319,19 @@ export default class GameMain extends Phaser.Scene {
             posY: 670,
             textaliveManager: this.api
         });
+//        this.pauseButton.setVisible(false);
         this.pauseButton.setVisible(true);
+        
+        // --------------------------------
+        // Input処理
+        this.input.on("pointerdown", () => {this.pointerdown();});
 
         // チュートリアル
-        this.tutorialDescription = this.add.image(640, 360, 'tutorialDescription');
-        this.tutorialFrame = this.add.image(160, 225, 'frame');
-        this.tapstart = this.add.image(640, 650, 'tapstart');
-        
+        this.tutorial.createImage(
+            this.add.image(640, 360, 'tutorialDescription'),
+            this.add.image(160, 225, 'frame'),
+            this.tapstart = this.add.image(640, 650, 'tapstart')
+        );
     }
 
     update() {
@@ -320,21 +339,14 @@ export default class GameMain extends Phaser.Scene {
         let pointer = this.input.activePointer;
 
         // チュートリアル判定
-        this.tutorialCounter++;
-        if (pointer.isDown && this.tutorialCounter > 50) {
-            this.tutorialDescription.setVisible(false);
-            this.tutorialFrame.setVisible(false);
-            this.tapstart.setVisible(false);
-            this.tutorialFlag = true;
+        if (pointer.isDown && this.tutorial.tutorialCounter > 50) {
+            this.tutorial.end();
+            // 一時停止ボタンの表示
+            //this.pauseButton.setVisible(true);
         }
         // チュートリアルが終わったかどうかの判定
-        if (!this.tutorialFlag) {
-            this.tapstart.alpha = Math.abs(Math.sin(this.r));
-            if (this.r >= 360 ) {
-              this.r = 0;
-            } else {
-              this.r += 0.05;
-            }
+        if (!this.tutorial.tutorialFlag) {
+            this.tutorial.flashing();
             return;
         }
 
@@ -677,5 +689,11 @@ export default class GameMain extends Phaser.Scene {
         }
 
 
+    }
+
+    private pointerdown(): void {
+        if (this.touchSe) {
+            this.touchSe.play();
+        }
     }
 }
