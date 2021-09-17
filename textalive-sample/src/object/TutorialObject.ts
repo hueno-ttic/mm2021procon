@@ -7,14 +7,15 @@ export default class TutorialObject {
      private tutorialFrame: Phaser.GameObjects.Image;
      private tapstart: Phaser.GameObjects.Image;
      public tutorialFlag: Boolean;
-     public tutorialCounter: number;
-     public gameStartCounter: number;
+     public tutorialCounter: number; // 次の画面から移動してきた瞬間チュートリアルが終わらないようにするカウンター
+     public gameStartCounter: number; // チュートリアルが終わった瞬間にゲームがいきなり始まらないようにするカウンター
      private r;
 
      constructor() {
           this.r = 0;
           this.tutorialCounter = 0;
           this.tutorialFlag = false;
+          this.gameStartCounter = 0;
      }
 
      public createImage(

@@ -110,13 +110,6 @@ export default class GameMain extends Phaser.Scene {
 
 
     // チュートリアル関連
-    private tutorialDescription: Phaser.GameObjects.Image;
-    private tutorialFrame: Phaser.GameObjects.Image;
-    private tapstart: Phaser.GameObjects.Image;
-    private tutorialFlag: Boolean;
-    private tutorialCounter: number;
-    private gameStartCounter: number;
-
     private tutorial: Tutorial;
 
     // ポーズボタン
@@ -330,7 +323,7 @@ export default class GameMain extends Phaser.Scene {
         this.tutorial.createImage(
             this.add.image(640, 360, 'tutorialDescription'),
             this.add.image(160, 225, 'frame'),
-            this.tapstart = this.add.image(640, 650, 'tapstart')
+            this.add.image(640, 650, 'tapstart')
         );
     }
 
@@ -344,11 +337,13 @@ export default class GameMain extends Phaser.Scene {
             // 一時停止ボタンの表示
             //this.pauseButton.setVisible(true);
         }
+        
         // チュートリアルが終わったかどうかの判定
         if (!this.tutorial.tutorialFlag) {
             this.tutorial.flashing();
             return;
         }
+        
 
         if (pointer.isDown) {
             this.gameTouchX = pointer.x;
@@ -364,8 +359,8 @@ export default class GameMain extends Phaser.Scene {
         }
 
         // ロードが終わり次第、楽曲をスタート
-        this.gameStartCounter++;
-        if (!this.api.player.isPlaying && !this.api.player.isLoading && !this.musicStart && this.gameStartCounter > 100) {
+        this.tutorial.gameStartCounter++;
+        if (!this.api.player.isPlaying && !this.api.player.isLoading && !this.musicStart && this.tutorial.gameStartCounter > 100) {
             this.api.player.requestPlay();
             this.musicStart = true;
 
