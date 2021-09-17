@@ -1,5 +1,6 @@
 // 必要なimport
 import * as Phaser from 'phaser';
+import SplashScene from './scenes/SplashScene';
 import TitleScene from './scenes/TitleScene';
 import GameMain from './scenes/GameMain';
 import GameResult from './scenes/GameResult';
@@ -18,6 +19,7 @@ const config: Phaser.Types.Core.GameConfig = {
     autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
   },
   scene: [
+    SplashScene,
     TitleScene,
     GameMain,
     MusicSelectScene,
