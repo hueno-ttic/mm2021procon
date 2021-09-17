@@ -3,7 +3,6 @@ import * as Phaser from 'phaser';
 import TitleScene from './scenes/TitleScene';
 import GameMain from './scenes/GameMain';
 import GameResult from './scenes/GameResult';
-import Tutorial from './scenes/Tutorial';
 import MusicSelectScene from './scenes/MusicSelect';
 
 // ゲームの基本設定
@@ -22,7 +21,6 @@ const config: Phaser.Types.Core.GameConfig = {
     TitleScene,
     GameMain,
     MusicSelectScene,
-    Tutorial,
     GameResult,
   ],
 };

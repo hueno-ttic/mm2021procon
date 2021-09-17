@@ -28,6 +28,7 @@ export default class TutorialObject {
          this.tapstart = tapstart;
      }
 
+     // 点滅処理
      public flashing () {
           this.tapstart.alpha = Math.abs(Math.sin(this.r));
           if (this.r >= 360 ) {
@@ -38,6 +39,7 @@ export default class TutorialObject {
           this.tutorialCounter++;
      }
 
+     // チュートリアルの終了処理
      public end() {
           this.tutorialDescription.setVisible(false);
           this.tutorialFrame.setVisible(false);

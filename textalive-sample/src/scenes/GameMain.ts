@@ -7,13 +7,12 @@ import TextaliveApiManager from "../TextaliveApiManager";
 import MusicSelect from "MusicSelect";
 import TimeInfoObject from '../object/TimeInfoObject';
 import UIPauseButtonObject from '../object/UIPauseButtonObject';
-import Tutorial from '../object/TutorialObject';
+import TutorialObject from "../object/TutorialObject";
 
 import image from "../assets/*.png";
 import artistImage from "../assets/live_artist/*.png";
 import uiImage from "../assets/ui/*.png"
 import soundSe from "../assets/sound/se/*.wav"
-import TutorialObject from "../object/TutorialObject";
 
 // パーティクルマネージャーの宣言
 var particles;
@@ -110,7 +109,7 @@ export default class GameMain extends Phaser.Scene {
 
 
     // チュートリアル関連
-    private tutorial: Tutorial;
+    private tutorial: TutorialObject;
 
     // ポーズボタン
     private pauseButton: UIPauseButtonObject;
@@ -312,8 +311,7 @@ export default class GameMain extends Phaser.Scene {
             posY: 670,
             textaliveManager: this.api
         });
-//        this.pauseButton.setVisible(false);
-        this.pauseButton.setVisible(true);
+        this.pauseButton.setVisible(false);
         
         // --------------------------------
         // Input処理
@@ -331,20 +329,18 @@ export default class GameMain extends Phaser.Scene {
         // タッチイベントの取得
         let pointer = this.input.activePointer;
 
-        // チュートリアル判定
+        // チュートリアルの終了判定
         if (pointer.isDown && this.tutorial.tutorialCounter > 50) {
             this.tutorial.end();
             // 一時停止ボタンの表示
-            //this.pauseButton.setVisible(true);
+            this.pauseButton.setVisible(true);
         }
-        
-        // チュートリアルが終わったかどうかの判定
+        // チュートリアルが終わるまでゲームを始めない
         if (!this.tutorial.tutorialFlag) {
             this.tutorial.flashing();
             return;
         }
         
-
         if (pointer.isDown) {
             this.gameTouchX = pointer.x;
             this.gameTouchY = pointer.y;
@@ -358,6 +354,7 @@ export default class GameMain extends Phaser.Scene {
             circleSwitch = true;
         }
 
+        // チュートリアルから一定のインターバル後
         // ロードが終わり次第、楽曲をスタート
         this.tutorial.gameStartCounter++;
         if (!this.api.player.isPlaying && !this.api.player.isLoading && !this.musicStart && this.tutorial.gameStartCounter > 100) {
