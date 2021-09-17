@@ -33,7 +33,7 @@ export default class TitleScene extends Phaser.Scene {
     this.load.image('sub_title', titleImage['sub_title']);
     this.load.image('back_title', titleImage['back_title']);
     this.load.image('click_start', titleImage['click_start']);
-    this.load.image('bg_star', image['star']);
+    this.load.image('bg_star', titleImage['star']);
     this.load.audio('title_music', music['title']);
   }
 
