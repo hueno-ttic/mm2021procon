@@ -7,6 +7,7 @@ import TextaliveApiManager from "../TextaliveApiManager";
 import MusicSelect from "MusicSelect";
 import TimeInfoObject from '../object/TimeInfoObject';
 import UIPauseButtonObject from '../object/UIPauseButtonObject';
+import TutorialObject from "../object/TutorialObject";
 
 import image from "../assets/*.png";
 import artistImage from "../assets/live_artist/*.png";
@@ -106,6 +107,10 @@ export default class GameMain extends Phaser.Scene {
     // 曲の進行時間
     private timeInfo: TimeInfoObject;
 
+
+    // チュートリアル関連
+    private tutorial: TutorialObject;
+
     // ポーズボタン
     private pauseButton: UIPauseButtonObject;
 
@@ -150,6 +155,9 @@ export default class GameMain extends Phaser.Scene {
         this.timeProgressBar = new TimeProgressBarObject();
         this.timeInfo = new TimeInfoObject();
 
+        // チュートリアル
+        this.tutorial = new TutorialObject();
+        
         // ボタン
         this.pauseButton = new UIPauseButtonObject();
     }
@@ -159,6 +167,11 @@ export default class GameMain extends Phaser.Scene {
         
         // 背景画像
         this.load.image('backImg', image['back_img']);
+
+        // チュートリアル素材
+        this.load.image('tutorialDescription', image['TutorialDescription']);
+        this.load.image('frame', image['TutorialSquare']);
+        this.load.image('tapstart', image['Tapstart']);
 
         // 操作キャラ
         this.load.image('miku', artistImage['live-artist_miku_sd_01_182p']);
@@ -298,19 +311,36 @@ export default class GameMain extends Phaser.Scene {
             posY: 670,
             textaliveManager: this.api
         });
-        this.pauseButton.setVisible(true);
-
-
+        this.pauseButton.setVisible(false);
+        
         // --------------------------------
         // Input処理
         this.input.on("pointerdown", () => {this.pointerdown();});
 
+        // チュートリアル
+        this.tutorial.createImage(
+            this.add.image(640, 360, 'tutorialDescription'),
+            this.add.image(160, 225, 'frame'),
+            this.add.image(640, 650, 'tapstart')
+        );
     }
 
     update() {
         // タッチイベントの取得
         let pointer = this.input.activePointer;
 
+        // チュートリアルの終了判定
+        if (pointer.isDown && this.tutorial.tutorialCounter > 50) {
+            this.tutorial.end();
+            // 一時停止ボタンの表示
+            this.pauseButton.setVisible(true);
+        }
+        // チュートリアルが終わるまでゲームを始めない
+        if (!this.tutorial.tutorialFlag) {
+            this.tutorial.flashing();
+            return;
+        }
+        
         if (pointer.isDown) {
             this.gameTouchX = pointer.x;
             this.gameTouchY = pointer.y;
@@ -324,8 +354,10 @@ export default class GameMain extends Phaser.Scene {
             circleSwitch = true;
         }
 
+        // チュートリアルから一定のインターバル後
         // ロードが終わり次第、楽曲をスタート
-        if (!this.api.player.isPlaying && !this.api.player.isLoading && !this.musicStart) {
+        this.tutorial.gameStartCounter++;
+        if (!this.api.player.isPlaying && !this.api.player.isLoading && !this.musicStart && this.tutorial.gameStartCounter > 100) {
             this.api.player.requestPlay();
             this.musicStart = true;
 

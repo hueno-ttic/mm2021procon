@@ -8,7 +8,7 @@ import music from "../assets/sound/music/*.ogg";
 export default class TitleScene extends Phaser.Scene {
   constructor() {
     super({
-      key: 'Title',
+      key: 'TitleScene',
     })
   }
 
