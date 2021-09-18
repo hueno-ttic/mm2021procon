@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import images from "../assets/music_select/*.png";
 import MusicList from "./MusicList";
+import { buildMusicInfo } from '../factory/MusicFactory';
 
 export default class MusicSelectScene extends Phaser.Scene {
   constructor() {
@@ -11,10 +12,18 @@ export default class MusicSelectScene extends Phaser.Scene {
 
   private musicInfoText;
   public selectMusic;
+  private selectedMusicId: number;
+  private musics = buildMusicInfo();
 
   preload(): void {
     this.load.image('music_frame', images['music_frame']);
     this.load.image('music_select_box', images['music_select_box']);
+    this.load.image('first_note' , images['01_first_note']);
+    this.load.image('usomo' , images['02_usomo']);
+    this.load.image('sonokokoro' , images['03_sonokokoro']);
+    this.load.image('natsu' , images['04_natsu']);
+    this.load.image('hisoka' , images['05_hisoka']);
+    this.load.image('freedom' , images['06_freedom']);
   }
 
   create(): void {
@@ -34,18 +43,6 @@ export default class MusicSelectScene extends Phaser.Scene {
     var dispBoxX = 950;
     var additionalBoxX = 0;
     var dispBoxY = 50;
-    for (let index = 0; index < 6; index++) {
-      if (index == 0 || index == 5) {
-        additionalBoxX = 75;
-      } else if (index == 1 || index == 4) {
-        additionalBoxX = 25;
-      } else {
-        additionalBoxX = 0;
-      }
-      dispBoxY+= 80;
-      this.add.image(dispBoxX + additionalBoxX, dispBoxY, 'music_select_box')
-        .setDisplaySize(240, 75);
-    }
 
     var musicList = new MusicList();
     var musicInfoList = musicList.getMusicInfoList();
@@ -55,6 +52,26 @@ export default class MusicSelectScene extends Phaser.Scene {
     this.musicInfoText = this.add.text(45, 600, this.selectMusic[0]+"/"+this.selectMusic[1],{ fontFamily: 'Makinas-4-Square' });
     
     this.musicInfoText.scale *= 2;
+
+    this.musics.forEach((music, index) => {
+      if (index == 0 || index == 5) {
+        additionalBoxX = 75;
+      } else if (index == 1 || index == 4) {
+        additionalBoxX = 25;
+      } else {
+        additionalBoxX = 0;
+      }
+      dispBoxY+= 80;
+      const image = this.add.image(dispBoxX + additionalBoxX, dispBoxY, music.label);
+      image.setDisplaySize(300, 80);
+      image.setInteractive();
+
+      image.on('pointerdown', () => {
+        this.registry.set("selectedMusic", music.id);
+        this.selectedMusicId = music.id;
+        this.musicInfoText.setText(`${music.title}/${music.author}`)
+      });
+    });
 
     const text = this.add.text(700, 650, 'クリックしてゲーム画面へ遷移する');
     text.setInteractive();

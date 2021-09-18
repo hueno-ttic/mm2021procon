@@ -1,5 +1,7 @@
 export default class MusicList {
-    
+
+    // TODO scenes配下から移動する
+    // TODO interfaceとして再定義
     public musicInfoList = [];
 
     constructor () {
