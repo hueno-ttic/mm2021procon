@@ -39,7 +39,7 @@ export default class ResultScoreObject {
 
         for (let i = 0; i < this._laneImages.length; i++) {
             const posY = this._underLineImage.y + this._underLineImage.height / 2 + 30 + 50 * i;
-            let image = param.scene.add.image(param.posX, posY, param.laneKeys[i]);
+            let image = param.scene.add.image(param.posX + 10, posY, param.laneKeys[i]);
             image.setDepth(0 + param.depth ? param.depth : 0).setOrigin(0.0, 0.5);
             this._laneImages[i] = image;
 
