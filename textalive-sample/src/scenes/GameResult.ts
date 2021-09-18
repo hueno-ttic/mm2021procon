@@ -1,6 +1,7 @@
 import Phaser from "phaser";
-import TotalResultObject from "../object/TotalResultObject";
+import DepthDefine from '../object/DepthDefine';
 import ResultScoreObject from "../object/ResultScoreObject";
+import TotalResultObject from "../object/TotalResultObject";
 
 import imageResult from "../assets/result/*.png"
 
@@ -103,19 +104,19 @@ export default class GameResultScene extends Phaser.Scene {
     public create(): void {
         // 背景
         this._backgroundImage = this.add.image(this.game.scale.gameSize.width / 2, this.game.scale.gameSize.height / 2, "bg_image");
-        this._backgroundImage.setDepth(-10);
+        this._backgroundImage.setDepth(DepthDefine.BACK_GROUND);
 
         // キャプチャ
         this._resultImage = this.add.image(100, 50, "result_image");
-        this._resultImage.setDepth(0);
+        this._resultImage.setDepth(DepthDefine.OBJECT);
 
         // サムネイル
         //this._thumbnailImage; // todo: シーン間のパラメータ受け渡し
         this._thumbnailFrameImage = this.add.image(420, 100, "tmb_frame");
-        this._thumbnailFrameImage.setDepth(0).setOrigin(0.5, 0.0);
+        this._thumbnailFrameImage.setDepth(DepthDefine.OBJECT - 1).setOrigin(0.5, 0.0);
 
         // スコア
-        const scoreDepth = 1;
+        const scoreDepth = DepthDefine.OBJECT;
         this._scoreBackgroundImage = this.add.image(1040, this._thumbnailFrameImage.y, "score_bg");
         this._scoreBackgroundImage.setDepth(scoreDepth - 1).setOrigin(0.5, 0.0).setDisplaySize(394, 500);
 
@@ -140,7 +141,7 @@ export default class GameResultScene extends Phaser.Scene {
             totalImageKey: "score_total",
             underLineKey: "line",
             totalResult: 100, // todo: シーン間のパラメータ受け渡し
-            depth: 0,
+            depth: scoreDepth,
             posX: this._scoreBackgroundImage.x - 180,
             posY: this._scoreBackgroundImage.y + this._scoreImage.height + 30 + 200 * this._resultScores.length + 5
         });
@@ -148,23 +149,23 @@ export default class GameResultScene extends Phaser.Scene {
         // 楽曲情報
         // todo: シーン間のパラメータ受け渡し
         this._selectSongText = this.add.text(50, this.game.scale.gameSize.height - 85, "夏をなぞって / シロクマ消しゴム", { font: '40px Arial' });
-        this._selectSongText.setDepth(1).setStroke("black", 5);
+        this._selectSongText.setDepth(DepthDefine.OBJECT).setStroke("black", 5);
 
         // リザルト
         this._playResultImage = this.add.image(this._scoreBackgroundImage.x, this._scoreBackgroundImage.y - 40, "result_cleared");
-        this._playResultImage.setDepth(10);
+        this._playResultImage.setDepth(DepthDefine.OBJECT + 1);
 
         // ボタン
-        const buttonDepth = 10;
+        const buttonDepth = DepthDefine.UI_OBJECT;
         this._moveSelectMusicButtonBgImage = this.add.image(this._scoreBackgroundImage.x, this._selectSongText.y + this._selectSongText.height / 2, "button_select_music_bg");
-        this._moveSelectMusicButtonBgImage.setDepth(buttonDepth);
+        this._moveSelectMusicButtonBgImage.setDepth(buttonDepth - 1);
         this._moveSelectMusicButtonBgImage.setInteractive();
         this._moveSelectMusicButtonBgImage.on("pointerdown", () => {
             this.scene.start("MusicSelect");
         });
 
         this._moveSelectMusicButtonImage = this.add.image(this._scoreBackgroundImage.x, this._selectSongText.y + this._selectSongText.height / 2, "button_select_music_image");
-        this._moveSelectMusicButtonImage.setDepth(buttonDepth + 1);
+        this._moveSelectMusicButtonImage.setDepth(buttonDepth);
     }
 
     public update(): void {
