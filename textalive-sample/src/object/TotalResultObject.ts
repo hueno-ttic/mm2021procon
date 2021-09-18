@@ -28,13 +28,13 @@ export default class TotalResultObject {
 
     public create(param: TotalResultObjectCreateParam): void {
         this._totalImage = param.scene.add.image(param.posX, param.posY, param.totalImageKey);
-        this._totalImage.setDepth(0 + param.depth ? param.depth : 0).setOrigin(0.0, 0.5);
+        this._totalImage.setDepth(param.depth ? param.depth : 0).setOrigin(0.0, 0.5);
 
         this._totalResutlText = param.scene.add.text(param.posX + 300, param.posY, param.totalResult.toString(), GameResultScene.SCORE_TEXT_STYLE);
-        this._totalResutlText.setDepth(0 + param.depth ? param.depth : 0).setOrigin(1.0, 0.5);
+        this._totalResutlText.setDepth(param.depth ? param.depth : 0).setOrigin(1.0, 0.5);
 
         this._underLineImage = param.scene.add.image(param.posX, param.posY + this._totalResutlText.height / 2 + 10, param.underLineKey);
-        this._underLineImage.setDepth(0 + param.depth ? param.depth : 0).setOrigin(0.0, 0.5);
+        this._underLineImage.setDepth(param.depth ? param.depth : 0).setOrigin(0.0, 0.5);
     }
 
     public update(): void {
