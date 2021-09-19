@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import images from "../assets/title/*.png";
-import music from "../assets/sound/music/*.ogg";
+import music from "../assets/sound/music/*.wav";
 export default class TitleScene extends Phaser.Scene {
   constructor() {
     super({
