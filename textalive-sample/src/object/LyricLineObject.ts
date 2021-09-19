@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
 import gameImage from "../assets/game_main/*.png";
 
 export default class LyricLineObject {
@@ -15,7 +15,6 @@ export default class LyricLineObject {
 
     public initLyricLine(lyrics) {
         for (let i = 0; i < lyrics.length; i++) {
-
             this.lyricLine[i] = this.scene.add.text(
                 0,
                 636,
