@@ -17,8 +17,8 @@ export default class Lyric {
     this.duration = data.duration; // 開始から終了迄の時間 [ms]
     this.index = index;
     this.color = color;
-    this.valence = valenceArousal.v;  // 覚醒度
-    this.arousal = valenceArousal.a;  // 感情価
+    this.valence = valenceArousal.v; // 覚醒度
+    this.arousal = valenceArousal.a; // 感情価
   }
 
   setIndex(index) {
@@ -30,7 +30,7 @@ export default class Lyric {
     return this.index;
   }
 
-  getText(): String {
+  getText(): string {
     return this.text;
   }
 }

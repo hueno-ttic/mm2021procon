@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
 
 export interface LaneHeartObjectCreateParam {
     image: Phaser.GameObjects.Image;
@@ -16,29 +16,29 @@ export default class LaneHeartObject {
         this.init();
     }
 
-    public init(): void {
+    init(): void {
         this._image = null;
         this._animationFrameCount = 0;
         this._playAnimationFlag = false;
     }
 
-    public update(): void {
+    update(): void {
         this.stretchHeart();
     }
 
-    public create(param: LaneHeartObjectCreateParam): void {
+    create(param: LaneHeartObjectCreateParam): void {
         this.image = param.image;
         this.image.scaleX *= param.scale;
         this.image.scaleY *= param.scale;
     }
 
     // 伸縮アニメーションを開始
-    public playStretchHeart(): void {
+    playStretchHeart(): void {
         this._playAnimationFlag = true;
     }
 
     // 伸縮アニメーションを初期化
-    public resetStretchHeart(): void {
+    resetStretchHeart(): void {
         this._playAnimationFlag = false;
         this._animationFrameCount = 0;
     }
@@ -48,8 +48,11 @@ export default class LaneHeartObject {
         // ハートの伸縮判定
         if (this._playAnimationFlag) {
             this._animationFrameCount++;
-            if (this._animationFrameCount > LaneHeartObject.STRETCH_ANIMATION_FRAME) {
-                this.resetStretchHeart()
+            if (
+                this._animationFrameCount >
+                LaneHeartObject.STRETCH_ANIMATION_FRAME
+            ) {
+                this.resetStretchHeart();
             }
         }
     }
@@ -68,5 +71,4 @@ export default class LaneHeartObject {
     get playAnimationFlag(): boolean {
         return this._playAnimationFlag;
     }
-
 }

@@ -4,3 +4,4 @@ docs/
 .parcel-cache/
 .DS_Store
 .cache/
+.idea/
