@@ -87,9 +87,9 @@ export default class TimeInfoObject {
             return "00:00";
         }
 
-        let time_sec = Math.round(time_ms / 1000);
+        let time_sec = Math.trunc(time_ms / 1000);
 
-        let min = Math.round(time_sec / 60);
+        let min = Math.trunc(time_sec / 60);
         let sec = time_sec % 60;
         return `${min.toString().padStart(2, "0")}:${sec.toString().padStart(2, "0")}`;
     }
