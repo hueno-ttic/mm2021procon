@@ -15,6 +15,9 @@ jobs:
       - name: npm install
         run: npm install
         working-directory: ./textalive-sample
+      - name: npm run build
+        run: npm run build
+        working-directory: ./textalive-sample
       - name: npm run lint
         run: npm run lint
         working-directory: ./textalive-sample
