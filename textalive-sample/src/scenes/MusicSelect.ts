@@ -29,11 +29,11 @@ export default class MusicSelectScene extends Phaser.Scene {
     this.add.image(420, 350, "music_frame").setDisplaySize(800, 450);
 
     // 円を描画する
-    let circle = this.add.graphics();
+    const circle = this.add.graphics();
     circle.lineStyle(3, 0xffffff, 0.6).strokeCircle(1350, 350, 350);
 
     // 楽曲選択用のボックスを配置する
-    let dispBoxX = 950;
+    const dispBoxX = 950;
     let additionalBoxX = 0;
     let dispBoxY = 50;
     for (let index = 0; index < 6; index++) {
@@ -50,8 +50,8 @@ export default class MusicSelectScene extends Phaser.Scene {
         .setDisplaySize(240, 75);
     }
 
-    let musicList = new MusicList();
-    let musicInfoList = musicList.getMusicInfoList();
+    const musicList = new MusicList();
+    const musicInfoList = musicList.getMusicInfoList();
 
     this.selectMusic = musicInfoList[1];
 

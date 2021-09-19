@@ -43,11 +43,11 @@ export default class TextaliveApiManager {
 
     // バッググラウンドで実行する機能をListenerに登録
     this.player.addListener({
-      onAppReady: app => this.onAppReady(app),
+      onAppReady: (app) => this.onAppReady(app),
       onTimerReady: () => this.onTimerReady(),
-      onTimeUpdate: pos => this.onTimeUpdate(pos),
-      onVideoReady: v => this.onVideoReady(v),
-      onThrottledTimeUpdate: pos => this.onThrottledTimeUpdate(pos),
+      onTimeUpdate: (pos) => this.onTimeUpdate(pos),
+      onVideoReady: (v) => this.onVideoReady(v),
+      onThrottledTimeUpdate: (pos) => this.onThrottledTimeUpdate(pos),
     });
     console.log(this.player);
   }
@@ -107,7 +107,7 @@ export default class TextaliveApiManager {
       }
 
       // 歌詞ごとの覚醒度と感情価を設定
-      let valenceArousal = this.player.getValenceArousal(w.startTime);
+      const valenceArousal = this.player.getValenceArousal(w.startTime);
       // 単語情報を格納
       this.lyrics.push(new Lyric(w, wordIndex, color, valenceArousal));
       // 次の単語へ
