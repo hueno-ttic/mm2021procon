@@ -19,7 +19,6 @@ export default class GainRepository {
     }
 
     public getGain(position: number, width: number = 3): number[][] {
-        console.log(position);
         return Array.from(
             {length: width * 2},
             (v, k) =>
