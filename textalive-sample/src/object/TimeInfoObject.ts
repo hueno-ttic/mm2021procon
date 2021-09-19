@@ -38,14 +38,14 @@ export default class TimeInfoObject {
 
     create(param: TimeInfoObjectCreateParam): void {
         // 座標は _objectRoot で起点移動後に設定する為、暫定値で作成
-        const strokeThickness = 10;
+        const strokeThickness = 4;
         this._songLengthText = param.scene.add.text(
             0,
             0,
             "00:00",
             TimeInfoObject.TEXT_STYLE
         );
-        this._songLengthText.setStroke("black", strokeThickness);
+        this._songLengthText.setStroke("#161616", strokeThickness);
         this._songLengthText.setDepth(TimeInfoObject.IMAGE_DEPTH_VALUE_MAX);
         this._songLengthText.setOrigin(0.5, 0.5);
 
@@ -55,7 +55,7 @@ export default class TimeInfoObject {
             "00:00",
             TimeInfoObject.TEXT_STYLE
         );
-        this._nowTimeText.setStroke("black", strokeThickness);
+        this._nowTimeText.setStroke("#161616", strokeThickness);
         this._nowTimeText.setDepth(TimeInfoObject.IMAGE_DEPTH_VALUE_MAX);
         this._nowTimeText.setOrigin(0.5, 0.5);
 
@@ -65,7 +65,7 @@ export default class TimeInfoObject {
             "/",
             TimeInfoObject.TEXT_STYLE
         );
-        this._splitText.setStroke("black", strokeThickness);
+        this._splitText.setStroke("#161616", strokeThickness);
         this._splitText.setDepth(TimeInfoObject.IMAGE_DEPTH_VALUE_MAX);
         this._splitText.setOrigin(0.5, 0.5);
 
