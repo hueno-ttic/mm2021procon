@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from 'phaser';
 
 export interface FlowingStarsManagerCreateParam {
   scene: Phaser.Scene;
@@ -49,13 +49,13 @@ export default class FlowingStarsManager {
   }
 
   update(): void {
-    this._stars.forEach((star) => {
+    this._stars.forEach(star => {
       star.update();
     });
   }
 
   setVisible(value: boolean): void {
-    this._stars.forEach((star) => {
+    this._stars.forEach(star => {
       star.image.setVisible(value);
     });
   }

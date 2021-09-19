@@ -1,7 +1,7 @@
-import Phaser from "phaser";
-import TextaliveApiManager from "../TextaliveApiManager";
+import Phaser from 'phaser';
+import TextaliveApiManager from '../TextaliveApiManager';
 
-import image from "../assets/*.png";
+import image from '../assets/*.png';
 
 export interface TimeProgressBarObjectCreateParam {
   scene: Phaser.Scene;
@@ -37,15 +37,15 @@ export default class TimeProgressBarObject {
   }
 
   static preload(loader: Phaser.Loader.LoaderPlugin): void {
-    loader.image("progress_bg", image.bar_bg);
-    loader.image("progress_progress", image.bar_gauge);
+    loader.image('progress_bg', image.bar_bg);
+    loader.image('progress_progress', image.bar_gauge);
   }
 
   create(param: TimeProgressBarObjectCreateParam): void {
     this._backgroundImage = param.scene.add.image(
       param.posX,
       param.posY,
-      "progress_bg"
+      'progress_bg'
     );
     this._backgroundImage.setDepth(TimeProgressBarObject.IMAGE_DEPTH_VALUE_MIN);
     this._backgroundImage.setDisplaySize(
@@ -56,7 +56,7 @@ export default class TimeProgressBarObject {
     this._progressImage = param.scene.add.image(
       param.posX,
       param.posY,
-      "progress_progress"
+      'progress_progress'
     );
     this._progressImage.setDepth(TimeProgressBarObject.IMAGE_DEPTH_VALUE_MAX);
     this._progressImage.setDisplaySize(0, TimeProgressBarObject.BAR_SIZE.y);

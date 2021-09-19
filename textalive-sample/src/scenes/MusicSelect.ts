@@ -1,11 +1,11 @@
-import Phaser from "phaser";
-import images from "../assets/music_select/*.png";
-import MusicList from "./MusicList";
+import Phaser from 'phaser';
+import images from '../assets/music_select/*.png';
+import MusicList from './MusicList';
 
 export default class MusicSelectScene extends Phaser.Scene {
   constructor() {
     super({
-      key: "MusicSelect",
+      key: 'MusicSelect',
     });
   }
 
@@ -13,24 +13,24 @@ export default class MusicSelectScene extends Phaser.Scene {
   selectMusic;
 
   preload(): void {
-    this.load.image("music_frame", images.music_frame);
-    this.load.image("music_select_box", images.music_select_box);
+    this.load.image('music_frame', images.music_frame);
+    this.load.image('music_select_box', images.music_select_box);
   }
 
   create(): void {
     this.add
-      .text(50, 70, "Music Select", { font: "32px" })
-      .setColor("white")
-      .setStroke("#00bfff", 2);
+      .text(50, 70, 'Music Select', { font: '32px' })
+      .setColor('white')
+      .setStroke('#00bfff', 2);
 
     // 画面全体スケールに対して0.625
     // xは画面サイズから0.33倍した位置
     // yは画面サイズから0.486倍した位置
-    this.add.image(420, 350, "music_frame").setDisplaySize(800, 450);
+    this.add.image(420, 350, 'music_frame').setDisplaySize(800, 450);
 
     // 円を描画する
     const circle = this.add.graphics();
-    circle.lineStyle(3, 0xffffff, 0.6).strokeCircle(1350, 350, 350);
+    circle.lineStyle(3, 0xFFFFFF, 0.6).strokeCircle(1350, 350, 350);
 
     // 楽曲選択用のボックスを配置する
     const dispBoxX = 950;
@@ -46,7 +46,7 @@ export default class MusicSelectScene extends Phaser.Scene {
       }
       dispBoxY += 80;
       this.add
-        .image(dispBoxX + additionalBoxX, dispBoxY, "music_select_box")
+        .image(dispBoxX + additionalBoxX, dispBoxY, 'music_select_box')
         .setDisplaySize(240, 75);
     }
 
@@ -58,22 +58,22 @@ export default class MusicSelectScene extends Phaser.Scene {
     this.musicInfoText = this.add.text(
       45,
       600,
-      this.selectMusic[0] + "/" + this.selectMusic[1],
-      { fontFamily: "Makinas-4-Square" }
+      this.selectMusic[0] + '/' + this.selectMusic[1],
+      { fontFamily: 'Makinas-4-Square' }
     );
 
     this.musicInfoText.scale *= 2;
 
-    const text = this.add.text(700, 650, "クリックしてゲーム画面へ遷移する");
+    const text = this.add.text(700, 650, 'クリックしてゲーム画面へ遷移する');
     text.setInteractive();
-    text.on("pointerdown", () => {
+    text.on('pointerdown', () => {
       console.log(
-        "this.scene.isActive('GameMain') : " + this.scene.isActive("GameMain")
+        'this.scene.isActive(\'GameMain\') : ' + this.scene.isActive('GameMain')
       );
-      if (this.scene.isActive("GameMain")) {
-        this.scene.remove("GameMain");
+      if (this.scene.isActive('GameMain')) {
+        this.scene.remove('GameMain');
       }
-      this.scene.start("GameMain");
+      this.scene.start('GameMain');
     });
   }
 }

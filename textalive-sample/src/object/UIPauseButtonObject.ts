@@ -1,5 +1,5 @@
-import TextaliveApiManager from "../TextaliveApiManager";
-import UIImageButtonObject from "./UIImageButtonObject";
+import TextaliveApiManager from '../TextaliveApiManager';
+import UIImageButtonObject from './UIImageButtonObject';
 
 export interface UIPauseButtonObjectCreateParam {
   scene: Phaser.Scene;
@@ -26,8 +26,8 @@ export default class UIPauseButtonObject {
 
   create(param: UIPauseButtonObjectCreateParam): void {
     const imageKeyMap = new Map<string, string>([
-      ["pause", param.pauseImageKey],
-      ["play", param.playImageKey],
+      ['pause', param.pauseImageKey],
+      ['play', param.playImageKey],
     ]);
 
     this._button = new UIImageButtonObject();
@@ -36,9 +36,9 @@ export default class UIPauseButtonObject {
       imageKeyMap,
       posX: param.posX,
       posY: param.posY,
-      firstStatusName: "pause",
+      firstStatusName: 'pause',
     });
-    this._button.responseObject.on("pointerdown", () => {
+    this._button.responseObject.on('pointerdown', () => {
       this.pointerdown();
     });
 
@@ -51,10 +51,10 @@ export default class UIPauseButtonObject {
     }
 
     if (this._textaliveManager.player.isPlaying) {
-      this._button.status = "play";
+      this._button.status = 'play';
       this._textaliveManager.player.requestPause();
     } else {
-      this._button.status = "pause";
+      this._button.status = 'pause';
       this._textaliveManager.player.requestPlay();
     }
   }

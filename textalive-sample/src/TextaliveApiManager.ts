@@ -1,5 +1,5 @@
-import Lyric from "./Lyric";
-import CharText from "./CharText";
+import Lyric from './Lyric';
+import CharText from './CharText';
 
 import {
   Ease,
@@ -7,7 +7,7 @@ import {
   IVideo,
   NullGraphicsDriver,
   PlayerEventListener,
-} from "textalive-app-api";
+} from 'textalive-app-api';
 
 export default class TextaliveApiManager {
   private musicUrl: string;
@@ -31,30 +31,30 @@ export default class TextaliveApiManager {
   init(): void {
     this.player = new Player({
       app: {
-        appAuthor: "TTIC",
-        appName: "TextAliveSample",
-        token: "GYtUEuVODFiceV7w",
+        appAuthor: 'TTIC',
+        appName: 'TextAliveSample',
+        token: 'GYtUEuVODFiceV7w',
       },
-      mediaElement: document.querySelector<HTMLElement>("#media"),
+      mediaElement: document.querySelector<HTMLElement>('#media'),
       valenceArousalEnabled: true, // 覚醒度と感情価の取得
       vocalAmplitudeEnabled: true, // 声量情報の取得
     });
-    document.querySelector<HTMLElement>("#media").hidden = true;
+    document.querySelector<HTMLElement>('#media').hidden = true;
 
     // バッググラウンドで実行する機能をListenerに登録
     this.player.addListener({
-      onAppReady: (app) => this.onAppReady(app),
+      onAppReady:app => this.onAppReady(app),
       onTimerReady: () => this.onTimerReady(),
-      onTimeUpdate: (pos) => this.onTimeUpdate(pos),
-      onVideoReady: (v) => this.onVideoReady(v),
-      onThrottledTimeUpdate: (pos) => this.onThrottledTimeUpdate(pos),
+      onTimeUpdate:pos => this.onTimeUpdate(pos),
+      onVideoReady:v => this.onVideoReady(v),
+      onThrottledTimeUpdate:pos => this.onThrottledTimeUpdate(pos),
     });
     console.log(this.player);
   }
 
   // APIへのアクセス準備
   private onAppReady(app): void {
-    console.log("onAppReady");
+    console.log('onAppReady');
 
     if (!app.songUrl) {
       // 再生対象となる楽曲URLをセット
@@ -89,21 +89,21 @@ export default class TextaliveApiManager {
       let color;
       switch (num) {
         case 0:
-          color = "red";
+          color = 'red';
           break;
         case 1:
-          color = "green";
+          color = 'green';
           break;
         case 2:
-          color = "yellow";
+          color = 'yellow';
           break;
         default:
-          color = "blue";
+          color = 'blue';
           break;
       }
 
       if (this.getIsChorus()) {
-        color = "blue";
+        color = 'blue';
       }
 
       // 歌詞ごとの覚醒度と感情価を設定
@@ -118,7 +118,7 @@ export default class TextaliveApiManager {
 
   // APIアクセス後に動画情報設定
   onTimerReady(): void {
-    console.log("onTimerReady");
+    console.log('onTimerReady');
   }
 
   // 再生中に呼び出され続けて画面の状態をupdateする
@@ -173,7 +173,7 @@ export default class TextaliveApiManager {
     }
 
     // 見つからない場合は空文字
-    return "";
+    return '';
   }
 
   getCurrentLyricIndex(positoinTime: number): number {

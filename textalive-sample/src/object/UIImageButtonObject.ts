@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser from 'phaser';
 
 export interface UIImageButtonObjectCreateParam {
   scene: Phaser.Scene;
@@ -46,7 +46,7 @@ export default class UIImageButtonObject {
       this._images.set(statusName, image);
     });
 
-    let responsImageKey = "";
+    let responsImageKey = '';
     param.imageKeyMap.forEach((value, key) => {
       if (key == param.firstStatusName) {
         responsImageKey = value;

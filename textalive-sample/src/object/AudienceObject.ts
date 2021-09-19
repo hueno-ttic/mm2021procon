@@ -1,5 +1,5 @@
-import Phaser from "phaser";
-import GameMain from "../scenes/GameMain";
+import Phaser from 'phaser';
+import GameMain from '../scenes/GameMain';
 
 export default class AudienceObject {
   audience: Phaser.GameObjects.Image;
@@ -27,7 +27,7 @@ export default class AudienceObject {
     this.gameMain.firstLaneAudience = this.gameMain.add.image(
       x,
       y,
-      "audience" + audienceNum
+      'audience' + audienceNum
     );
     // alpha値の初期化
     this.gameMain.firstLaneAudience.alpha = 0;

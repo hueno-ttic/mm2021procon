@@ -1,5 +1,5 @@
-import Phaser from "phaser";
-import GameMain from "../scenes/GameMain";
+import Phaser from 'phaser';
+import GameMain from '../scenes/GameMain';
 
 export default class TutorialObject {
   // チュートリアル関連

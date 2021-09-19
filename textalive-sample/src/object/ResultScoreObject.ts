@@ -1,6 +1,6 @@
-import Phaser from "phaser";
-import GameMain from "../scenes/GameMain";
-import GameResultScene from "../scenes/GameResult";
+import Phaser from 'phaser';
+import GameMain from '../scenes/GameMain';
+import GameResultScene from '../scenes/GameResult';
 
 export interface ResultScoreObjectCreateParam {
   scene: Phaser.Scene;

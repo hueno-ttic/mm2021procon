@@ -1,5 +1,5 @@
-import Phaser from "phaser";
-import TextaliveApiManager from "../TextaliveApiManager";
+import Phaser from 'phaser';
+import TextaliveApiManager from '../TextaliveApiManager';
 
 export interface TimeInfoObjectCreateParam {
   scene: Phaser.Scene;
@@ -20,7 +20,7 @@ export default class TimeInfoObject {
   private static readonly IMAGE_DEPTH_VALUE_MIN: number = 0;
   private static readonly IMAGE_DEPTH_VALUE_MAX: number = 1;
   private static readonly TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle =
-    { font: "18px Arial" };
+    { font: '18px Arial' };
 
   constructor() {
     this.init();
@@ -42,30 +42,30 @@ export default class TimeInfoObject {
     this._songLengthText = param.scene.add.text(
       0,
       0,
-      "00:00",
+      '00:00',
       TimeInfoObject.TEXT_STYLE
     );
-    this._songLengthText.setStroke("black", strokeThickness);
+    this._songLengthText.setStroke('black', strokeThickness);
     this._songLengthText.setDepth(TimeInfoObject.IMAGE_DEPTH_VALUE_MAX);
     this._songLengthText.setOrigin(0.5, 0.5);
 
     this._nowTimeText = param.scene.add.text(
       0,
       0,
-      "00:00",
+      '00:00',
       TimeInfoObject.TEXT_STYLE
     );
-    this._nowTimeText.setStroke("black", strokeThickness);
+    this._nowTimeText.setStroke('black', strokeThickness);
     this._nowTimeText.setDepth(TimeInfoObject.IMAGE_DEPTH_VALUE_MAX);
     this._nowTimeText.setOrigin(0.5, 0.5);
 
     this._splitText = param.scene.add.text(
       0,
       0,
-      "/",
+      '/',
       TimeInfoObject.TEXT_STYLE
     );
-    this._splitText.setStroke("black", strokeThickness);
+    this._splitText.setStroke('black', strokeThickness);
     this._splitText.setDepth(TimeInfoObject.IMAGE_DEPTH_VALUE_MAX);
     this._splitText.setOrigin(0.5, 0.5);
 
@@ -106,16 +106,16 @@ export default class TimeInfoObject {
 
   private makeTimeString(time_ms: number): string {
     if (!this._dispTime) {
-      return "00:00";
+      return '00:00';
     }
 
     const time_sec = Math.round(time_ms / 1000);
 
     const min = Math.round(time_sec / 60);
     const sec = time_sec % 60;
-    return `${min.toString().padStart(2, "0")}:${sec
+    return `${min.toString().padStart(2, '0')}:${sec
       .toString()
-      .padStart(2, "0")}`;
+      .padStart(2, '0')}`;
   }
 
   setVisible(value: boolean): void {

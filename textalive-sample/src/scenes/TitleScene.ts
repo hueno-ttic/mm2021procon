@@ -1,14 +1,14 @@
-import Phaser from "phaser";
-import FlowingStarsManager from "../object/FlowingStarsObject";
+import Phaser from 'phaser';
+import FlowingStarsManager from '../object/FlowingStarsObject';
 
-import image from "../assets/*.png";
-import titleImage from "../assets/title/*.png";
-import music from "../assets/sound/music/*.wav";
+import image from '../assets/*.png';
+import titleImage from '../assets/title/*.png';
+import music from '../assets/sound/music/*.wav';
 
 export default class TitleScene extends Phaser.Scene {
   constructor() {
     super({
-      key: "TitleScene",
+      key: 'TitleScene',
     });
   }
 
@@ -27,40 +27,40 @@ export default class TitleScene extends Phaser.Scene {
 
   preload(): void {
     // imageの読み込み
-    this.load.image("back_ground", titleImage.back_ground);
-    this.load.image("project_mirai", titleImage.project_mirai);
-    this.load.image("sub_title", titleImage.sub_title);
-    this.load.image("back_title", titleImage.back_title);
-    this.load.image("click_start", titleImage.click_start);
-    this.load.image("bg_star", titleImage.star);
-    this.load.audio("title_music", music.title);
+    this.load.image('back_ground', titleImage.back_ground);
+    this.load.image('project_mirai', titleImage.project_mirai);
+    this.load.image('sub_title', titleImage.sub_title);
+    this.load.image('back_title', titleImage.back_title);
+    this.load.image('click_start', titleImage.click_start);
+    this.load.image('bg_star', titleImage.star);
+    this.load.audio('title_music', music.title);
   }
 
   create(): void {
-    const bg = this.add.image(500, 350, "back_ground");
+    const bg = this.add.image(500, 350, 'back_ground');
     bg.setDepth(-10);
 
-    const gameTitle = this.add.image(640, 230, "project_mirai");
+    const gameTitle = this.add.image(640, 230, 'project_mirai');
     gameTitle.setDisplaySize(950, 90);
-    this.add.image(640, 315, "sub_title");
+    this.add.image(640, 315, 'sub_title');
 
-    this.back_title = this.add.image(640, 570, "back_title");
+    this.back_title = this.add.image(640, 570, 'back_title');
     this.back_title.setInteractive();
-    this.back_title.on("pointerdown", () => {
+    this.back_title.on('pointerdown', () => {
       this.titleMusic.stop();
-      this.scene.start("MusicSelect");
+      this.scene.start('MusicSelect');
     });
     this.back_title.scaleY = this.back_title.scaleY * 0.7;
 
-    this.click_start = this.add.image(640, 570, "click_start");
+    this.click_start = this.add.image(640, 570, 'click_start');
     this.click_start.scale = this.click_start.scale * 0.7;
 
-    this.click_start.on("pointerdown", () => {
+    this.click_start.on('pointerdown', () => {
       this.titleMusic.stop();
-      this.scene.start("MusicSelect");
+      this.scene.start('MusicSelect');
     });
 
-    this.titleMusic = this.sound.add("title_music", {
+    this.titleMusic = this.sound.add('title_music', {
       loop: true,
       volume: 0.5,
     });
@@ -70,7 +70,7 @@ export default class TitleScene extends Phaser.Scene {
 
     this.flowingStars.create({
       scene: this,
-      starImageKey: "bg_star",
+      starImageKey: 'bg_star',
       imageDepth: -1,
     });
     this.flowingStars.setVisible(true);
