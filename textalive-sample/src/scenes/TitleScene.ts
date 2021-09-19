@@ -3,7 +3,7 @@ import FlowingStarsManager from '../object/FlowingStarsObject';
 
 import image from "../assets/*.png"
 import titleImage from "../assets/title/*.png";
-import music from "../assets/sound/music/*.ogg";
+import music from "../assets/sound/music/*.wav";
 
 export default class TitleScene extends Phaser.Scene {
   constructor() {
