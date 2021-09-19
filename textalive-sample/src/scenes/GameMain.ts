@@ -8,6 +8,7 @@ import MusicSelect from "MusicSelect";
 import TimeInfoObject from '../object/TimeInfoObject';
 import UIPauseButtonObject from '../object/UIPauseButtonObject';
 import TutorialObject from "../object/TutorialObject";
+import LyricLineObject from "../object/LyricLineObject";
 
 import image from "../assets/*.png";
 import artistImage from "../assets/live_artist/*.png";
@@ -88,9 +89,7 @@ export default class GameMain extends Phaser.Scene {
     public thirdLaneLine;
 
     // 歌詞表示部分
-    public lyricLine = [];
-    public lyricLineStartPos = 0;
-    public textLineLength = 0;
+    private lyricLineObject: LyricLineObject;
 
     public initFlag: Boolean = true;
     
@@ -164,6 +163,8 @@ export default class GameMain extends Phaser.Scene {
         
         // ボタン
         this.pauseButton = new UIPauseButtonObject();
+
+        this.lyricLineObject = new LyricLineObject(this);
 
         // Visualizer
         this.visualizer = new Visualizer(this);
@@ -437,7 +438,6 @@ export default class GameMain extends Phaser.Scene {
             }
         }
 
-
         // 曲が流れているときだけ動く
         if (this.api.getPositionTime() != null && this.api.getPositionTime() != 0) {
 
@@ -447,16 +447,7 @@ export default class GameMain extends Phaser.Scene {
                 this.lyrics = this.api.getLyrics();
                 console.log(this.lyrics);
                 // 最初に表示する分の歌詞だけ表示状態にする
-                for (let i = 0; i < this.lyrics.length; i++) {
-                    this.lyricLine[i] = this.add.text(0, 636, this.lyrics[i].getText(), { font: '32px Arial' });
-                    this.lyricLine[i].x = 180 + (this.textLineLength * 35);
-                    this.lyricLine[i].setStroke(this.lyrics[i].color, 5);
-                    this.lyricLine[i].setVisible(true);
-                    this.textLineLength += this.lyrics[i].getText().length;
-                    if (this.textLineLength > 15) {
-                        break;
-                    }
-                }
+                this.lyricLineObject.initLyricLine(this.lyrics);
                 // 初期化処理の終了フラグ
                 this.initFlag = false;
             }
@@ -470,16 +461,17 @@ export default class GameMain extends Phaser.Scene {
                 lyricIndex = lyric.index;
             }
 
-            // 歌詞表示
-            this.updateLyricLine(lyricIndex);
-
             // 横に流れる歌詞データの追加
             lyricText = this.api.getCurrentLyricText(time);
             lyricIndex = this.api.getCurrentLyricIndex(time);
             if (typeof this.textData[lyricIndex] === "undefined" && lyricText != null && lyricText != "" && lyricText != " ") {
                 this.textData[lyricIndex] = this.add.text(800, this.lyricY - 20, lyricText, { font: '50px Arial' });
                 this.textData[lyricIndex].setStroke(lyric.color, 10);
+                // 歌詞表示の更新
+                this.lyricLineObject.updateLyricLine(this.lyrics, lyricIndex);
             }
+
+
         }
 
         // テキストの描画更新
@@ -579,40 +571,6 @@ export default class GameMain extends Phaser.Scene {
         return score;
     }
 
-    // 下部に表示している歌詞情報の更新
-    private updateLyricLine(currentLyricIndex) {
-
-        // 直前に打ち出した歌詞がない、または歌詞が進んでない場合はreturn
-        if ( typeof currentLyricIndex == "undefined" ||typeof this.lyrics[currentLyricIndex] == "undefined"
-            || currentLyricIndex <= this.lyricLineStartPos-1 ) {
-            return;
-        }
-        // 直前に打ち出した歌詞データ
-        let nextVisibleText = this.lyrics[currentLyricIndex];
-        // 直前の歌詞を無くした歌詞表示エリアの長さを計算
-        this.textLineLength -= nextVisibleText.getText().length;
-
-        // 打ち出した歌詞は削除
-        this.lyricLine[currentLyricIndex].destroy(this);
-        this.lyricLineStartPos++;
-
-        // 打ち出した分だけ既存の歌詞を進める
-        for (let i = currentLyricIndex; i < this.lyricLine.length; i++) {
-            this.lyricLine[i].x -= (nextVisibleText.getText().length * 35);
-        }
-
-        // 残りの歌詞を追加する
-        for (let i = this.lyricLine.length; i < this.lyrics.length; i++) {
-            this.lyricLine[i] = this.add.text(0, 636, this.lyrics[i].getText(), { font: '32px Arial' });
-            this.lyricLine[i].x = 180 + (this.textLineLength*35) ;
-            this.lyricLine[i].setStroke(this.lyrics[i].color, 5);
-            this.textLineLength += this.lyrics[i].getText().length;
-            if (this.textLineLength > 15) {
-                break;
-            }
-        }
-    }
-
     private setHeartTween(heartObject) {
         this.tweens.add({
             //tweenを適応させる対象
@@ -642,54 +600,6 @@ export default class GameMain extends Phaser.Scene {
             //easingの指定
             ease: 'Linear',
         });
-    }
-
-    /**
-     *  レーンの色を可変にする
-     */
-    private setLaneColor(laneName: String, color: String) {
-
-        var scale = 0.9;
-        switch (laneName) {
-            case "first":
-                this.laneHeartObjectArray[0].image.destroy(true);
-                this.laneHeartObjectArray[0].image = this.add.image(this.heartX, this.firstLane, 'heart_' + color);
-                this.laneHeartObjectArray[0].image.scaleX *= scale;
-                this.laneHeartObjectArray[0].image.scaleY *= scale;
-
-                this.firstLaneLine.destroy(this);
-                this.firstLaneLine = this.add.image(430, this.firstLane, 'line_' + color);
-                this.firstLaneLine.scaleX = this.firstLaneLine.scaleX * 0.4;
-                this.firstLaneLine.scaleY = this.firstLaneLine.scaleY * 0.5;
-                break;
-            case "second":
-                this.laneHeartObjectArray[1].image.destroy(true);
-                this.laneHeartObjectArray[1].image = this.add.image(this.heartX, this.secondLane, 'heart_' + color);
-                this.laneHeartObjectArray[1].image.scaleX *= scale;
-                this.laneHeartObjectArray[1].image.scaleY *= scale;
-
-                this.secondLaneLine.destroy(this);
-                this.secondLaneLine = this.add.image(430, this.secondLane, 'line_' + color);
-                this.secondLaneLine.scaleX = this.secondLaneLine.scaleX * 0.4;
-                this.secondLaneLine.scaleY = this.secondLaneLine.scaleY * 0.5;
-                break;
-            case "third":
-                this.laneHeartObjectArray[2].image.destroy(true);
-                this.laneHeartObjectArray[2].image = this.add.image(this.heartX, this.thirdLane, 'heart_' + color);
-                this.laneHeartObjectArray[2].image.scaleX *= scale;
-                this.laneHeartObjectArray[2].image.scaleY *= scale;
-
-                this.thirdLaneLine.destroy(this);
-                this.thirdLaneLine = this.add.image(430, this.thirdLane, 'line_' + color);
-                this.thirdLaneLine.scaleX = this.thirdLaneLine.scaleX * 0.4;
-                this.thirdLaneLine.scaleY = this.thirdLaneLine.scaleY * 0.5;
-                break;
-            default:
-                console.log("定義されていないレーンです");
-                break;
-        }
-
-
     }
 
     private pointerdown(): void {
