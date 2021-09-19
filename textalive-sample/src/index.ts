@@ -18,13 +18,7 @@ const config: Phaser.Types.Core.GameConfig = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
   },
-  scene: [
-    SplashScene,
-    TitleScene,
-    GameMain,
-    MusicSelectScene,
-    GameResult,
-  ],
+  scene: [SplashScene, TitleScene, GameMain, MusicSelectScene, GameResult],
 };
 
 // ゲームメインのクラス
@@ -40,7 +34,7 @@ class Main {
     // windowイベントで、ロードされたらゲーム開始
     window.addEventListener('load', () => {
       console.log('start');
-      let gameApp = new Game();
+      const gameApp = new Game();
     });
   }
 }

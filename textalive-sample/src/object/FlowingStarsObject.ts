@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
 
 export interface FlowingStarsManagerCreateParam {
     scene: Phaser.Scene;
@@ -8,51 +8,56 @@ export interface FlowingStarsManagerCreateParam {
 
 export default class FlowingStarsManager {
     private _scene: Phaser.Scene;
-    private _stars: Array<FlowingStarObject>;
+    private _stars: FlowingStarObject[];
 
-    public static readonly IMAGE_DEPTH_VALUE_MIN: number = 0;
-    public static readonly IMAGE_DEPTH_VALUE_MAX: number = 0;
- 
+    static readonly IMAGE_DEPTH_VALUE_MIN: number = 0;
+    static readonly IMAGE_DEPTH_VALUE_MAX: number = 0;
+
     private static readonly STARS_NUM: number = 20;
 
     constructor() {
         this.init();
     }
 
-    public init(): void {
+    init(): void {
         this._scene = null;
         this._stars = null;
     }
 
-    public create(param: FlowingStarsManagerCreateParam): void {
+    create(param: FlowingStarsManagerCreateParam): void {
         this._scene = param.scene;
 
         this._stars = new Array<FlowingStarObject>();
         // 星の軌道の角度に合わせて leight * Math.tan(rad) 掛ける必要があるが、rad = 4 / PI だと 1 になるので簡略化
-        const startWidth = this._scene.game.scale.gameSize.width + this._scene.game.scale.gameSize.height;
+        const startWidth =
+            this._scene.game.scale.gameSize.width +
+            this._scene.game.scale.gameSize.height;
         const distance = startWidth / FlowingStarsManager.STARS_NUM;
         for (let i = 0; i < FlowingStarsManager.STARS_NUM; i++) {
-            const x_offset = distance * Phaser.Math.FloatBetween(0.0, 1.0);
-            let star = new FlowingStarObject();
+            const x_offset = distance * Phaser.Math.FloatBetween(0, 1);
+            const star = new FlowingStarObject();
             star.create({
                 parentParam: param,
                 posX: distance * (i + 1) + x_offset,
-                posY: -Phaser.Math.Between(0, this._scene.game.scale.gameSize.height)
+                posY: -Phaser.Math.Between(
+                    0,
+                    this._scene.game.scale.gameSize.height
+                ),
             });
-            const scale = Phaser.Math.FloatBetween(0.1, 1.0);
+            const scale = Phaser.Math.FloatBetween(0.1, 1);
             star.image.setScale(scale, scale);
             this._stars.push(star);
         }
         this.setVisible(false);
     }
 
-    public update(): void {
+    update(): void {
         this._stars.forEach((star) => {
-            star.update()
+            star.update();
         });
     }
 
-    public setVisible(value: boolean): void {
+    setVisible(value: boolean): void {
         this._stars.forEach((star) => {
             star.image.setVisible(value);
         });
@@ -73,18 +78,27 @@ class FlowingStarObject {
         this.init();
     }
 
-    public init(): void {
+    init(): void {
         this._image = null;
     }
 
-    public create(param: FlowingStarObjectCreateParam): void {
-        this._image = param.parentParam.scene.add.image(param.posX, param.posY, param.parentParam.starImageKey);
-        this._image.setDepth(FlowingStarsManager.IMAGE_DEPTH_VALUE_MAX + (param.parentParam.imageDepth ? param.parentParam.imageDepth : 0));
+    create(param: FlowingStarObjectCreateParam): void {
+        this._image = param.parentParam.scene.add.image(
+            param.posX,
+            param.posY,
+            param.parentParam.starImageKey
+        );
+        this._image.setDepth(
+            FlowingStarsManager.IMAGE_DEPTH_VALUE_MAX +
+                (param.parentParam.imageDepth
+                    ? param.parentParam.imageDepth
+                    : 0)
+        );
 
         this._scene = param.parentParam.scene;
     }
 
-    public update(): void {
+    update(): void {
         if (!this._image.visible) {
             return;
         }
@@ -93,20 +107,22 @@ class FlowingStarObject {
         // 星の軌道の角度に合わせて三角関数を掛ける必要があるが、rad = 4 / PI だと x:y = 1:1 になるので簡略化
         this._image.x -= speed;
         this._image.y += speed;
-        this._image.rotation -= (Math.PI / 180) * (1 - this._image.scale) * speed * 5;
+        this._image.rotation -=
+            (Math.PI / 180) * (1 - this._image.scale) * speed * 5;
 
         const width = this._image.width;
         if (this._image.x < -width) {
-            this._image.x += this._scene.game.scale.gameSize.width + 2.0 * width;
+            this._image.x += this._scene.game.scale.gameSize.width + 2 * width;
         }
 
         const height = this._image.height;
         if (this._image.y > this._scene.game.scale.gameSize.height + height) {
-            this._image.y -= this._scene.game.scale.gameSize.height + 2.0 * height;
+            this._image.y -=
+                this._scene.game.scale.gameSize.height + 2 * height;
         }
     }
 
-    public setVisible(value: boolean): void {
+    setVisible(value: boolean): void {
         this._image.setVisible(value);
     }
 

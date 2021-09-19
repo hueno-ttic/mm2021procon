@@ -24,7 +24,7 @@ export default class CharText {
     return this.index;
   }
 
-  getText(): String {
+  getText(): string {
     return this.text;
   }
 }

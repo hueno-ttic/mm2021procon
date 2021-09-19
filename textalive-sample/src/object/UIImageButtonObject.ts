@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
 
 export interface UIImageButtonObjectCreateParam {
     scene: Phaser.Scene;
@@ -24,43 +24,57 @@ export default class UIImageButtonObject {
         this.init();
     }
 
-    public init(): void {
+    init(): void {
         this._isVisible = false;
         this._images = null;
         this._responseObject = null;
         this._status = null;
     }
 
-    public create(param: UIImageButtonObjectCreateParam): void {
+    create(param: UIImageButtonObjectCreateParam): void {
         this._images = new Map<string, Phaser.GameObjects.Image>();
         param.imageKeyMap.forEach((imageKey, statusName) => {
-            let image = param.scene.add.image(param.posX, param.posY, imageKey);
+            const image = param.scene.add.image(
+                param.posX,
+                param.posY,
+                imageKey
+            );
             image.setVisible(this._isVisible);
             if (param.width && param.height) {
                 image.setDisplaySize(param.width, param.height);
             }
-            image.setDepth(UIImageButtonObject.IMAGE_DEPTH_VALUE_MAX + (param.imageDepth ? param.imageDepth : 0));
+            image.setDepth(
+                UIImageButtonObject.IMAGE_DEPTH_VALUE_MAX +
+                    (param.imageDepth ? param.imageDepth : 0)
+            );
             this._images.set(statusName, image);
         });
 
         let responsImageKey = "";
         param.imageKeyMap.forEach((value, key) => {
-            if(key == param.firstStatusName) {
+            if (key == param.firstStatusName) {
                 responsImageKey = value;
             }
         });
-        this._responseObject = param.scene.add.image(param.posX, param.posY, responsImageKey);
+        this._responseObject = param.scene.add.image(
+            param.posX,
+            param.posY,
+            responsImageKey
+        );
         if (param.width && param.height) {
             this._responseObject.setDisplaySize(param.width, param.height);
         }
         this._responseObject.setInteractive();
         this._responseObject.setVisible(this._isVisible);
-        this._responseObject.setDepth(UIImageButtonObject.IMAGE_DEPTH_VALUE_MIN + (param.imageDepth ? param.imageDepth : 0));
+        this._responseObject.setDepth(
+            UIImageButtonObject.IMAGE_DEPTH_VALUE_MIN +
+                (param.imageDepth ? param.imageDepth : 0)
+        );
 
         this._status = param.firstStatusName;
     }
 
-    public setVisible(value: boolean): void {
+    setVisible(value: boolean): void {
         this._isVisible = value;
         this._images.forEach((image, statusName) => {
             image.setVisible(statusName == this._status && this._isVisible);

@@ -1,7 +1,6 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
 
 export default class LyricLineObject {
-
     public scene;
     public lyricLine: Array<Phaser.GameObjects.Text>;
     public textLineLength = 0;
@@ -15,8 +14,15 @@ export default class LyricLineObject {
 
     public initLyricLine(lyrics) {
         for (let i = 0; i < lyrics.length; i++) {
-            this.lyricLine[i] = this.scene.add.text(0, 636, lyrics[i].getText(), { font: '32px Arial' });
-            this.lyricLine[i].x = 180 + (this.textLineLength * 35);
+            this.lyricLine[i] = this.scene.add.text(
+                0,
+                636,
+                lyrics[i].getText(),
+                {
+                    font: "32px Arial",
+                }
+            );
+            this.lyricLine[i].x = 180 + this.textLineLength * 35;
             this.lyricLine[i].setStroke(lyrics[i].color, 5);
             this.lyricLine[i].setVisible(true);
             this.textLineLength += lyrics[i].getText().length;
@@ -37,9 +43,11 @@ export default class LyricLineObject {
         }
 
         // 直前に打ち出した歌詞がない、または歌詞が進んでない場合はreturn
-        if (typeof currentLyricIndex == "undefined" ||
+        if (
+            typeof currentLyricIndex == "undefined" ||
             typeof lyrics[currentLyricIndex] == "undefined" ||
-            typeof this.lyricLine[currentLyricIndex] == "undefined") {
+            typeof this.lyricLine[currentLyricIndex] == "undefined"
+        ) {
             return;
         }
 
@@ -50,7 +58,7 @@ export default class LyricLineObject {
         // 打ち出した分だけ既存の歌詞を進める
         let lyricLineLength = 0;
         for (let i = currentLyricIndex + 1; i < this.lyricLine.length; i++) {
-            this.lyricLine[i].x = 180 + (lyricLineLength * 35);
+            this.lyricLine[i].x = 180 + lyricLineLength * 35;
             lyricLineLength += this.lyricLine[i].text.length;
         }
 
@@ -60,8 +68,15 @@ export default class LyricLineObject {
             if (lyricLineLength > 17) {
                 break;
             }
-            this.lyricLine[i] = this.scene.add.text(0, 636, lyrics[i].getText(), { font: '32px Arial' });
-            this.lyricLine[i].x = 180 + (lyricLineLength * 35);
+            this.lyricLine[i] = this.scene.add.text(
+                0,
+                636,
+                lyrics[i].getText(),
+                {
+                    font: "32px Arial",
+                }
+            );
+            this.lyricLine[i].x = 180 + lyricLineLength * 35;
             this.lyricLine[i].setStroke(lyrics[i].color, 5);
             lyricLineLength += lyrics[i].getText().length;
             this.lyricLineAddPos++;

@@ -1,22 +1,28 @@
 import Lyric from './Lyric';
 import CharText from './CharText';
 
-import { Ease, Player, IVideo, NullGraphicsDriver, PlayerEventListener} from 'textalive-app-api';
+import {
+  Ease,
+  Player,
+  IVideo,
+  NullGraphicsDriver,
+  PlayerEventListener,
+} from 'textalive-app-api';
 
 export default class TextaliveApiManager {
   private musicUrl: string;
 
-  public player: Player;
-  public playerEventListener: PlayerEventListener;
+  player: Player;
+  playerEventListener: PlayerEventListener;
 
   private lyrics: Lyric[] = [];
   private charText: CharText[] = [];
 
   private positionTime: number;
 
-  videoEnd: Boolean = false;
+  videoEnd: boolean = false;
 
-  private isChorus: Boolean;
+  private isChorus: boolean;
 
   private excludeLyricList = [];
 
@@ -32,11 +38,10 @@ export default class TextaliveApiManager {
         token: 'GYtUEuVODFiceV7w',
       },
       mediaElement: document.querySelector<HTMLElement>('#media'),
-      valenceArousalEnabled : true, // 覚醒度と感情価の取得
-      vocalAmplitudeEnabled : true // 声量情報の取得
+      valenceArousalEnabled: true, // 覚醒度と感情価の取得
+      vocalAmplitudeEnabled: true, // 声量情報の取得
     });
     document.querySelector<HTMLElement>('#media').hidden = true;
-
 
     // バッググラウンドで実行する機能をListenerに登録
     this.player.addListener({
@@ -44,7 +49,7 @@ export default class TextaliveApiManager {
       onTimerReady: () => this.onTimerReady(),
       onTimeUpdate:pos => this.onTimeUpdate(pos),
       onVideoReady:v => this.onVideoReady(v),
-      onThrottledTimeUpdate:pos => this.onThrottledTimeUpdate(pos)
+      onThrottledTimeUpdate:pos => this.onThrottledTimeUpdate(pos),
     });
     console.log(this.player);
     this.excludeLyricList = [" ","　","?","!","？","！",")","(","）","（","」","「"];
@@ -109,7 +114,7 @@ export default class TextaliveApiManager {
       }
 
       // 歌詞ごとの覚醒度と感情価を設定
-      var valenceArousal = this.player.getValenceArousal(w.startTime);
+      const valenceArousal = this.player.getValenceArousal(w.startTime);
       // 単語情報を格納
       this.lyrics.push(new Lyric(w, wordIndex, color, valenceArousal));
       // 次の単語へ
@@ -134,7 +139,6 @@ export default class TextaliveApiManager {
     // サビかどうかを取得(サビならtrue)
     // console.log(this.player.findBeat(position));
     this.isChorus = this.player.findChorus(position) != null;
-
   }
 
   getLyrics() {
@@ -199,23 +203,22 @@ export default class TextaliveApiManager {
     return this.positionTime;
   }
 
-  getLyricsLength(): Number {
+  getLyricsLength(): number {
     return this.lyrics.length;
   }
 
-  getMusicLength(): Number {
+  getMusicLength(): number {
     return 0;
   }
 
-  // public isVideoSeeking() : Boolean {
+  // public isVideoSeeking() : boolean {
   //     return this.player.isVideoSeeking();
   // }
 
   /**
    * 楽曲ががしていたポジションならTrueを返す
    */
-  getIsChorus(): Boolean {
+  getIsChorus(): boolean {
     return this.isChorus;
   }
-
 }
