@@ -176,13 +176,9 @@ export default class GameMain extends Phaser.Scene {
         console.log("preload()");
 
         // 背景画像
-<<<<<<< HEAD
         this.load.image('backImg', gameImage['whiteback']);
         this.load.image('stage', gameImage['Stage']);
         this.load.image('miscBackground', gameImage['MiscBackground']);
-=======
-        this.load.image("backImg", image["back_img"]);
->>>>>>> main
 
         // チュートリアル素材
         this.load.image("tutorialDescription", image["TutorialDescription"]);
@@ -199,17 +195,10 @@ export default class GameMain extends Phaser.Scene {
         this.load.image("heart_blue", image["heart_blue"]);
 
         // ライン
-<<<<<<< HEAD
         this.load.image('line_red', gameImage['Lane03']);
         this.load.image('line_yellow', gameImage['Lane02']);
         this.load.image('line_green', gameImage['Lane01']);
         this.load.image('line_blue', gameImage['Lane04']);
-=======
-        this.load.image("line_red", image["line_red"]);
-        this.load.image("line_yellow", image["line_yellow"]);
-        this.load.image("line_green", image["line_green"]);
-        this.load.image("line_blue", image["line_blue"]);
->>>>>>> main
 
         //観客
         this.load.image("audience", image["audience"]);
@@ -234,7 +223,6 @@ export default class GameMain extends Phaser.Scene {
         // --------------------------------
         // オブジェクトの生成
         // 背景
-<<<<<<< HEAD
         let backImg = this.add.image(640, 360, 'backImg').setDepth(DepthDefine.BACK_GROUND);
         const lineX = 20;
         
@@ -262,14 +250,6 @@ export default class GameMain extends Phaser.Scene {
                 this.audience[j][i].createAudience(this.add.image(880 - (110 * i), this.lanePosition[j], 'audience'));
             }
         }
-=======
-        var backImg = this.add.image(500, 350, "backImg");
-        backImg.alpha = 0.2;
-
-        // ミクの設定
-        this.lyricY = this.firstLane;
-        this.mikuImg = this.add.image(1100, this.lyricY, "miku");
->>>>>>> main
 
         // ハートオブジェクト
         var scale = 0.5;
@@ -290,46 +270,6 @@ export default class GameMain extends Phaser.Scene {
             });
         }
 
-<<<<<<< HEAD
-=======
-        // ラインのオブジェクト
-        var lineScale = 0.9;
-        this.firstLaneLine = this.add.image(500, this.firstLane, "line_red");
-        this.firstLaneLine.scaleX = this.firstLaneLine.scaleX * 0.53;
-        this.firstLaneLine.scaleY = this.firstLaneLine.scaleY * 0.62;
-        this.secondLaneLine = this.add.image(
-            500,
-            this.secondLane,
-            "line_yellow"
-        );
-        this.secondLaneLine.scaleX = this.secondLaneLine.scaleX * 0.53;
-        this.secondLaneLine.scaleY = this.secondLaneLine.scaleY * 0.62;
-        this.thirdLaneLine = this.add.image(500, this.thirdLane, "line_green");
-        this.thirdLaneLine.scaleX = this.thirdLaneLine.scaleX * 0.53;
-        this.thirdLaneLine.scaleY = this.thirdLaneLine.scaleY * 0.62;
-
-        // スコアの設定
-        var scoreT = this.add.text(30, 625, "Score", { font: "18px Arial" });
-        scoreT.setStroke("black", 10);
-        this.scoreText = this.add.text(30, 650, String(this.score), {
-            font: "18px Arial",
-        });
-        this.scoreText.setStroke("black", 10);
-
-        // 観客の設定
-        for (let j = 0; j < GameMain.LANE_SIZE; j++) {
-            for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE; i++) {
-                this.audience[j][i].createAudience(
-                    this.add.image(
-                        880 - 110 * i,
-                        this.lanePosition[j],
-                        "audience"
-                    )
-                );
-            }
-        }
-
->>>>>>> main
         // パーティクル処理
         particles = this.add.particles("star");
 
@@ -365,26 +305,16 @@ export default class GameMain extends Phaser.Scene {
         this.timeProgressBar.create({
             scene: this,
             posX: 570,
-<<<<<<< HEAD
             posY: 695,
             textalivePlayer: this.api
-=======
-            posY: 690,
-            textalivePlayer: this.api,
->>>>>>> main
         });
         this.timeProgressBar.setVisible(true);
 
         this.timeInfo.create({
             scene: this,
             posX: 87,
-<<<<<<< HEAD
             posY: 695,
             textalivePlayer: this.api
-=======
-            posY: 690,
-            textalivePlayer: this.api,
->>>>>>> main
         });
         this.timeInfo.setVisible(true);
 
@@ -560,11 +490,6 @@ export default class GameMain extends Phaser.Scene {
             // 横に流れる歌詞データの追加
             lyricText = this.api.getCurrentLyricText(time);
             lyricIndex = this.api.getCurrentLyricIndex(time);
-<<<<<<< HEAD
-            if (typeof this.textData[lyricIndex] === "undefined" && lyricText != null && lyricText != "" && lyricText != " ") {
-                this.textData[lyricIndex] = this.add.text(800, this.lyricY - 20, lyricText, { font: '50px Arial' });
-                this.textData[lyricIndex].setStroke(lyric.color, 5);
-=======
             if (
                 typeof this.textData[lyricIndex] === "undefined" &&
                 lyricText != null &&
@@ -578,7 +503,6 @@ export default class GameMain extends Phaser.Scene {
                     { font: "50px Arial" }
                 );
                 this.textData[lyricIndex].setStroke(lyric.color, 10);
->>>>>>> main
                 // 歌詞表示の更新
                 this.lyricLineObject.updateLyricLine(this.lyrics, lyricIndex);
             }
