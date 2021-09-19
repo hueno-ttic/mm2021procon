@@ -32,7 +32,7 @@
     "lint-staged": {
         "*.{ts,tsx}": [
             "tsc --noEmit",
-            "tslint -p tsconfig.json -c tslint.json --fix",
+            "prettier --write ./src/**/*.ts",
             "git add"
         ]
     }
