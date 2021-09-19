@@ -13,7 +13,7 @@ export default class FlowingStarsManager {
     static readonly IMAGE_DEPTH_VALUE_MIN: number = 0;
     static readonly IMAGE_DEPTH_VALUE_MAX: number = 0;
 
-    private static readonly STARS_NUM: number = 20;
+    private static readonly STARS_NUM: number = 40;
 
     constructor() {
         this.init();
@@ -28,7 +28,7 @@ export default class FlowingStarsManager {
         this._scene = param.scene;
 
         this._stars = new Array<FlowingStarObject>();
-        // 星の軌道の角度に合わせて leight * Math.tan(rad) 掛ける必要があるが、rad = 4 / PI だと 1 になるので簡略化
+        // 星の軌道の角度に合わせて leight * Math.tan(rad) 掛ける必要があるが、rad = PI / 4 だと 1 になるので簡略化
         const startWidth =
             this._scene.game.scale.gameSize.width +
             this._scene.game.scale.gameSize.height;
@@ -103,12 +103,12 @@ class FlowingStarObject {
             return;
         }
 
-        const speed = 3 * (1.2 - this._image.scale);
-        // 星の軌道の角度に合わせて三角関数を掛ける必要があるが、rad = 4 / PI だと x:y = 1:1 になるので簡略化
+        const speed = 15 * (1.2 - this._image.scale);
+        // 星の軌道の角度に合わせて三角関数を掛ける必要があるが、rad = PI / 4 だと x:y = 1:1 になるので簡略化
         this._image.x -= speed;
         this._image.y += speed;
         this._image.rotation -=
-            (Math.PI / 180) * (1 - this._image.scale) * speed * 5;
+            (Math.PI / 180) * (1 - this._image.scale) * speed * 2;
 
         const width = this._image.width;
         if (this._image.x < -width) {
