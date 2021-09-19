@@ -13,6 +13,7 @@ import image from "../assets/*.png";
 import artistImage from "../assets/live_artist/*.png";
 import uiImage from "../assets/ui/*.png"
 import soundSe from "../assets/sound/se/*.wav"
+import Visualizer from "./audioVisualizer/app/presenter/visualizer";
 
 // パーティクルマネージャーの宣言
 var particles;
@@ -114,6 +115,9 @@ export default class GameMain extends Phaser.Scene {
     // ポーズボタン
     private pauseButton: UIPauseButtonObject;
 
+    // Visuzlizer
+    private visualizer: Visualizer;
+
     constructor() {
         super({ key: 'GameMain' })
     }
@@ -160,6 +164,10 @@ export default class GameMain extends Phaser.Scene {
         
         // ボタン
         this.pauseButton = new UIPauseButtonObject();
+
+        // Visualizer
+        this.visualizer = new Visualizer(this);
+        this.visualizer.init();
     }
 
     preload(): void {
@@ -532,6 +540,7 @@ export default class GameMain extends Phaser.Scene {
 
         this.timeProgressBar.update();
         this.timeInfo.update();
+        this.visualizer.update(this.api.getPositionTime());
 
     }
 
