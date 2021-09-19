@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 import Phaser from 'phaser';
 import gameImage from "../assets/game_main/*.png";
-=======
-import Phaser from "phaser";
->>>>>>> main
 
 export default class LyricLineObject {
     public scene;
@@ -19,11 +15,7 @@ export default class LyricLineObject {
 
     public initLyricLine(lyrics) {
         for (let i = 0; i < lyrics.length; i++) {
-<<<<<<< HEAD
-            this.lyricLine[i] = this.scene.add.text(0, 640, lyrics[i].getText(), { font: '32px Arial' });
-            this.lyricLine[i].x = 180 + (this.textLineLength * 35);
-            this.lyricLine[i].setStroke(lyrics[i].color, 3);
-=======
+
             this.lyricLine[i] = this.scene.add.text(
                 0,
                 636,
@@ -34,7 +26,6 @@ export default class LyricLineObject {
             );
             this.lyricLine[i].x = 180 + this.textLineLength * 35;
             this.lyricLine[i].setStroke(lyrics[i].color, 5);
->>>>>>> main
             this.lyricLine[i].setVisible(true);
             this.textLineLength += lyrics[i].getText().length;
             this.lyricLineAddPos++;
@@ -79,10 +70,7 @@ export default class LyricLineObject {
             if (lyricLineLength > 17) {
                 break;
             }
-<<<<<<< HEAD
-            this.lyricLine[i] = this.scene.add.text(0, 640, lyrics[i].getText(), { font: '32px Arial' });
-            this.lyricLine[i].x = 180 + (lyricLineLength * 35);
-=======
+
             this.lyricLine[i] = this.scene.add.text(
                 0,
                 636,
@@ -92,7 +80,6 @@ export default class LyricLineObject {
                 }
             );
             this.lyricLine[i].x = 180 + lyricLineLength * 35;
->>>>>>> main
             this.lyricLine[i].setStroke(lyrics[i].color, 5);
             lyricLineLength += lyrics[i].getText().length;
             this.lyricLineAddPos++;
