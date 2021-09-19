@@ -116,9 +116,9 @@ export default class TimeInfoObject {
             return "00:00";
         }
 
-        const time_sec = Math.round(time_ms / 1000);
+        const time_sec = Math.trunc(time_ms / 1000);
 
-        const min = Math.round(time_sec / 60);
+        const min = Math.trunc(time_sec / 60);
         const sec = time_sec % 60;
         return `${min.toString().padStart(2, "0")}:${sec
             .toString()
