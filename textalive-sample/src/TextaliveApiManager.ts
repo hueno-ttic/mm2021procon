@@ -24,6 +24,8 @@ export default class TextaliveApiManager {
 
   private isChorus: boolean;
 
+  private excludeLyricList = [];
+
   constructor(url: string) {
     this.musicUrl = url;
   }
@@ -50,6 +52,7 @@ export default class TextaliveApiManager {
       onThrottledTimeUpdate:pos => this.onThrottledTimeUpdate(pos),
     });
     console.log(this.player);
+    this.excludeLyricList = [" ","　","?","!","？","！",")","(","）","（","」","「"];
   }
 
   // APIへのアクセス準備
@@ -84,6 +87,10 @@ export default class TextaliveApiManager {
     let w = this.player.video.firstWord;
     let wordIndex = 0;
     while (w) {
+      // 歌詞の除外条件
+      if (this.excludeLyricList.includes(w)) {
+          continue;
+      }
       // 歌詞の色変え
       const num = Math.floor(Math.random() * 3);
       let color;
