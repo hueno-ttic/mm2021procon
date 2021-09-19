@@ -7,7 +7,8 @@
         "dev": "parcel src/index.html --out-dir dev",
         "build": "parcel build src/index.html --public-url ./ --out-dir docs --no-source-maps",
         "clean": "del-cli .cache dev docs",
-        "precommit": "lint-staged"
+        "precommit": "lint-staged",
+        "lint:write": "prettier --write ./src/**/*.ts"
     },
     "keywords": [
         "textalive"
@@ -24,9 +25,6 @@
         "lint-staged": "^11.1.2",
         "parcel-bundler": "^1.12.4",
         "prettier": "^2.3.2",
-        "tslint": "^6.1.3",
-        "tslint-config-prettier": "^1.18.0",
-        "tslint-plugin-prettier": "^2.3.0",
         "typescript": "^4.3.5"
     },
     "lint-staged": {
