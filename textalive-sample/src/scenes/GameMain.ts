@@ -17,6 +17,7 @@ import artistImage from "../assets/live_artist/*.png";
 import uiImage from "../assets/ui/*.png";
 import soundSe from "../assets/sound/se/*.wav";
 import Visualizer from "./audioVisualizer/app/presenter/visualizer";
+import DebugInfo from "../object/DebugInfo";
 
 // パーティクルマネージャーの宣言
 var particles;
@@ -116,6 +117,11 @@ export default class GameMain extends Phaser.Scene {
     // Visuzlizer
     private visualizer: Visualizer;
 
+    // --------------------------------
+    // デバッグ用
+    private enableDebugInfo: boolean;
+    private debugInfo: DebugInfo;
+
     constructor() {
         super({ key: "GameMain" });
     }
@@ -170,6 +176,15 @@ export default class GameMain extends Phaser.Scene {
         // Visualizer
         this.visualizer = new Visualizer(this);
         this.visualizer.init();
+
+        // --------------------------------
+        // デバッグ用
+        this.enableDebugInfo = false;
+        if (this.enableDebugInfo) {
+            this.debugInfo = new DebugInfo();
+        } else {
+            this.debugInfo = null;
+        }
     }
 
     preload(): void {
@@ -346,18 +361,28 @@ export default class GameMain extends Phaser.Scene {
         });
         this.pauseButton.setVisible(false);
 
-        // --------------------------------
-        // Input処理
-        this.input.on("pointerdown", () => {
-            this.pointerdown();
-        });
-
         // チュートリアル
         this.tutorial.createImage(
             this.add.image(640, 360, "tutorialDescription"),
             this.add.image(160, 225, "frame"),
             this.add.image(640, 650, "tapstart")
         );
+
+        // --------------------------------
+        // Input処理
+        this.input.on("pointerdown", () => {
+            this.pointerdown();
+        });
+
+        // --------------------------------
+        // デバッグ用
+        if (this.enableDebugInfo) {
+            this.debugInfo.create({
+                scene: this,
+                textaliveAppApi: this.api,
+            });
+            this.debugInfo.setVisible(true);
+        }
     }
 
     update() {
@@ -411,6 +436,11 @@ export default class GameMain extends Phaser.Scene {
             // 曲の進行時間
             this.timeInfo.songLength = this.api.player.data.song.length * 1000;
             this.timeInfo.dispTime = true;
+
+            // 楽曲情報をコンソール出力
+            if (this.enableDebugInfo) {
+                this.debugInfo.dispConsoleSongInfo();
+            }
         }
 
         if (typeof this.api.player.data.song != "undefined") {
@@ -591,6 +621,12 @@ export default class GameMain extends Phaser.Scene {
         this.timeProgressBar.update();
         this.timeInfo.update();
         this.visualizer.update(this.api.getPositionTime());
+
+        // --------------------------------
+        // デバッグ用
+        if (this.enableDebugInfo) {
+            this.debugInfo.update();
+        }
     }
 
     /**
