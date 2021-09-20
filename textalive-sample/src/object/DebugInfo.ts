@@ -4,7 +4,7 @@ import DepthDefine from "./DepthDefine";
 
 export interface DebugInfoCreateParam {
     scene: Phaser.Scene;
-    textaliveAppApi: TextaliveApiManager;
+    textaliveAppApi?: TextaliveApiManager;
 }
 
 export default class DebugInfo {
@@ -33,14 +33,13 @@ export default class DebugInfo {
 
         this.setVisible(this._isVisible);
 
-        this._textaliveAppApi = param.textaliveAppApi;
+        if (param.textaliveAppApi) {
+            this._textaliveAppApi = param.textaliveAppApi;
+        }
     }
 
     public update(): void {
         if (!this._isVisible) {
-            return;
-        }
-        if (!this.isAvailableTextaliveAppApi()) {
             return;
         }
 
@@ -49,32 +48,49 @@ export default class DebugInfo {
             `fps: ${this.getFormatted(this._scene.game.loop.actualFps, 5)}`
         );
 
+        if (this.isAvailableTextaliveAppApi()) {
+            const songInfo = this.makeSongInfo(
+                this._textaliveAppApi.getPositionTime()
+            );
+            for (let i = 0; i < songInfo.length; i++) {
+                dispInfoList.push(songInfo[i]);
+            }
+        }
+
+        this._dispText.setText(dispInfoList);
+    }
+
+    private makeSongInfo(position: number): string[] {
+        if (!this.isAvailableTextaliveAppApi()) {
+            return [];
+        }
+
+        let songInfoList: string[] = [];
+
         const player = this._textaliveAppApi.player;
         const video = player.video;
 
-        const beat = player.findBeat(player.timer.position);
-        dispInfoList.push(`ビート間隔[ms]: ${beat ? beat.duration : "----"}`);
-        dispInfoList.push(`ビート数: ${beat ? beat.length : "----"}`);
-        dispInfoList.push(
+        const beat = player.findBeat(position);
+        songInfoList.push(`ビート間隔[ms]: ${beat ? beat.duration : "----"}`);
+        songInfoList.push(`ビート数: ${beat ? beat.length : "----"}`);
+        songInfoList.push(
             `1小節[ms]: ${beat ? beat.duration * beat.length : "----"}`
         );
-        dispInfoList.push(
+        songInfoList.push(
             `BPM: ${beat ? ((60 * 1000) / beat.duration).toFixed(2) : "----"}`
         );
 
-        dispInfoList.push(
-            `サビ: ${
-                player.findChorus(player.timer.position) ? "True" : "False"
-            }`
+        songInfoList.push(
+            `サビ: ${player.findChorus(position) ? "True" : "False"}`
         );
 
-        const chord = player.findChord(player.timer.position);
-        dispInfoList.push(`コード： ${chord ? chord.name : "----"}`);
+        const chord = player.findChord(position);
+        songInfoList.push(`コード： ${chord ? chord.name : "----"}`);
 
-        const word = video.findWord(player.timer.position);
-        dispInfoList.push(
+        const word = video.findWord(position);
+        songInfoList.push(
             `声量(time): ${this.getFormatted(
-                player.getVocalAmplitude(player.timer.position)
+                player.getVocalAmplitude(position)
             )}`
         );
         let wordAmplitude = 0;
@@ -87,17 +103,17 @@ export default class DebugInfo {
                     )) /
                 3;
         }
-        dispInfoList.push(`声量(word): ${this.getFormatted(wordAmplitude)}`);
+        songInfoList.push(`声量(word): ${this.getFormatted(wordAmplitude)}`);
 
-        const va = player.getValenceArousal(player.timer.position);
-        dispInfoList.push(
+        const va = player.getValenceArousal(position);
+        songInfoList.push(
             `V/A(time): 感情価 ${this.getFormatted(
                 va.v,
                 4
             )}, 覚醒度 ${this.getFormatted(va.a, 4)}`
         );
 
-        this._dispText.setText(dispInfoList);
+        return songInfoList;
     }
 
     private getFormatted(val: number, len?: number, fix?: number): string {
@@ -115,7 +131,7 @@ export default class DebugInfo {
             return;
         }
         if (!this.isAvailableTextaliveAppApi()) {
-            console.log("ロードが完了していません");
+            console.log("TextAlive App API の楽曲情報ロードが完了していません");
             return;
         }
 
