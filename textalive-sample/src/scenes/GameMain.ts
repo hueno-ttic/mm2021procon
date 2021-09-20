@@ -4,12 +4,12 @@ import LaneHeartObject from "../object/LaneHeartObject";
 import AudienceObject from "../object/AudienceObject";
 import TimeProgressBarObject from "../object/TimeProgressBarObject";
 import TextaliveApiManager from "../TextaliveApiManager";
-import TimeInfoObject from '../object/TimeInfoObject';
-import UIPauseButtonObject from '../object/UIPauseButtonObject';
+import TimeInfoObject from "../object/TimeInfoObject";
+import UIPauseButtonObject from "../object/UIPauseButtonObject";
 import TutorialObject from "../object/TutorialObject";
 import LyricLineObject from "../object/LyricLineObject";
 import DepthDefine from "../object/DepthDefine";
-import { buildMusicInfo } from '../factory/MusicFactory';
+import { buildMusicInfo } from "../factory/MusicFactory";
 
 import image from "../assets/*.png";
 import gameImage from "../assets/game_main/*.png";
@@ -31,7 +31,6 @@ var circleSwitch = false;
 var circleOffset = 0; // 円の中心を示す値
 
 export default class GameMain extends Phaser.Scene {
-
     private musics = buildMusicInfo();
     public frameCount = 0;
 
@@ -94,7 +93,7 @@ export default class GameMain extends Phaser.Scene {
     private lyricLineObject: LyricLineObject;
 
     public initFlag: Boolean = true;
-    
+
     private selectedMusicId: number;
 
     // タッチエフェクトの表示時間
@@ -124,10 +123,12 @@ export default class GameMain extends Phaser.Scene {
 
     init(): void {
         this.selectedMusicId = this.registry.get("selectedMusic");
-        console.log(`選択楽曲id ${this.selectedMusicId}`)
+        console.log(`選択楽曲id ${this.selectedMusicId}`);
 
-        const selectedMusic = this.musics.filter(music => music.id === this.selectedMusicId).pop();
-        
+        const selectedMusic = this.musics
+            .filter((music) => music.id === this.selectedMusicId)
+            .pop();
+
         var url = selectedMusic.url;
 
         //var url = "https://www.youtube.com/watch?v=bMtYf3R0zhY";
