@@ -40,7 +40,7 @@ export default class MusicSelectScene extends Phaser.Scene {
         circle.lineStyle(3, 0xffffff, 0.6).strokeCircle(1350, 350, 350);
 
         // 楽曲選択用のボックスを配置する
-        var dispBoxX = 950;
+        var dispBoxX = 1050;
         var additionalBoxX = 0;
         var dispBoxY = 50;
 
@@ -79,20 +79,11 @@ export default class MusicSelectScene extends Phaser.Scene {
             });
         });
 
-        this.musicInfoText.scale *= 2;
         const text = this.add.text(
             700,
             650,
-            "クリックしてゲーム画面へ遷移する"
+            "楽曲の画像を2回連続で押すと次の画面に進む"
         );
-        text.setInteractive();
-        text.on("pointerdown", () => {
-            console.log(
-                "this.scene.isActive('GameMain') : " +
-                    this.scene.isActive("GameMain")
-            );
-            this.moveGameMain();
-        });
     }
 
     private moveGameMain() {
