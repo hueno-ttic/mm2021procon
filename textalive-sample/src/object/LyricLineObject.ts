@@ -24,7 +24,7 @@ export default class LyricLineObject {
                 }
             );
             this.lyricLine[i].x = 180 + this.textLineLength * 35;
-            this.lyricLine[i].setStroke(lyrics[i].color, 5);
+            this.lyricLine[i].setStroke(lyrics[i].color, 4);
             this.lyricLine[i].setVisible(true);
             this.textLineLength += lyrics[i].getText().length;
             this.lyricLineAddPos++;
@@ -79,7 +79,7 @@ export default class LyricLineObject {
                 }
             );
             this.lyricLine[i].x = 180 + lyricLineLength * 35;
-            this.lyricLine[i].setStroke(lyrics[i].color, 5);
+            this.lyricLine[i].setStroke(lyrics[i].color, 4);
             lyricLineLength += lyrics[i].getText().length;
             this.lyricLineAddPos++;
         }

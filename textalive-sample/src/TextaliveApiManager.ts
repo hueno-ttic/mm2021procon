@@ -109,21 +109,21 @@ export default class TextaliveApiManager {
             let color;
             switch (num) {
                 case 0:
-                    color = "red";
+                    color = "#ff8e1e"; // 橙
                     break;
                 case 1:
-                    color = "green";
+                    color = "#47ff47"; // 緑
                     break;
                 case 2:
-                    color = "yellow";
+                    color = "#ffdc00"; // 黄
                     break;
                 default:
-                    color = "blue";
+                    color = "#ff8e1e"; // 青
                     break;
             }
 
             if (this.getIsChorus()) {
-                color = "blue";
+                color = "#ff8e1e";
             }
 
             // 歌詞ごとの覚醒度と感情価を設定

@@ -8,7 +8,7 @@
         "build": "parcel build src/index.html --public-url ./ --out-dir docs --no-source-maps",
         "clean": "del-cli .cache dev docs",
         "precommit": "lint-staged",
-        "lint": "prettier ./src/**/*.ts ./src/*.ts",
+        "lint": "prettier --check ./src/**/*.ts ./src/*.ts",
         "lint:write": "prettier --write ./src/**/*.ts ./src/*.ts"
     },
     "keywords": [
