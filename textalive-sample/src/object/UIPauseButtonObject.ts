@@ -19,34 +19,37 @@ export default class UIPauseButtonObject {
         this.init();
     }
 
-    public init(): void {
+    init(): void {
         this._button = null;
         this._textaliveManager = null;
     }
 
-    public create(param: UIPauseButtonObjectCreateParam): void {
-        let imageKeyMap = new Map<string, string>([
+    create(param: UIPauseButtonObjectCreateParam): void {
+        const imageKeyMap = new Map<string, string>([
             ["pause", param.pauseImageKey],
-            ["play", param.playImageKey]
+            ["play", param.playImageKey],
         ]);
 
         this._button = new UIImageButtonObject();
         this._button.create({
             scene: param.scene,
-            imageKeyMap: imageKeyMap,
+            imageKeyMap,
             posX: param.posX,
             posY: param.posY,
-            firstStatusName: "pause"
+            firstStatusName: "pause",
         });
         this._button.responseObject.on("pointerdown", () => {
-            this.pointerdown()
-        })
+            this.pointerdown();
+        });
 
         this._textaliveManager = param.textaliveManager;
     }
 
     private pointerdown(): void {
-        if (!this._textaliveManager || this._textaliveManager.player.isLoading) {
+        if (
+            !this._textaliveManager ||
+            this._textaliveManager.player.isLoading
+        ) {
             return;
         }
 
@@ -59,7 +62,7 @@ export default class UIPauseButtonObject {
         }
     }
 
-    public setVisible(value: boolean): void {
+    setVisible(value: boolean): void {
         this._button.setVisible(value);
     }
 }
