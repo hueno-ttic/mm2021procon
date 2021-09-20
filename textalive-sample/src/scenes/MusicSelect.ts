@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 import images from "../assets/music_select/*.png";
-import MusicList from "./MusicList";
 import { buildMusicInfo } from '../factory/MusicFactory';
 
 export default class MusicSelectScene extends Phaser.Scene {
@@ -11,7 +10,6 @@ export default class MusicSelectScene extends Phaser.Scene {
   }
 
   private musicInfoText;
-  public selectMusic;
   private selectedMusicId: number;
   private musics = buildMusicInfo();
 
@@ -44,12 +42,7 @@ export default class MusicSelectScene extends Phaser.Scene {
     var additionalBoxX = 0;
     var dispBoxY = 50;
 
-    var musicList = new MusicList();
-    var musicInfoList = musicList.getMusicInfoList();
-
-    this.selectMusic = musicInfoList[1];
-
-    this.musicInfoText = this.add.text(45, 600, this.selectMusic[0]+"/"+this.selectMusic[1],{ fontFamily: 'Makinas-4-Square' });
+    this.musicInfoText = this.add.text(45, 600, "楽曲を選択してください",{ fontFamily: 'Makinas-4-Square' });
     
     this.musicInfoText.scale *= 2;
 
@@ -67,9 +60,14 @@ export default class MusicSelectScene extends Phaser.Scene {
       image.setInteractive();
 
       image.on('pointerdown', () => {
+        if (music.id === this.selectedMusicId) {
+          this.moveGameMain();
+          return;
+        }
+
         this.registry.set("selectedMusic", music.id);
         this.selectedMusicId = music.id;
-        this.musicInfoText.setText(`${music.title}/${music.author}`)
+        this.musicInfoText.setText(`${music.title}/${music.author}`);
       });
     });
 
@@ -78,10 +76,14 @@ export default class MusicSelectScene extends Phaser.Scene {
     text.on('pointerdown', () => {
 
       console.log("this.scene.isActive('GameMain') : " + this.scene.isActive('GameMain'));
-      if(this.scene.isActive('GameMain')) {
-         this.scene.remove('GameMain');
-      }
-      this.scene.start('GameMain');
+      this.moveGameMain();
     });
+  }
+
+  moveGameMain() {
+    if(this.scene.isActive('GameMain')) {
+      this.scene.remove('GameMain');
+   }
+   this.scene.start('GameMain');
   }
 }
