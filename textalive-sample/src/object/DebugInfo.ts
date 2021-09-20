@@ -105,13 +105,16 @@ export default class DebugInfo {
         }
         songInfoList.push(`声量(word): ${this.getFormatted(wordAmplitude)}`);
 
-        const va = player.getValenceArousal(position);
-        songInfoList.push(
-            `V/A(time): 感情価 ${this.getFormatted(
-                va.v,
-                4
-            )}, 覚醒度 ${this.getFormatted(va.a, 4)}`
-        );
+        // Uncaught TypeError: Cannot read properties of undefined 回避のための処理
+        if (position < video.lastChar.endTime) {
+            const va = player.getValenceArousal(position);
+            songInfoList.push(
+                `V/A(time): 感情価 ${this.getFormatted(
+                    va.v,
+                    4
+                )}, 覚醒度 ${this.getFormatted(va.a, 4)}`
+            );
+        }
 
         return songInfoList;
     }
