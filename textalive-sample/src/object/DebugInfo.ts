@@ -72,22 +72,26 @@ export default class DebugInfo {
 
         try {
             const beat = player.findBeat(position);
-            songInfoList.push(`ビート間隔[ms]: ${beat ? beat.duration : "----"}`);
+            songInfoList.push(
+                `ビート間隔[ms]: ${beat ? beat.duration : "----"}`
+            );
             songInfoList.push(`ビート数: ${beat ? beat.length : "----"}`);
             songInfoList.push(
                 `1小節[ms]: ${beat ? beat.duration * beat.length : "----"}`
             );
             songInfoList.push(
-                `BPM: ${beat ? ((60 * 1000) / beat.duration).toFixed(2) : "----"}`
+                `BPM: ${
+                    beat ? ((60 * 1000) / beat.duration).toFixed(2) : "----"
+                }`
             );
-    
+
             songInfoList.push(
                 `サビ: ${player.findChorus(position) ? "True" : "False"}`
             );
-    
+
             const chord = player.findChord(position);
             songInfoList.push(`コード： ${chord ? chord.name : "----"}`);
-    
+
             const word = video.findWord(position);
             songInfoList.push(
                 `声量(time): ${this.getFormatted(
@@ -104,8 +108,10 @@ export default class DebugInfo {
                         )) /
                     3;
             }
-            songInfoList.push(`声量(word): ${this.getFormatted(wordAmplitude)}`);
-    
+            songInfoList.push(
+                `声量(word): ${this.getFormatted(wordAmplitude)}`
+            );
+
             // Uncaught TypeError: Cannot read properties of undefined 回避のための処理
             if (position < video.lastChar.endTime) {
                 const va = player.getValenceArousal(position);
@@ -115,7 +121,7 @@ export default class DebugInfo {
                         4
                     )}, 覚醒度 ${this.getFormatted(va.a, 4)}`
                 );
-            }    
+            }
         } catch (error) {
             // pass エラー回避のための対応
         }
