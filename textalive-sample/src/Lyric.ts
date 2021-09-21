@@ -9,8 +9,9 @@ export default class Lyric {
     valence;
     arousal;
     color;
+    beat;
 
-    constructor(data, index, color, valenceArousal) {
+    constructor(data, index, color, valenceArousal, beat) {
         this.text = data.text; // 歌詞文字
         this.startTime = data.startTime; // 開始タイム [ms]
         this.endTime = data.endTime; // 終了タイム [ms]
@@ -19,6 +20,7 @@ export default class Lyric {
         this.color = color;
         this.valence = valenceArousal.v; // 覚醒度
         this.arousal = valenceArousal.a; // 感情価
+        this.beat = beat; // ビート
     }
 
     setIndex(index) {

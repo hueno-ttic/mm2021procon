@@ -9,6 +9,7 @@ import UIPauseButtonObject from "../object/UIPauseButtonObject";
 import TutorialObject from "../object/TutorialObject";
 import LyricLineObject from "../object/LyricLineObject";
 import DepthDefine from "../object/DepthDefine";
+import LyricLogicObject from "../object/LyricLogicObject";
 import { buildMusicInfo } from "../factory/MusicFactory";
 
 import image from "../assets/*.png";
@@ -118,6 +119,8 @@ export default class GameMain extends Phaser.Scene {
     // Visuzlizer
     private visualizer: Visualizer;
 
+    private lyricLogicObject: LyricLogicObject;
+
     // --------------------------------
     // デバッグ用
     private enableDebugInfo: boolean;
@@ -182,6 +185,9 @@ export default class GameMain extends Phaser.Scene {
         this.visualizer = new Visualizer(this);
         this.visualizer.init();
 
+        // 歌詞の色付けロジック
+        this.lyricLogicObject = new LyricLogicObject(this.api);
+
         // --------------------------------
         // デバッグ用
         this.enableDebugInfo = false;
@@ -194,6 +200,8 @@ export default class GameMain extends Phaser.Scene {
 
     preload(): void {
         console.log("preload()");
+
+        Phaser.GameObjects.Particles. ParticleEmitterManager
 
         // 背景画像
         this.load.image("backImg", gameImage["whiteback"]);
@@ -431,6 +439,9 @@ export default class GameMain extends Phaser.Scene {
         ) {
             this.api.player.requestPlay();
             this.musicStart = true;
+
+            // 歌詞の色付け
+            this.lyricLogicObject.setLyricColor();
 
             // プログレスバーを表示
             this.timeProgressBar.maxValue =
