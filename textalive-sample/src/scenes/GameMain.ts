@@ -9,6 +9,7 @@ import UIPauseButtonObject from "../object/UIPauseButtonObject";
 import TutorialObject from "../object/TutorialObject";
 import LyricLineObject from "../object/LyricLineObject";
 import HeartEffect from "../object/HeartEffect";
+import TouchEffect from "../object/TouchEffect";
 import DepthDefine from "../object/DepthDefine";
 import { buildMusicInfo } from "../factory/MusicFactory";
 import DebugInfo from "../object/DebugInfo";
@@ -19,18 +20,6 @@ import artistImage from "../assets/live_artist/*.png";
 import uiImage from "../assets/ui/*.png";
 import soundSe from "../assets/sound/se/*.wav";
 import Visualizer from "./audioVisualizer/app/presenter/visualizer";
-
-// パーティクルマネージャーの宣言
-var particles;
-
-// エミッタ
-var emitter;
-
-// タッチエフェクトの処理
-var circleScale = 0;
-var circleImg;
-var circleSwitch = false;
-var circleOffset = 0; // 円の中心を示す値
 
 export default class GameMain extends Phaser.Scene {
     private musics = buildMusicInfo();
@@ -100,7 +89,7 @@ export default class GameMain extends Phaser.Scene {
     private selectedMusicId: number;
 
     // タッチエフェクトの表示時間
-    private circleVisibleCounter = 0;
+    private touchEffect: TouchEffect;
 
     // タッチ時のSE
     private touchSe: Phaser.Sound.BaseSound;
@@ -142,6 +131,8 @@ export default class GameMain extends Phaser.Scene {
         //var url = "https://www.youtube.com/watch?v=bMtYf3R0zhY";
         this.api = new TextaliveApiManager(url);
         this.api.init();
+
+        this.touchEffect = new TouchEffect();
 
         this.laneHeartObjectArray = new Array(
             GameMain.LANE_HEART_OBJECT_ARRAY_SIZE
@@ -330,35 +321,11 @@ export default class GameMain extends Phaser.Scene {
         }
 
         // パーティクル処理
-        particles = this.add.particles("star");
-
-        emitter = particles.createEmitter({
-            //パーティクルのスケール（2から0へ遷移）
-            scale: {
-                start: 0.5,
-                end: 0,
-            },
-
-            //パーティクルの速度（minからmaxの範囲）
-            speed: { min: 500, max: 50 },
-
-            blendMode: "SCREEN",
-
-            frequency: -1,
-
-            //パーティクルの放出数（エミット時に指定するので0を入れておく）
-            quantity: 0,
-
-            //パーティクルの寿命
-            lifespan: 400,
+        this.touchEffect.create({
+            scene: this,
+            particleKey: "star",
+            circleKey: "circle",
         });
-
-        circleImg = this.add.image(
-            500 - circleOffset,
-            5 - circleOffset,
-            "circle"
-        );
-
         this.touchSe = this.sound.add("touch_se", { volume: 0.5 });
 
         this.timeProgressBar.create({
@@ -434,15 +401,7 @@ export default class GameMain extends Phaser.Scene {
             this.gameTouchY = pointer.y;
 
             // パーティクルを発動
-            emitter.explode(8, this.gameTouchX, this.gameTouchY);
-
-            // タッチエフェクトを表示
-            circleImg.setPosition(
-                this.gameTouchX - circleOffset,
-                this.gameTouchY - circleOffset
-            );
-            circleImg.setVisible(true);
-            circleSwitch = true;
+            this.touchEffect.explodeStar(8, this.gameTouchX, this.gameTouchY);
         }
 
         // チュートリアルから一定のインターバル後
@@ -636,19 +595,6 @@ export default class GameMain extends Phaser.Scene {
             }
         }
 
-        // 円の表示秒数の間カウント
-        if (this.circleVisibleCounter <= 6 && circleSwitch) {
-            this.circleVisibleCounter++;
-            circleScale += 0.08;
-            circleImg.setAlpha(1.0);
-            circleImg.scale = circleScale;
-        } else {
-            this.circleVisibleCounter = 0;
-            circleScale = 0.01;
-            circleImg.setVisible(false);
-            circleSwitch = false;
-        }
-
         this.timeProgressBar.update();
         this.timeInfo.update();
         this.visualizer.update(this.api.getPositionTime());
@@ -749,6 +695,11 @@ export default class GameMain extends Phaser.Scene {
     private pointerdown(): void {
         if (this.touchSe) {
             this.touchSe.play();
+        }
+
+        const pointer = this.input.activePointer;
+        if (pointer) {
+            this.touchEffect.explodeCircle(1, pointer.x, pointer.y);
         }
     }
 }
