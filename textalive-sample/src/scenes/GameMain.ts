@@ -8,8 +8,10 @@ import TimeInfoObject from "../object/TimeInfoObject";
 import UIPauseButtonObject from "../object/UIPauseButtonObject";
 import TutorialObject from "../object/TutorialObject";
 import LyricLineObject from "../object/LyricLineObject";
+import HeartEffect from "../object/HeartEffect";
 import DepthDefine from "../object/DepthDefine";
 import { buildMusicInfo } from "../factory/MusicFactory";
+import DebugInfo from "../object/DebugInfo";
 
 import image from "../assets/*.png";
 import gameImage from "../assets/game_main/*.png";
@@ -17,7 +19,6 @@ import artistImage from "../assets/live_artist/*.png";
 import uiImage from "../assets/ui/*.png";
 import soundSe from "../assets/sound/se/*.wav";
 import Visualizer from "./audioVisualizer/app/presenter/visualizer";
-import DebugInfo from "../object/DebugInfo";
 
 // パーティクルマネージャーの宣言
 var particles;
@@ -72,6 +73,7 @@ export default class GameMain extends Phaser.Scene {
 
     // ハートオブジェクト
     private laneHeartObjectArray: Array<LaneHeartObject>;
+    private heartParticleArray: Array<HeartEffect>;
     static readonly LANE_HEART_OBJECT_ARRAY_SIZE: number = 3;
 
     // ハートのX座標
@@ -144,8 +146,12 @@ export default class GameMain extends Phaser.Scene {
         this.laneHeartObjectArray = new Array(
             GameMain.LANE_HEART_OBJECT_ARRAY_SIZE
         );
+        this.heartParticleArray = new Array(
+            GameMain.LANE_HEART_OBJECT_ARRAY_SIZE
+        );
         for (let i = 0; i < GameMain.LANE_HEART_OBJECT_ARRAY_SIZE; i++) {
             this.laneHeartObjectArray[i] = new LaneHeartObject();
+            this.heartParticleArray[i] = new HeartEffect();
         }
 
         // 観客
@@ -228,6 +234,12 @@ export default class GameMain extends Phaser.Scene {
         this.load.image("star", image["star"]);
         this.load.image("circle", image["circle"]);
 
+        this.load.image("effect_heart_hit", gameImage["effect_hit"]);
+        this.load.image(
+            "effect_heart_hit_circle",
+            gameImage["effect_heart_hit_circle"]
+        );
+
         this.load.audio("touch_se", soundSe["decide"]);
 
         // プログレスバー
@@ -288,7 +300,7 @@ export default class GameMain extends Phaser.Scene {
         }
 
         // ハートオブジェクト
-        var scale = 0.5;
+        const heartDepth = DepthDefine.OBJECT + 1;
         const laneHeartImageParam: [number, number, string][] = [
             [this.heartX, this.firstLane, "heart_red"],
             [this.heartX, this.secondLane, "heart_yellow"],
@@ -300,9 +312,20 @@ export default class GameMain extends Phaser.Scene {
                 laneHeartImageParam[i][1],
                 laneHeartImageParam[i][2]
             );
+            image.setDepth(heartDepth);
             this.laneHeartObjectArray[i].create({
                 image: image,
-                scale: scale,
+                scale: 0.5,
+            });
+        }
+        for (let i = 0; i < this.heartParticleArray.length; i++) {
+            this.heartParticleArray[i].create({
+                scene: this,
+                particleKey: "effect_heart_hit",
+                circleKey: "effect_heart_hit_circle",
+                depth: heartDepth - 1,
+                posX: laneHeartImageParam[i][0],
+                posY: laneHeartImageParam[i][1],
             });
         }
 
@@ -583,6 +606,7 @@ export default class GameMain extends Phaser.Scene {
                     ) {
                         this.laneHeartObjectArray[0].playStretchHeart();
                         this.setHeartTween(this.laneHeartObjectArray[0].image);
+                        this.heartParticleArray[0].explode();
                     }
                     if (
                         !this.laneHeartObjectArray[1].playAnimationFlag &&
@@ -590,6 +614,7 @@ export default class GameMain extends Phaser.Scene {
                     ) {
                         this.laneHeartObjectArray[1].playStretchHeart();
                         this.setHeartTween(this.laneHeartObjectArray[1].image);
+                        this.heartParticleArray[1].explode();
                     }
                     if (
                         !this.laneHeartObjectArray[2].playAnimationFlag &&
@@ -597,6 +622,7 @@ export default class GameMain extends Phaser.Scene {
                     ) {
                         this.laneHeartObjectArray[2].playStretchHeart();
                         this.setHeartTween(this.laneHeartObjectArray[2].image);
+                        this.heartParticleArray[2].explode();
                     }
 
                     // 歌詞の削除
