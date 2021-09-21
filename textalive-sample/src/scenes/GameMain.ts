@@ -389,9 +389,11 @@ export default class GameMain extends Phaser.Scene {
 
         // チュートリアル
         this.tutorial.createImage(
-            this.add.image(640, 360, "tutorialDescription"),
-            this.add.image(160, 225, "frame"),
-            this.add.image(640, 650, "tapstart")
+            this.add
+                .image(640, 360, "tutorialDescription")
+                .setDepth(DepthDefine.UI_OBJECT),
+            this.add.image(160, 225, "frame").setDepth(DepthDefine.UI_OBJECT),
+            this.add.image(640, 650, "tapstart").setDepth(DepthDefine.UI_OBJECT)
         );
 
         // --------------------------------
