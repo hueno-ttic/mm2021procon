@@ -1,4 +1,3 @@
-import Phaser from "phaser";
 import GameMain from "../scenes/GameMain";
 import image from "../assets/audience/*.png";
 import DepthDefine from "../object/DepthDefine";
@@ -7,18 +6,13 @@ const AUDIENCE_SET_SIZE_X = 25;
 const AUDIENCE_SET_SIZE_Y = 5;
 
 export default class AudienceObject {
-    // public audience: Phaser.GameObjects.Image;
-    // public audienceY = 0;
-    // public textAliveApi;
-    // public gameMain;
-    // public laneIndex;
-    // public audienceIndex;
-
     private gameMain;
-
     private firstLane;
     private secondLane;
     private thirdLane;
+    private firstLaneCounter;
+    private secondLaneCounter;
+    private thirdLaneCounter;
 
     constructor(gameMain: GameMain) {
         this.gameMain = gameMain;
@@ -38,6 +32,9 @@ export default class AudienceObject {
                 new Array(AUDIENCE_SET_SIZE_X).fill(null)
             );
         });
+        this.firstLaneCounter = 0;
+        this.secondLaneCounter = 0;
+        this.thirdLaneCounter = 0;
     }
     preload() {
         this.gameMain.load.image("audience_a", image["audience_a"]);
@@ -57,7 +54,7 @@ export default class AudienceObject {
         let diffX = 30;
         for (let i = 0; i < AUDIENCE_SET_SIZE_Y; i++) {
             for (let j = 0; j < AUDIENCE_SET_SIZE_X; j++) {
-                let audience = this.getAudience();
+                let audience = this.getAudienceType();
                 laneAudience[i][j] = this.gameMain.add
                     .image(baseX - j * diffX, baseY + i * diffY, audience)
                     .setDepth(DepthDefine.OBJECT + i);
@@ -67,7 +64,7 @@ export default class AudienceObject {
         }
     }
 
-    getAudience(): string {
+    getAudienceType(): string {
         let audience;
         const num = Math.floor(Math.random() * 3);
         switch (num) {
@@ -88,55 +85,37 @@ export default class AudienceObject {
     }
 
     update(lane: string) {
-        if (lane === "first") {
-            this.updateAudience(this.firstLane);
-        } else if (lane === "second") {
-            this.updateAudience(this.secondLane);
-        } else if (lane === "third") {
-            this.updateAudience(this.thirdLane);
+        let maxAudience = AUDIENCE_SET_SIZE_X * AUDIENCE_SET_SIZE_Y;
+        if (lane === "first" && this.firstLaneCounter < maxAudience) {
+            this.updateAudience(this.firstLane, this.firstLaneCounter);
+            this.firstLaneCounter++;
+        } else if (lane === "second" && this.secondLaneCounter < maxAudience) {
+            this.updateAudience(this.secondLane, this.secondLaneCounter);
+            this.secondLaneCounter++;
+        } else if (lane === "third" && this.thirdLaneCounter < maxAudience) {
+            this.updateAudience(this.thirdLane, this.thirdLaneCounter);
+            this.thirdLaneCounter++;
         }
     }
 
-    updateAudience(laneAudience) {
-        const numX = Math.floor(Math.random() * AUDIENCE_SET_SIZE_X);
-        const numY = Math.floor(Math.random() * AUDIENCE_SET_SIZE_Y);
+    updateAudience(laneAudience, counter) {
+        let numX = Math.floor(Math.random() * AUDIENCE_SET_SIZE_X);
+        let numY = Math.floor(Math.random() * AUDIENCE_SET_SIZE_Y);
         if (laneAudience[numY][numX].alpha === 0) {
             laneAudience[numY][numX].alpha = 0.5;
+            return;
         } else {
-            this.updateAudience(laneAudience);
+            for (let i = -1; i < 1; i++) {
+                for (let j = -1; j < 1; j++) {
+                    if (numY+i > 0 && numY+i < AUDIENCE_SET_SIZE_Y && numX+i > 0 && numX+i < AUDIENCE_SET_SIZE_X) {
+                        if (laneAudience[numY][numX].alpha === 0) {
+                            laneAudience[numY][numX].alpha = 0.5;
+                            return;
+                        }
+                    }
+                }
+            }
+            this.updateAudience(laneAudience, counter);                 
         }
     }
-
-    // constructor(laneIndex:number, index:number) {
-    //     this.laneIndex = laneIndex;
-    //     this.audienceIndex = index;
-    // }
-
-    // 観客を設置する
-    // public createAudience(image: Phaser.GameObjects.Image) {
-    //     this.audience = image;
-    //     // 画像の大きさを調整したらこちらのscaleの指定は削除する
-    //     this.audience.scale *= 0.75;
-    //     // alpha値の初期化
-    //     this.audience.alpha = 0.0;
-    // }
-
-    // // 観客を出現させる
-    // public isVisibleAudience(x: number, y: number, audienceNum: number) {
-    //     this.gameMain.firstLaneAudience = this.gameMain.add.image(x, y, 'audience' + audienceNum);
-    //     // alpha値の初期化
-    //     this.gameMain.firstLaneAudience.alpha = 0;
-    // }
-
-    // // スコアに合わせ観客のalphaを更新する
-    // public updateAlpha(score): Boolean {
-    //     //console.log("index " +this.audienceIndex+" alpha : "+this.audience.alpha + "score : "+score);
-    //     // 後ろのビジュアライザーが見える程度(alpha = 0.5)に観客がくっきり表示されているか
-    //     if (this.audience.alpha >= 0.5) {
-    //         return false;
-    //     }
-    //     // 得点に応じて観客をはっきり表示させる
-    //     this.audience.alpha = score / (this.audienceIndex + 1) * 0.002;
-    //     return true;
-    // }
 }
