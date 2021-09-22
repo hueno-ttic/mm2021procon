@@ -12,12 +12,12 @@ import LyricLineObject from "../object/LyricLineObject";
 import HeartEffect from "../object/HeartEffect";
 import TouchEffect from "../object/TouchEffect";
 import DepthDefine from "../object/DepthDefine";
+import LiveArtistObject from "../object/LiveArtistObject";
 import { buildMusicInfo } from "../factory/MusicFactory";
 import DebugInfo from "../object/DebugInfo";
 
 import image from "../assets/*.png";
 import gameImage from "../assets/game_main/*.png";
-import artistImage from "../assets/live_artist/*.png";
 import uiImage from "../assets/ui/*.png";
 import soundSe from "../assets/sound/se/*.wav";
 import Visualizer from "./audioVisualizer/app/presenter/visualizer";
@@ -74,14 +74,14 @@ export default class GameMain extends Phaser.Scene {
     public score: number = 0;
     public scoreText;
 
-    // 動作オブジェクト
-    public mikuImg;
-
     // ラインオブジェクト
     public r: number = 0;
     public firstLaneLine;
     public secondLaneLine;
     public thirdLaneLine;
+
+    // 曲情報
+    private selectedMusic;
 
     // 歌詞表示部分
     private lyricLineObject: LyricLineObject;
@@ -111,6 +111,9 @@ export default class GameMain extends Phaser.Scene {
     // Visuzlizer
     private visualizer: Visualizer;
 
+    // ライブアーティスト
+    private liveArtist: LiveArtistObject;
+
     // --------------------------------
     // デバッグ用
     private enableDebugInfo: boolean;
@@ -124,11 +127,11 @@ export default class GameMain extends Phaser.Scene {
         this.selectedMusicId = this.registry.get("selectedMusic");
         console.log(`選択楽曲id ${this.selectedMusicId}`);
 
-        const selectedMusic = this.musics
+        this.selectedMusic = this.musics
             .filter((music) => music.id === this.selectedMusicId)
             .pop();
 
-        var url = selectedMusic.url;
+        var url = this.selectedMusic.url;
 
         //var url = "https://www.youtube.com/watch?v=bMtYf3R0zhY";
         this.api = new TextaliveApiManager(url);
@@ -181,6 +184,9 @@ export default class GameMain extends Phaser.Scene {
         this.visualizer = new Visualizer(this);
         this.visualizer.init();
 
+        // ライブアーティスト
+        this.liveArtist = new LiveArtistObject(this);
+
         // --------------------------------
         // デバッグ用
         this.enableDebugInfo = false;
@@ -205,7 +211,7 @@ export default class GameMain extends Phaser.Scene {
         this.load.image("tapstart", image["Tapstart"]);
 
         // 操作キャラ
-        this.load.image("miku", artistImage["live-artist_miku_sd_01_182p"]);
+        this.liveArtist.preload();
 
         // ハート
         this.load.image("heart_red", image["heart_red"]);
@@ -269,9 +275,8 @@ export default class GameMain extends Phaser.Scene {
             .image(lineX, stage.height, "miscBackground")
             .setOrigin(0, 0);
 
-        // ミクの設定
-        this.lyricY = this.firstLane;
-        this.mikuImg = this.add.image(1130, this.lyricY, "miku");
+        // ライブアーティストの設定
+        this.liveArtist.create(this.selectedMusic);
 
         // スコアの設定
         this.scoreText = this.add.text(30, 650, "Score：0", {
@@ -455,9 +460,6 @@ export default class GameMain extends Phaser.Scene {
             this.laneHeartObjectArray[i].update();
         }
 
-        // シークしている確認
-        // console.log(this.api.isVideoSeeking())
-
         // クリックした際に3レーンのいずれかに移動する
         const moveLanePos = [this.firstLane, this.secondLane, this.thirdLane];
         for (let i = 0; i < this.lanePosition.length; i++) {
@@ -473,22 +475,6 @@ export default class GameMain extends Phaser.Scene {
             }
         }
 
-        // ミクの場所の更新
-        this.tweens.add({
-            //tweenを適応させる対象
-            targets: this.mikuImg,
-            //tweenさせる値
-            y: this.lyricY,
-            //tweenにかかる時間
-            duration: 100,
-            //tween開始までのディレイ
-            delay: 0,
-            //tweenのリピート回数（-1で無限）
-            repeat: 0,
-            //easingの指定
-            ease: "Linear",
-        });
-
         // 観客の表示情報を更新
         for (let j = 0; j < GameMain.LANE_SIZE; j++) {
             for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE; i++) {
@@ -498,7 +484,12 @@ export default class GameMain extends Phaser.Scene {
             }
         }
 
-        // 曲が流れているときだけ動く
+        // 操作しているアーティストの位置更新
+        if (this.api.player.isPlaying) {
+            this.liveArtist.update(this.lyricY);
+        }
+
+        // 曲がスタートしてから動く
         if (
             this.api.getPositionTime() != null &&
             this.api.getPositionTime() != 0
