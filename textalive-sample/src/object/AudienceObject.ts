@@ -107,7 +107,12 @@ export default class AudienceObject {
         } else {
             for (let i = -1; i < 1; i++) {
                 for (let j = -1; j < 1; j++) {
-                    if (numY+i > 0 && numY+i < AUDIENCE_SET_SIZE_Y && numX+i > 0 && numX+i < AUDIENCE_SET_SIZE_X) {
+                    if (
+                        numY + i > 0 &&
+                        numY + i < AUDIENCE_SET_SIZE_Y &&
+                        numX + i > 0 &&
+                        numX + i < AUDIENCE_SET_SIZE_X
+                    ) {
                         if (laneAudience[numY][numX].alpha === 0) {
                             laneAudience[numY][numX].alpha = 0.5;
                             return;
@@ -115,7 +120,7 @@ export default class AudienceObject {
                     }
                 }
             }
-            this.updateAudience(laneAudience, counter);                 
+            this.updateAudience(laneAudience, counter);
         }
     }
 }
