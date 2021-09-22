@@ -24,9 +24,7 @@ export default class GainRepository {
     }
 
     private getGainByPosition(position: number): number[] {
-        return position >= 0
-            ? this.gains[Math.floor(position / 10)]
-            : Array<number>(this.size).fill(0.0);
+        return position >= 0 ? this.gains[Math.floor(position / 10)] : Array<number>(this.size).fill(0.0);
     }
 
     /**
