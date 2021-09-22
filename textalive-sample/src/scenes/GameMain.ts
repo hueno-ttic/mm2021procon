@@ -153,13 +153,7 @@ export default class GameMain extends Phaser.Scene {
 
         // 観客
         this.audienceObject = new AudienceObject(this);
-        // this.audience = new Array();
-        // for (let j = 0; j < GameMain.LANE_SIZE; j++) {
-        //     this.audience[j] = new Array(GameMain.AUDIENCE_SET_SIZE);
-        //     for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE; i++) {
-        //         this.audience[j][i] = new AudienceObject(j, i);
-        //     }
-        // }
+
         // レーンのy座標
         this.lanePosition[0] = 120;
         this.lanePosition[1] = 320;
@@ -288,17 +282,6 @@ export default class GameMain extends Phaser.Scene {
         this.scoreText.setStroke("#161616", 4);
 
         // 観客の設定
-        // for (let j = 0; j < GameMain.LANE_SIZE; j++) {
-        //     for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE; i++) {
-        //         this.audience[j][i].createAudience(
-        //             this.add.image(
-        //                 880 - 110 * i,
-        //                 this.lanePosition[j],
-        //                 "audience"
-        //             )
-        //         );
-        //     }
-        // }
         this.audienceObject.create();
 
         // ハートオブジェクト
