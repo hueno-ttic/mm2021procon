@@ -532,7 +532,7 @@ export default class GameMain extends Phaser.Scene {
         }
 
         // テキストの描画更新
-        for (var i = this.indexStart; i < this.textData.length; i++) {
+        for (let i = this.indexStart; i < this.textData.length; i++) {
             // 文字を移動させる
             if (typeof this.textData[i] !== "undefined") {
                 this.textData[i].x -= this.counter;
@@ -540,38 +540,16 @@ export default class GameMain extends Phaser.Scene {
                 // 一定区間移動したら歌詞を非表示する
                 if (this.textData[i].x < this.heartX) {
                     this.indexStart++;
-                    var wordY = this.textData[i].y;
-                    var nowLine = "";
-                    if (wordY > 0 && wordY < 720 / 3) {
-                        nowLine = "first";
-                    } else if (wordY >= 720 / 3 && wordY < (720 / 3) * 2) {
-                        nowLine = "second";
-                    } else if (wordY >= (720 / 3) * 2 && wordY < 720) {
-                        nowLine = "third";
-                    }
+                    const laneIndex = this.getLaneIndex(this.textData[i].y);
                     if (
-                        !this.laneHeartObjectArray[0].playAnimationFlag &&
-                        nowLine == "first"
+                        -1 < laneIndex &&
+                        !this.laneHeartObjectArray[laneIndex].playAnimationFlag
                     ) {
-                        this.laneHeartObjectArray[0].playStretchHeart();
-                        this.setHeartTween(this.laneHeartObjectArray[0].image);
-                        this.heartParticleArray[0].explode();
-                    }
-                    if (
-                        !this.laneHeartObjectArray[1].playAnimationFlag &&
-                        nowLine == "second"
-                    ) {
-                        this.laneHeartObjectArray[1].playStretchHeart();
-                        this.setHeartTween(this.laneHeartObjectArray[1].image);
-                        this.heartParticleArray[1].explode();
-                    }
-                    if (
-                        !this.laneHeartObjectArray[2].playAnimationFlag &&
-                        nowLine == "third"
-                    ) {
-                        this.laneHeartObjectArray[2].playStretchHeart();
-                        this.setHeartTween(this.laneHeartObjectArray[2].image);
-                        this.heartParticleArray[2].explode();
+                        this.laneHeartObjectArray[laneIndex].playStretchHeart();
+                        this.setHeartTween(
+                            this.laneHeartObjectArray[laneIndex].image
+                        );
+                        this.heartParticleArray[laneIndex].explode();
                     }
 
                     // 歌詞の削除
