@@ -189,7 +189,7 @@ export default class GameMain extends Phaser.Scene {
 
         // --------------------------------
         // デバッグ用
-        this.enableDebugInfo = true;
+        this.enableDebugInfo = false;
         if (this.enableDebugInfo) {
             this.debugInfo = new DebugInfo();
         } else {
