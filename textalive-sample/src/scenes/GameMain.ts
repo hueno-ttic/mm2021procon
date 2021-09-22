@@ -158,7 +158,7 @@ export default class GameMain extends Phaser.Scene {
         this.lanePosition[2] = 520;
 
         // スコアの初期化
-        this.laneScoreArray = new Array(3);
+        this.laneScoreArray = new Array(GameMain.LANE_SIZE);
         for (let i = 0; i < GameMain.LANE_SIZE; i++) {
             this.laneScoreArray[i] = new ScoreCounter();
         }
