@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import images from "../assets/music_select/*.png";
 import { buildMusicInfo } from "../factory/MusicFactory";
+import GameMain from "./GameMain";
 
 export default class MusicSelectScene extends Phaser.Scene {
     constructor() {
@@ -87,9 +88,10 @@ export default class MusicSelectScene extends Phaser.Scene {
     }
 
     private moveGameMain() {
-        if (this.scene.isActive("GameMain")) {
+        if (this.game.scene.getScene("GameMain")) {
             this.scene.remove("GameMain");
         }
+        this.scene.add("GameMain", GameMain);
         this.scene.start("GameMain");
     }
 }
