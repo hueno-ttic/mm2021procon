@@ -8,8 +8,11 @@ import TimeInfoObject from "../object/TimeInfoObject";
 import UIPauseButtonObject from "../object/UIPauseButtonObject";
 import TutorialObject from "../object/TutorialObject";
 import LyricLineObject from "../object/LyricLineObject";
+import HeartEffect from "../object/HeartEffect";
+import TouchEffect from "../object/TouchEffect";
 import DepthDefine from "../object/DepthDefine";
 import { buildMusicInfo } from "../factory/MusicFactory";
+import DebugInfo from "../object/DebugInfo";
 
 import image from "../assets/*.png";
 import gameImage from "../assets/game_main/*.png";
@@ -17,19 +20,6 @@ import artistImage from "../assets/live_artist/*.png";
 import uiImage from "../assets/ui/*.png";
 import soundSe from "../assets/sound/se/*.wav";
 import Visualizer from "./audioVisualizer/app/presenter/visualizer";
-import DebugInfo from "../object/DebugInfo";
-
-// パーティクルマネージャーの宣言
-var particles;
-
-// エミッタ
-var emitter;
-
-// タッチエフェクトの処理
-var circleScale = 0;
-var circleImg;
-var circleSwitch = false;
-var circleOffset = 0; // 円の中心を示す値
 
 export default class GameMain extends Phaser.Scene {
     private musics = buildMusicInfo();
@@ -72,6 +62,7 @@ export default class GameMain extends Phaser.Scene {
 
     // ハートオブジェクト
     private laneHeartObjectArray: Array<LaneHeartObject>;
+    private heartParticleArray: Array<HeartEffect>;
     static readonly LANE_HEART_OBJECT_ARRAY_SIZE: number = 3;
 
     // ハートのX座標
@@ -98,7 +89,7 @@ export default class GameMain extends Phaser.Scene {
     private selectedMusicId: number;
 
     // タッチエフェクトの表示時間
-    private circleVisibleCounter = 0;
+    private touchEffect: TouchEffect;
 
     // タッチ時のSE
     private touchSe: Phaser.Sound.BaseSound;
@@ -141,11 +132,17 @@ export default class GameMain extends Phaser.Scene {
         this.api = new TextaliveApiManager(url);
         this.api.init();
 
+        this.touchEffect = new TouchEffect();
+
         this.laneHeartObjectArray = new Array(
+            GameMain.LANE_HEART_OBJECT_ARRAY_SIZE
+        );
+        this.heartParticleArray = new Array(
             GameMain.LANE_HEART_OBJECT_ARRAY_SIZE
         );
         for (let i = 0; i < GameMain.LANE_HEART_OBJECT_ARRAY_SIZE; i++) {
             this.laneHeartObjectArray[i] = new LaneHeartObject();
+            this.heartParticleArray[i] = new HeartEffect();
         }
 
         // 観客
@@ -228,6 +225,12 @@ export default class GameMain extends Phaser.Scene {
         this.load.image("star", image["star"]);
         this.load.image("circle", image["circle"]);
 
+        this.load.image("effect_heart_hit", gameImage["effect_hit"]);
+        this.load.image(
+            "effect_heart_hit_circle",
+            gameImage["effect_heart_hit_circle"]
+        );
+
         this.load.audio("touch_se", soundSe["decide"]);
 
         // プログレスバー
@@ -288,7 +291,7 @@ export default class GameMain extends Phaser.Scene {
         }
 
         // ハートオブジェクト
-        var scale = 0.5;
+        const heartDepth = DepthDefine.OBJECT + 1;
         const laneHeartImageParam: [number, number, string][] = [
             [this.heartX, this.firstLane, "heart_red"],
             [this.heartX, this.secondLane, "heart_yellow"],
@@ -300,42 +303,29 @@ export default class GameMain extends Phaser.Scene {
                 laneHeartImageParam[i][1],
                 laneHeartImageParam[i][2]
             );
+            image.setDepth(heartDepth);
             this.laneHeartObjectArray[i].create({
                 image: image,
-                scale: scale,
+                scale: 0.5,
+            });
+        }
+        for (let i = 0; i < this.heartParticleArray.length; i++) {
+            this.heartParticleArray[i].create({
+                scene: this,
+                particleKey: "effect_heart_hit",
+                circleKey: "effect_heart_hit_circle",
+                depth: heartDepth - 1,
+                posX: laneHeartImageParam[i][0],
+                posY: laneHeartImageParam[i][1],
             });
         }
 
         // パーティクル処理
-        particles = this.add.particles("star");
-
-        emitter = particles.createEmitter({
-            //パーティクルのスケール（2から0へ遷移）
-            scale: {
-                start: 0.5,
-                end: 0,
-            },
-
-            //パーティクルの速度（minからmaxの範囲）
-            speed: { min: 500, max: 50 },
-
-            blendMode: "SCREEN",
-
-            frequency: -1,
-
-            //パーティクルの放出数（エミット時に指定するので0を入れておく）
-            quantity: 0,
-
-            //パーティクルの寿命
-            lifespan: 400,
+        this.touchEffect.create({
+            scene: this,
+            particleKey: "star",
+            circleKey: "circle",
         });
-
-        circleImg = this.add.image(
-            500 - circleOffset,
-            5 - circleOffset,
-            "circle"
-        );
-
         this.touchSe = this.sound.add("touch_se", { volume: 0.5 });
 
         this.timeProgressBar.create({
@@ -366,9 +356,11 @@ export default class GameMain extends Phaser.Scene {
 
         // チュートリアル
         this.tutorial.createImage(
-            this.add.image(640, 360, "tutorialDescription"),
-            this.add.image(160, 225, "frame"),
-            this.add.image(640, 650, "tapstart")
+            this.add
+                .image(640, 360, "tutorialDescription")
+                .setDepth(DepthDefine.UI_OBJECT),
+            this.add.image(160, 225, "frame").setDepth(DepthDefine.UI_OBJECT),
+            this.add.image(640, 650, "tapstart").setDepth(DepthDefine.UI_OBJECT)
         );
 
         // --------------------------------
@@ -409,15 +401,7 @@ export default class GameMain extends Phaser.Scene {
             this.gameTouchY = pointer.y;
 
             // パーティクルを発動
-            emitter.explode(8, this.gameTouchX, this.gameTouchY);
-
-            // タッチエフェクトを表示
-            circleImg.setPosition(
-                this.gameTouchX - circleOffset,
-                this.gameTouchY - circleOffset
-            );
-            circleImg.setVisible(true);
-            circleSwitch = true;
+            this.touchEffect.explodeStar(8, this.gameTouchX, this.gameTouchY);
         }
 
         // チュートリアルから一定のインターバル後
@@ -583,6 +567,7 @@ export default class GameMain extends Phaser.Scene {
                     ) {
                         this.laneHeartObjectArray[0].playStretchHeart();
                         this.setHeartTween(this.laneHeartObjectArray[0].image);
+                        this.heartParticleArray[0].explode();
                     }
                     if (
                         !this.laneHeartObjectArray[1].playAnimationFlag &&
@@ -590,6 +575,7 @@ export default class GameMain extends Phaser.Scene {
                     ) {
                         this.laneHeartObjectArray[1].playStretchHeart();
                         this.setHeartTween(this.laneHeartObjectArray[1].image);
+                        this.heartParticleArray[1].explode();
                     }
                     if (
                         !this.laneHeartObjectArray[2].playAnimationFlag &&
@@ -597,6 +583,7 @@ export default class GameMain extends Phaser.Scene {
                     ) {
                         this.laneHeartObjectArray[2].playStretchHeart();
                         this.setHeartTween(this.laneHeartObjectArray[2].image);
+                        this.heartParticleArray[2].explode();
                     }
 
                     // 歌詞の削除
@@ -606,19 +593,6 @@ export default class GameMain extends Phaser.Scene {
                     this.scoreText.setText("Score : " + this.score);
                 }
             }
-        }
-
-        // 円の表示秒数の間カウント
-        if (this.circleVisibleCounter <= 6 && circleSwitch) {
-            this.circleVisibleCounter++;
-            circleScale += 0.08;
-            circleImg.setAlpha(1.0);
-            circleImg.scale = circleScale;
-        } else {
-            this.circleVisibleCounter = 0;
-            circleScale = 0.01;
-            circleImg.setVisible(false);
-            circleSwitch = false;
         }
 
         this.timeProgressBar.update();
@@ -721,6 +695,11 @@ export default class GameMain extends Phaser.Scene {
     private pointerdown(): void {
         if (this.touchSe) {
             this.touchSe.play();
+        }
+
+        const pointer = this.input.activePointer;
+        if (pointer) {
+            this.touchEffect.explodeCircle(1, pointer.x, pointer.y);
         }
     }
 }
