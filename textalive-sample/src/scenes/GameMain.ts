@@ -43,6 +43,7 @@ export default class GameMain extends Phaser.Scene {
     static readonly LANE_SIZE: number = 3;
 
     // 観客
+    private audienceObject: AudienceObject;
     public audience: Array<Array<AudienceObject>>;
     static readonly AUDIENCE_SET_SIZE: number = 6;
 
@@ -133,10 +134,10 @@ export default class GameMain extends Phaser.Scene {
             .filter((music) => music.id === this.selectedMusicId)
             .pop();
 
-        var url = this.selectedMusic.url;
-
-        //var url = "https://www.youtube.com/watch?v=bMtYf3R0zhY";
-        this.api = new TextaliveApiManager(url);
+        this.api = new TextaliveApiManager(
+            this.selectedMusic.url,
+            this.selectedMusic.playerVideoOptions
+        );
         this.api.init();
 
         this.touchEffect = new TouchEffect();
@@ -153,13 +154,8 @@ export default class GameMain extends Phaser.Scene {
         }
 
         // 観客
-        this.audience = new Array();
-        for (let j = 0; j < GameMain.LANE_SIZE; j++) {
-            this.audience[j] = new Array(GameMain.AUDIENCE_SET_SIZE);
-            for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE; i++) {
-                this.audience[j][i] = new AudienceObject(j, i);
-            }
-        }
+        this.audienceObject = new AudienceObject(this);
+
         // レーンのy座標
         this.lanePosition[0] = 120;
         this.lanePosition[1] = 320;
@@ -234,6 +230,7 @@ export default class GameMain extends Phaser.Scene {
         //観客
         this.load.image("audience", image["audience"]);
         this.load.image("bar1", image["bar1"]);
+        this.audienceObject.preload();
 
         // タッチエフェクトに利用するアセット
         this.load.image("star", image["star"]);
@@ -291,17 +288,7 @@ export default class GameMain extends Phaser.Scene {
         this.scoreText.setStroke("#161616", 4);
 
         // 観客の設定
-        for (let j = 0; j < GameMain.LANE_SIZE; j++) {
-            for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE; i++) {
-                this.audience[j][i].createAudience(
-                    this.add.image(
-                        880 - 110 * i,
-                        this.lanePosition[j],
-                        "audience"
-                    )
-                );
-            }
-        }
+        this.audienceObject.create();
 
         // ハートオブジェクト
         const heartDepth = DepthDefine.OBJECT + 1;
@@ -484,15 +471,6 @@ export default class GameMain extends Phaser.Scene {
             }
         }
 
-        // 観客の表示情報を更新
-        for (let j = 0; j < GameMain.LANE_SIZE; j++) {
-            for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE; i++) {
-                if (this.audience[j][i].updateAlpha(this.laneScoreSet[j])) {
-                    break;
-                }
-            }
-        }
-
         // 操作しているアーティストの位置更新
         if (this.api.player.isPlaying) {
             this.liveArtist.update(this.lyricY);
@@ -539,8 +517,18 @@ export default class GameMain extends Phaser.Scene {
                     { font: "50px Arial" }
                 );
                 this.textData[lyricIndex].setStroke(lyric.color, 10);
+                this.textData[lyricIndex].setDepth(DepthDefine.OBJECT + 10);
                 // 歌詞表示の更新
                 this.lyricLineObject.updateLyricLine(this.lyrics, lyricIndex);
+                // 観客の表示情報を更新
+                // todo スコアによって出し方を変えるかもしれない
+                if (this.lyricY === this.firstLane) {
+                    this.audienceObject.update("first");
+                } else if (this.lyricY === this.secondLane) {
+                    this.audienceObject.update("second");
+                } else if (this.lyricY === this.thirdLane) {
+                    this.audienceObject.update("third");
+                }
             }
         }
 
