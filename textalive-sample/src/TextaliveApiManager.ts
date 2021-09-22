@@ -107,27 +107,6 @@ export default class TextaliveApiManager {
             if (this.excludeLyricList.includes(w)) {
                 continue;
             }
-            // 歌詞の色変え
-            const num = Math.floor(Math.random() * 3);
-            let color;
-            switch (num) {
-                case 0:
-                    color = "#ff8e1e"; // 橙
-                    break;
-                case 1:
-                    color = "#47ff47"; // 緑
-                    break;
-                case 2:
-                    color = "#ffdc00"; // 黄
-                    break;
-                default:
-                    color = "#ff8e1e"; // 青
-                    break;
-            }
-
-            if (this.getIsChorus()) {
-                color = "#ff8e1e";
-            }
 
             // 歌詞ごとの覚醒度と感情価を設定
             const valenceArousal = this.player.getValenceArousal(w.startTime);
@@ -138,9 +117,7 @@ export default class TextaliveApiManager {
             }
 
             // 単語情報を格納
-            this.lyrics.push(
-                new Lyric(w, wordIndex, color, valenceArousal, beat)
-            );
+            this.lyrics.push(new Lyric(w, wordIndex, valenceArousal, beat));
             // 次の単語へ
             w = w.next;
             wordIndex++;

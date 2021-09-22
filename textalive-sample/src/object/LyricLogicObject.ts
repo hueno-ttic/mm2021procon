@@ -1,35 +1,36 @@
 export default class LyricLogicObject {
     public textAliveAPI;
-    public target;
+    public targetTime = 1500; // ms
+    public targetTime2 = 1000; // ms
+    public now_color = "#ff8e1e";
 
-    //下部の歌詞部分
     constructor(textAliveAPI) {
         this.textAliveAPI = textAliveAPI;
     }
 
+    // 単語の色つけロジック
     public setLyricColor() {
-        console.log("bpm : " + this.textAliveAPI.bpm);
-        console.log("色変え : " + (this.textAliveAPI.bpm / 60) * 1000);
-        console.log(
-            "色変えの回数：" +
-                (this.textAliveAPI.player.data.song.length - 0.5) /
-                    (this.textAliveAPI.bpm / 60)
-        );
-
-        let changeColorCount = (this.textAliveAPI.bpm / 60) * 1000;
-
-        let nextChangeColorTime = 0;
+        let nextChangeColorTime = 0; // 色切り替え時の最低限の待たないといけない時間
+        let preCheckTime = 0; // 色切り替え時の発話スタートタイム
         let lyricColor = this.getRandomColor();
         for (let i = 0; i < this.textAliveAPI.lyrics.length; i++) {
-            if (nextChangeColorTime < this.textAliveAPI.lyrics[i].startTime) {
+            if (
+                i < this.textAliveAPI.lyrics.length - 1 && // 最後の文字の次が取得できないため
+                nextChangeColorTime < this.textAliveAPI.lyrics[i].startTime && // 色を変える際の最低限の間隔の担保
+                this.textAliveAPI.lyrics[i + 1].startTime - preCheckTime >=
+                    this.targetTime2 // 最低限の発話幅の担保
+            ) {
                 nextChangeColorTime =
-                    this.textAliveAPI.lyrics[i].startTime + changeColorCount;
+                    this.textAliveAPI.lyrics[i].startTime + this.targetTime;
+                preCheckTime = this.textAliveAPI.lyrics[i].startTime;
                 lyricColor = this.getRandomColor();
+                this.now_color = lyricColor;
             }
             this.textAliveAPI.lyrics[i].color = lyricColor;
         }
     }
 
+    // 前回と同じ色にはならないようにランダムに色を返す
     private getRandomColor(): string {
         let color;
         let num = Math.floor(Math.random() * 3);
@@ -46,6 +47,11 @@ export default class LyricLogicObject {
             default:
                 color = "#ff8e1e"; // 青
                 break;
+        }
+
+        // 連続して同じ色にならないようにする
+        if (this.now_color === color) {
+            this.getRandomColor();
         }
         return color;
     }
