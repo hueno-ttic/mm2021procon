@@ -57,24 +57,54 @@ export default class AudienceObject {
         let diffX = 30;
         for (let i = 0; i < AUDIENCE_SET_SIZE_Y; i++) {
             for (let j = 0; j < AUDIENCE_SET_SIZE_X; j++) {
+                let audience = this.getAudience();
                 laneAudience[i][j] = this.gameMain.add
-                    .image(baseX - j * diffX, baseY + i * diffY, "audience_a")
+                    .image(baseX - j * diffX, baseY + i * diffY, audience)
                     .setDepth(DepthDefine.OBJECT + i);
                 laneAudience[i][j].scale *= 0.03;
-                laneAudience[i][j].alpha = 0.5;
+                laneAudience[i][j].alpha = 0.0;
             }
         }
     }
 
-    update(laneScoreSet) {
-        //console.log(laneScoreSet);
-        // for (let j = 0; j < GameMain.LANE_SIZE; j++) {
-        //     for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE; i++) {
-        //         if (this.audience[j][i].updateAlpha(laneScoreSet[j])) {
-        //             break;
-        //         }
-        //     }
-        // }
+    getAudience(): string {
+        let audience;
+        const num = Math.floor(Math.random() * 3);
+        switch (num) {
+            case 0:
+                audience = "audience_a";
+                break;
+            case 1:
+                audience = "audience_b";
+                break;
+            case 2:
+                audience = "audience_c";
+                break;
+            case 3:
+                audience = "audience_d";
+                break;
+        }
+        return audience;
+    }
+
+    update(lane: string) {
+        if (lane === "first") {
+            this.updateAudience(this.firstLane);
+        } else if (lane === "second") {
+            this.updateAudience(this.secondLane);
+        } else if (lane === "third") {
+            this.updateAudience(this.thirdLane);
+        }
+    }
+
+    updateAudience(laneAudience) {
+        const numX = Math.floor(Math.random() * AUDIENCE_SET_SIZE_X);
+        const numY = Math.floor(Math.random() * AUDIENCE_SET_SIZE_Y);
+        if (laneAudience[numY][numX].alpha === 0) {
+            laneAudience[numY][numX].alpha = 0.5;
+        } else {
+            this.updateAudience(laneAudience);
+        }
     }
 
     // constructor(laneIndex:number, index:number) {
