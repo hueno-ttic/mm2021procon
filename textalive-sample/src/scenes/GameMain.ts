@@ -568,18 +568,19 @@ export default class GameMain extends Phaser.Scene {
      * スコアの計算を行う
      */
     private calcScore(textIndex: number, score: number): number {
-        const laneIndex = this.getLaneIndex(this.textData[textIndex].y);
-        if (-1 < laneIndex) {
+        const lyricPosLaneIndex = this.getLaneIndex(this.textData[textIndex].y);
+        if (-1 < lyricPosLaneIndex) {
             const laneColor = ["#ff8e1e", "#ffdc00", "#47ff47"]; // todo: 歌詞の色付け処理との紐づけ
-            const isSuccess = laneColor[laneIndex].includes(
-                this.textData[textIndex].style.stroke
+            const answerLaneIndex = laneColor.findIndex(
+                (color) => color == this.textData[textIndex].style.stroke
             );
-            score += isSuccess ? 50 : 10;
+            const isSuccess = lyricPosLaneIndex == answerLaneIndex;
 
+            score += isSuccess ? 50 : 10;
             if (isSuccess) {
-                this.laneScoreArray[laneIndex].addSuccess();
+                this.laneScoreArray[answerLaneIndex].addSuccess();
             } else {
-                this.laneScoreArray[laneIndex].addFailed();
+                this.laneScoreArray[answerLaneIndex].addFailed();
             }
         }
         return score;
@@ -636,6 +637,11 @@ export default class GameMain extends Phaser.Scene {
         switch (this.sceneChangeStatus) {
             case "":
                 console.log("完了画面へ");
+                this.registry.set("gameResult", {
+                    laneScore: this.laneScoreArray,
+                    totalScore: this.score,
+                });
+
                 if (this.game.scene.getScene("GameResult")) {
                     console.log("GameResult remove");
                     this.scene.remove("GameResult");
