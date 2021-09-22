@@ -9,6 +9,7 @@ import TimeInfoObject from "../object/TimeInfoObject";
 import UIPauseButtonObject from "../object/UIPauseButtonObject";
 import TutorialObject from "../object/TutorialObject";
 import LyricLineObject from "../object/LyricLineObject";
+import ScoreCounter from "../object/ScoreCounter";
 import HeartEffect from "../object/HeartEffect";
 import TouchEffect from "../object/TouchEffect";
 import DepthDefine from "../object/DepthDefine";
@@ -38,7 +39,8 @@ export default class GameMain extends Phaser.Scene {
     public lanePosition = [];
 
     // レーンごとのスコア
-    public laneScoreSet: Array<number>;
+    public laneScoreSet: Array<number>; // todo: 廃止予定
+    public laneScoreArray: Array<ScoreCounter>;
     static readonly LANE_SIZE: number = 3;
 
     // 観客
@@ -165,8 +167,10 @@ export default class GameMain extends Phaser.Scene {
 
         // スコアの初期化
         this.laneScoreSet = new Array();
+        this.laneScoreArray = new Array(3);
         for (let i = 0; i < GameMain.LANE_SIZE; i++) {
             this.laneScoreSet[i] = 0;
+            this.laneScoreArray[i] = new ScoreCounter();
         }
 
         this.timeProgressBar = new TimeProgressBarObject();
@@ -579,13 +583,18 @@ export default class GameMain extends Phaser.Scene {
         const laneIndex = this.getLaneIndex(this.textData[textIndex].y);
         if (-1 < laneIndex) {
             const laneColor = ["#ff8e1e", "#ffdc00", "#47ff47"]; // todo: 歌詞の色付け処理との紐づけ
-            const addScore = laneColor[laneIndex].includes(
+            const isSuccess = laneColor[laneIndex].includes(
                 this.textData[textIndex].style.stroke
-            )
-                ? 50
-                : 10;
+            );
+            const addScore = isSuccess ? 50 : 10;
             score += addScore;
             this.laneScoreSet[laneIndex] += addScore;
+
+            if (isSuccess) {
+                this.laneScoreArray[laneIndex].addSuccess();
+            } else {
+                this.laneScoreArray[laneIndex].addFailed();
+            }
         }
         return score;
     }
