@@ -7,10 +7,12 @@ import {
     IVideo,
     NullGraphicsDriver,
     PlayerEventListener,
+    PlayerVideoOptions,
 } from "textalive-app-api";
 
 export default class TextaliveApiManager {
     private musicUrl: string;
+    private options: PlayerVideoOptions;
 
     player: Player;
     playerEventListener: PlayerEventListener;
@@ -26,8 +28,9 @@ export default class TextaliveApiManager {
 
     private excludeLyricList = [];
 
-    constructor(url: string) {
+    constructor(url: string, options?: PlayerVideoOptions) {
         this.musicUrl = url;
+        this.options = options ? options : null;
     }
 
     init(): void {
@@ -74,7 +77,7 @@ export default class TextaliveApiManager {
 
         if (!app.songUrl) {
             // 再生対象となる楽曲URLをセット
-            this.player.createFromSongUrl(this.musicUrl);
+            this.player.createFromSongUrl(this.musicUrl, this.options);
         }
     }
 
