@@ -67,7 +67,6 @@ export default class GameMain extends Phaser.Scene {
     // ハートオブジェクト
     private laneHeartObjectArray: Array<LaneHeartObject>;
     private heartParticleArray: Array<HeartEffect>;
-    static readonly LANE_HEART_OBJECT_ARRAY_SIZE: number = 3;
 
     // ハートのX座標
     public heartX = 120;
@@ -143,13 +142,9 @@ export default class GameMain extends Phaser.Scene {
 
         this.lyricY = this.firstLane;
 
-        this.laneHeartObjectArray = new Array(
-            GameMain.LANE_HEART_OBJECT_ARRAY_SIZE
-        );
-        this.heartParticleArray = new Array(
-            GameMain.LANE_HEART_OBJECT_ARRAY_SIZE
-        );
-        for (let i = 0; i < GameMain.LANE_HEART_OBJECT_ARRAY_SIZE; i++) {
+        this.laneHeartObjectArray = new Array(GameMain.LANE_SIZE);
+        this.heartParticleArray = new Array(GameMain.LANE_SIZE);
+        for (let i = 0; i < GameMain.LANE_SIZE; i++) {
             this.laneHeartObjectArray[i] = new LaneHeartObject();
             this.heartParticleArray[i] = new HeartEffect();
         }
