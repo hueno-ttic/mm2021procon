@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import Lyric from "../Lyric";
 import LaneHeartObject from "../object/LaneHeartObject";
 import AudienceObject from "../object/AudienceObject";
+import GameResultScene from "./GameResult";
 import TimeProgressBarObject from "../object/TimeProgressBarObject";
 import TextaliveApiManager from "../TextaliveApiManager";
 import TimeInfoObject from "../object/TimeInfoObject";
@@ -28,6 +29,7 @@ export default class GameMain extends Phaser.Scene {
     public api: TextaliveApiManager;
 
     public musicStart = false;
+    public sceneChangeStatus = "";
 
     public firstLane: number = 120;
     public secondLane: number = 320;
@@ -440,8 +442,7 @@ export default class GameMain extends Phaser.Scene {
                 this.api.player.data.song.length - 0.5 <
                 this.api.getPositionTime() / 1000
             ) {
-                console.log("完了画面へ");
-                this.scene.start("GameResult");
+                this.changeNextScene();
             }
         }
 
@@ -681,6 +682,40 @@ export default class GameMain extends Phaser.Scene {
             //easingの指定
             ease: "Linear",
         });
+    }
+
+    private changeNextScene(): void {
+        switch (this.sceneChangeStatus) {
+            case "":
+                console.log("完了画面へ");
+                if (this.game.scene.getScene("GameResult")) {
+                    console.log("GameResult remove");
+                    this.scene.remove("GameResult");
+                    this.sceneChangeStatus = "Request_Remove";
+                } else {
+                    console.log("既に removed");
+                    this.sceneChangeStatus = "Removed";
+                }
+                break;
+            case "Request_Remove":
+                if (!this.game.scene.getScene("GameResult")) {
+                    this.sceneChangeStatus = "Removed";
+                }
+                break;
+            case "Removed":
+                this.scene.add("GameResult", GameResultScene);
+                this.sceneChangeStatus = "Request_Add";
+                break;
+            case "Request_Add":
+                if (this.game.scene.getScene("GameResult")) {
+                    this.sceneChangeStatus = "Added";
+                }
+                break;
+            case "Added":
+                this.scene.start("GameResult");
+                this.sceneChangeStatus = "Request_Start";
+                break;
+        }
     }
 
     private pointerdown(): void {

@@ -18,7 +18,7 @@ const config: Phaser.Types.Core.GameConfig = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
     },
-    scene: [SplashScene, TitleScene, GameMain, MusicSelectScene, GameResult],
+    scene: [SplashScene, TitleScene, MusicSelectScene],
 };
 
 // ゲームメインのクラス
