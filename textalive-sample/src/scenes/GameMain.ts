@@ -699,7 +699,7 @@ export default class GameMain extends Phaser.Scene {
                 console.log("完了画面へ");
                 if (this.game.scene.getScene("GameResult")) {
                     console.log("GameResult remove");
-                    this.game.scene.remove("GameResult");
+                    this.scene.remove("GameResult");
                     this.sceneChangeStatus = "Request_Remove";
                 } else {
                     console.log("既に removed");
@@ -712,7 +712,7 @@ export default class GameMain extends Phaser.Scene {
                 }
                 break;
             case "Removed":
-                this.game.scene.add("GameResult", GameResultScene);
+                this.scene.add("GameResult", GameResultScene);
                 this.sceneChangeStatus = "Request_Add";
                 break;
             case "Request_Add":
