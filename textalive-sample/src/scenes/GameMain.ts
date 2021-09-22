@@ -40,6 +40,7 @@ export default class GameMain extends Phaser.Scene {
     static readonly LANE_SIZE: number = 3;
 
     // 観客
+    private audienceObject: AudienceObject;
     public audience: Array<Array<AudienceObject>>;
     static readonly AUDIENCE_SET_SIZE: number = 6;
 
@@ -149,13 +150,14 @@ export default class GameMain extends Phaser.Scene {
         }
 
         // 観客
-        this.audience = new Array();
-        for (let j = 0; j < GameMain.LANE_SIZE; j++) {
-            this.audience[j] = new Array(GameMain.AUDIENCE_SET_SIZE);
-            for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE; i++) {
-                this.audience[j][i] = new AudienceObject(j, i);
-            }
-        }
+        this.audienceObject = new AudienceObject(this);
+        // this.audience = new Array();
+        // for (let j = 0; j < GameMain.LANE_SIZE; j++) {
+        //     this.audience[j] = new Array(GameMain.AUDIENCE_SET_SIZE);
+        //     for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE; i++) {
+        //         this.audience[j][i] = new AudienceObject(j, i);
+        //     }
+        // }
         // レーンのy座標
         this.lanePosition[0] = 120;
         this.lanePosition[1] = 320;
@@ -226,6 +228,7 @@ export default class GameMain extends Phaser.Scene {
         //観客
         this.load.image("audience", image["audience"]);
         this.load.image("bar1", image["bar1"]);
+        this.audienceObject.preload();
 
         // タッチエフェクトに利用するアセット
         this.load.image("star", image["star"]);
@@ -283,17 +286,18 @@ export default class GameMain extends Phaser.Scene {
         this.scoreText.setStroke("#161616", 4);
 
         // 観客の設定
-        for (let j = 0; j < GameMain.LANE_SIZE; j++) {
-            for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE; i++) {
-                this.audience[j][i].createAudience(
-                    this.add.image(
-                        880 - 110 * i,
-                        this.lanePosition[j],
-                        "audience"
-                    )
-                );
-            }
-        }
+        // for (let j = 0; j < GameMain.LANE_SIZE; j++) {
+        //     for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE; i++) {
+        //         this.audience[j][i].createAudience(
+        //             this.add.image(
+        //                 880 - 110 * i,
+        //                 this.lanePosition[j],
+        //                 "audience"
+        //             )
+        //         );
+        //     }
+        // }
+        this.audienceObject.create();
 
         // ハートオブジェクト
         const heartDepth = DepthDefine.OBJECT + 1;
@@ -475,13 +479,14 @@ export default class GameMain extends Phaser.Scene {
         }
 
         // 観客の表示情報を更新
-        for (let j = 0; j < GameMain.LANE_SIZE; j++) {
-            for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE; i++) {
-                if (this.audience[j][i].updateAlpha(this.laneScoreSet[j])) {
-                    break;
-                }
-            }
-        }
+        this.audienceObject.update(this.laneScoreSet);
+        // for (let j = 0; j < GameMain.LANE_SIZE; j++) {
+        //     for (let i = 0; i < GameMain.AUDIENCE_SET_SIZE; i++) {
+        //         if (this.audience[j][i].updateAlpha(this.laneScoreSet[j])) {
+        //             break;
+        //         }
+        //     }
+        // }
 
         // 操作しているアーティストの位置更新
         if (this.api.player.isPlaying) {
