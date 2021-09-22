@@ -37,10 +37,10 @@ export default class AudienceObject {
         this.thirdLaneCounter = 0;
     }
     preload() {
-        this.gameMain.load.image("audience_a", image["audience_a"]);
-        this.gameMain.load.image("audience_b", image["audience_b"]);
-        this.gameMain.load.image("audience_c", image["audience_c"]);
-        this.gameMain.load.image("audience_d", image["audience_d"]);
+        this.gameMain.load.image("audience_a", image["audience_a_39p"]);
+        this.gameMain.load.image("audience_b", image["audience_b_39p"]);
+        this.gameMain.load.image("audience_c", image["audience_c_39p"]);
+        this.gameMain.load.image("audience_d", image["audience_d_39p"]);
     }
 
     create() {
@@ -58,7 +58,6 @@ export default class AudienceObject {
                 laneAudience[i][j] = this.gameMain.add
                     .image(baseX - j * diffX, baseY + i * diffY, audience)
                     .setDepth(DepthDefine.OBJECT + i);
-                laneAudience[i][j].scale *= 0.03;
                 laneAudience[i][j].alpha = 0.0;
             }
         }
