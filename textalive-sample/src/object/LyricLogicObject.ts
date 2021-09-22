@@ -1,4 +1,3 @@
-
 export default class LyricLogicObject {
     public textAliveAPI;
     public target;
@@ -8,26 +7,30 @@ export default class LyricLogicObject {
         this.textAliveAPI = textAliveAPI;
     }
 
-
     public setLyricColor() {
         console.log("bpm : " + this.textAliveAPI.bpm);
-        console.log("色変え : " + this.textAliveAPI.bpm / 60 * 1000)
-        console.log("色変えの回数：" + (this.textAliveAPI.player.data.song.length - 0.5) / (this.textAliveAPI.bpm / 60));
+        console.log("色変え : " + (this.textAliveAPI.bpm / 60) * 1000);
+        console.log(
+            "色変えの回数：" +
+                (this.textAliveAPI.player.data.song.length - 0.5) /
+                    (this.textAliveAPI.bpm / 60)
+        );
 
-        let changeColorCount =  this.textAliveAPI.bpm / 60 * 1000
+        let changeColorCount = (this.textAliveAPI.bpm / 60) * 1000;
 
         let nextChangeColorTime = 0;
         let lyricColor = this.getRandomColor();
         for (let i = 0; i < this.textAliveAPI.lyrics.length; i++) {
             if (nextChangeColorTime < this.textAliveAPI.lyrics[i].startTime) {
-                nextChangeColorTime = this.textAliveAPI.lyrics[i].startTime + changeColorCount;
+                nextChangeColorTime =
+                    this.textAliveAPI.lyrics[i].startTime + changeColorCount;
                 lyricColor = this.getRandomColor();
             }
             this.textAliveAPI.lyrics[i].color = lyricColor;
         }
     }
 
-    private getRandomColor() :string{
+    private getRandomColor(): string {
         let color;
         let num = Math.floor(Math.random() * 3);
         switch (num) {
@@ -47,4 +50,3 @@ export default class LyricLogicObject {
         return color;
     }
 }
-

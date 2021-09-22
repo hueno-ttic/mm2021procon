@@ -133,19 +133,20 @@ export default class TextaliveApiManager {
             const valenceArousal = this.player.getValenceArousal(w.startTime);
             // 歌詞に紐づくビートを取得
             const beat = this.player.findBeat(w.startTime);
-            if ( beat !== null) {
-              bpmCalc += beat.duration;
+            if (beat !== null) {
+                bpmCalc += beat.duration;
             }
-            
 
             // 単語情報を格納
-            this.lyrics.push(new Lyric(w, wordIndex, color, valenceArousal, beat));
+            this.lyrics.push(
+                new Lyric(w, wordIndex, color, valenceArousal, beat)
+            );
             // 次の単語へ
             w = w.next;
             wordIndex++;
         }
-        let avgBeatDuration = bpmCalc/this.lyrics.length;
-        this.bpm = 60000 /  avgBeatDuration;
+        let avgBeatDuration = bpmCalc / this.lyrics.length;
+        this.bpm = 60000 / avgBeatDuration;
     }
 
     // APIアクセス後に動画情報設定
@@ -248,6 +249,6 @@ export default class TextaliveApiManager {
     }
 
     getBPMdata() {
-      return this.getBea
+        return this.getBea;
     }
 }
