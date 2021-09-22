@@ -578,10 +578,10 @@ export default class GameMain extends Phaser.Scene {
     private calcScore(textIndex: number, score: number): number {
         const laneIndex = this.getLaneIndex(this.textData[textIndex].y);
         if (-1 < laneIndex) {
-            const textColor = this.textData[textIndex].style.stroke;
-            const addScore = this.laneHeartObjectArray[
-                laneIndex
-            ].image.texture.key.includes(textColor)
+            const laneColor = ["#ff8e1e", "#ffdc00", "#47ff47"]; // todo: 歌詞の色付け処理との紐づけ
+            const addScore = laneColor[laneIndex].includes(
+                this.textData[textIndex].style.stroke
+            )
                 ? 50
                 : 10;
             score += addScore;
