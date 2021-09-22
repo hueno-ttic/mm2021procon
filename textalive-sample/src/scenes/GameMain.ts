@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import Lyric from "../Lyric";
 import LaneHeartObject from "../object/LaneHeartObject";
 import AudienceObject from "../object/AudienceObject";
 import GameResultScene from "./GameResult";
@@ -199,8 +198,6 @@ export default class GameMain extends Phaser.Scene {
 
     preload(): void {
         console.log("preload()");
-
-        Phaser.GameObjects.Particles.ParticleEmitterManager;
 
         // 背景画像
         this.load.image("backImg", gameImage["whiteback"]);

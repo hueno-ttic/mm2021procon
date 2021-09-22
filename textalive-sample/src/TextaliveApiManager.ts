@@ -227,8 +227,4 @@ export default class TextaliveApiManager {
     getIsChorus(): boolean {
         return this.isChorus;
     }
-
-    getBPMdata() {
-        return this.getBea;
-    }
 }
