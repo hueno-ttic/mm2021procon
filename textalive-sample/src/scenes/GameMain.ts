@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import Lyric from "../Lyric";
 import LaneHeartObject from "../object/LaneHeartObject";
 import AudienceObject from "../object/AudienceObject";
 import GameResultScene from "./GameResult";
@@ -13,6 +12,7 @@ import ScoreCounter from "../object/ScoreCounter";
 import HeartEffect from "../object/HeartEffect";
 import TouchEffect from "../object/TouchEffect";
 import DepthDefine from "../object/DepthDefine";
+import LyricLogicObject from "../object/LyricLogicObject";
 import LiveArtistObject from "../object/LiveArtistObject";
 import { buildMusicInfo } from "../factory/MusicFactory";
 import DebugInfo from "../object/DebugInfo";
@@ -112,6 +112,7 @@ export default class GameMain extends Phaser.Scene {
     // Visuzlizer
     private visualizer: Visualizer;
 
+    private lyricLogicObject: LyricLogicObject;
     // ライブアーティスト
     private liveArtist: LiveArtistObject;
 
@@ -178,6 +179,8 @@ export default class GameMain extends Phaser.Scene {
         this.visualizer = new Visualizer(this);
         this.visualizer.init();
 
+        // 歌詞の色付けロジック
+        this.lyricLogicObject = new LyricLogicObject(this.api);
         // ライブアーティスト
         this.liveArtist = new LiveArtistObject(this);
 
@@ -407,6 +410,9 @@ export default class GameMain extends Phaser.Scene {
         ) {
             this.api.player.requestPlay();
             this.musicStart = true;
+
+            // 歌詞の色付け
+            this.lyricLogicObject.setLyricColor();
 
             // プログレスバーを表示
             this.timeProgressBar.maxValue =

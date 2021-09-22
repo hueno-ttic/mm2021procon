@@ -33,6 +33,8 @@ export default class TextaliveApiManager {
         this.options = options ? options : null;
     }
 
+    public bpm = 0;
+
     init(): void {
         this.player = new Player({
             app: {
@@ -99,6 +101,7 @@ export default class TextaliveApiManager {
                 lyricIndex++;
             }
         }
+        let bpmCalc = 0;
         // 歌詞の区切りごと
         let w = this.player.video.firstWord;
         let wordIndex = 0;
@@ -107,36 +110,23 @@ export default class TextaliveApiManager {
             if (this.excludeLyricList.includes(w)) {
                 continue;
             }
-            // 歌詞の色変え
-            const num = Math.floor(Math.random() * 3);
-            let color;
-            switch (num) {
-                case 0:
-                    color = "#ff8e1e"; // 橙
-                    break;
-                case 1:
-                    color = "#47ff47"; // 緑
-                    break;
-                case 2:
-                    color = "#ffdc00"; // 黄
-                    break;
-                default:
-                    color = "#ff8e1e"; // 青
-                    break;
-            }
-
-            if (this.getIsChorus()) {
-                color = "#ff8e1e";
-            }
 
             // 歌詞ごとの覚醒度と感情価を設定
             const valenceArousal = this.player.getValenceArousal(w.startTime);
+            // 歌詞に紐づくビートを取得
+            const beat = this.player.findBeat(w.startTime);
+            if (beat !== null) {
+                bpmCalc += beat.duration;
+            }
+
             // 単語情報を格納
-            this.lyrics.push(new Lyric(w, wordIndex, color, valenceArousal));
+            this.lyrics.push(new Lyric(w, wordIndex, valenceArousal, beat));
             // 次の単語へ
             w = w.next;
             wordIndex++;
         }
+        let avgBeatDuration = bpmCalc / this.lyrics.length;
+        this.bpm = 60000 / avgBeatDuration;
     }
 
     // APIアクセス後に動画情報設定
