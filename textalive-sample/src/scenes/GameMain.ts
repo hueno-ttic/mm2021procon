@@ -141,6 +141,8 @@ export default class GameMain extends Phaser.Scene {
 
         this.touchEffect = new TouchEffect();
 
+        this.lyricY = this.firstLane;
+
         this.laneHeartObjectArray = new Array(
             GameMain.LANE_HEART_OBJECT_ARRAY_SIZE
         );
