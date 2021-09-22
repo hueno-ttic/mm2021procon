@@ -131,10 +131,10 @@ export default class GameMain extends Phaser.Scene {
             .filter((music) => music.id === this.selectedMusicId)
             .pop();
 
-        var url = this.selectedMusic.url;
-
-        //var url = "https://www.youtube.com/watch?v=bMtYf3R0zhY";
-        this.api = new TextaliveApiManager(url);
+        this.api = new TextaliveApiManager(
+            this.selectedMusic.url,
+            this.selectedMusic.playerVideoOptions
+        );
         this.api.init();
 
         this.touchEffect = new TouchEffect();
