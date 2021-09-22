@@ -16,8 +16,10 @@ export default class GainRepository {
     }
 
     public getGain(position: number, width: number = 3): number[][] {
-        return Array.from({ length: width * 2 }, (v, k) =>
-            this.getGainByPosition(position - width + k)
+        return Array.from(
+            { length: width * 2 },
+            (v, k) =>
+                this.getGainByPosition(position - width + k)
         );
     }
 
