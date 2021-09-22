@@ -9,6 +9,7 @@ import TimeInfoObject from "../object/TimeInfoObject";
 import UIPauseButtonObject from "../object/UIPauseButtonObject";
 import TutorialObject from "../object/TutorialObject";
 import LyricLineObject from "../object/LyricLineObject";
+import ScoreCounter from "../object/ScoreCounter";
 import HeartEffect from "../object/HeartEffect";
 import TouchEffect from "../object/TouchEffect";
 import DepthDefine from "../object/DepthDefine";
@@ -38,7 +39,7 @@ export default class GameMain extends Phaser.Scene {
     public lanePosition = [];
 
     // レーンごとのスコア
-    public laneScoreSet: Array<number>;
+    public laneScoreArray: Array<ScoreCounter>;
     static readonly LANE_SIZE: number = 3;
 
     // 観客
@@ -66,7 +67,6 @@ export default class GameMain extends Phaser.Scene {
     // ハートオブジェクト
     private laneHeartObjectArray: Array<LaneHeartObject>;
     private heartParticleArray: Array<HeartEffect>;
-    static readonly LANE_HEART_OBJECT_ARRAY_SIZE: number = 3;
 
     // ハートのX座標
     public heartX = 120;
@@ -140,13 +140,11 @@ export default class GameMain extends Phaser.Scene {
 
         this.touchEffect = new TouchEffect();
 
-        this.laneHeartObjectArray = new Array(
-            GameMain.LANE_HEART_OBJECT_ARRAY_SIZE
-        );
-        this.heartParticleArray = new Array(
-            GameMain.LANE_HEART_OBJECT_ARRAY_SIZE
-        );
-        for (let i = 0; i < GameMain.LANE_HEART_OBJECT_ARRAY_SIZE; i++) {
+        this.lyricY = this.firstLane;
+
+        this.laneHeartObjectArray = new Array(GameMain.LANE_SIZE);
+        this.heartParticleArray = new Array(GameMain.LANE_SIZE);
+        for (let i = 0; i < GameMain.LANE_SIZE; i++) {
             this.laneHeartObjectArray[i] = new LaneHeartObject();
             this.heartParticleArray[i] = new HeartEffect();
         }
@@ -160,9 +158,9 @@ export default class GameMain extends Phaser.Scene {
         this.lanePosition[2] = 520;
 
         // スコアの初期化
-        this.laneScoreSet = new Array();
+        this.laneScoreArray = new Array(GameMain.LANE_SIZE);
         for (let i = 0; i < GameMain.LANE_SIZE; i++) {
-            this.laneScoreSet[i] = 0;
+            this.laneScoreArray[i] = new ScoreCounter();
         }
 
         this.timeProgressBar = new TimeProgressBarObject();
@@ -448,18 +446,14 @@ export default class GameMain extends Phaser.Scene {
         }
 
         // クリックした際に3レーンのいずれかに移動する
-        const moveLanePos = [this.firstLane, this.secondLane, this.thirdLane];
-        for (let i = 0; i < this.lanePosition.length; i++) {
-            const laneHeightHalf =
-                (this.firstLaneLine.height * this.firstLaneLine.scaleY) / 2;
-            const lanePos = this.lanePosition[i];
-            if (
-                lanePos - laneHeightHalf < this.gameTouchY &&
-                this.gameTouchY < lanePos + laneHeightHalf
-            ) {
-                this.lyricY = moveLanePos[i];
-                break;
-            }
+        const touchLaneIndex = this.getLaneIndex(this.gameTouchY);
+        if (-1 < touchLaneIndex) {
+            const moveLanePos = [
+                this.firstLane,
+                this.secondLane,
+                this.thirdLane,
+            ];
+            this.lyricY = moveLanePos[touchLaneIndex];
         }
 
         // 操作しているアーティストの位置更新
@@ -524,7 +518,7 @@ export default class GameMain extends Phaser.Scene {
         }
 
         // テキストの描画更新
-        for (var i = this.indexStart; i < this.textData.length; i++) {
+        for (let i = this.indexStart; i < this.textData.length; i++) {
             // 文字を移動させる
             if (typeof this.textData[i] !== "undefined") {
                 this.textData[i].x -= this.counter;
@@ -532,38 +526,16 @@ export default class GameMain extends Phaser.Scene {
                 // 一定区間移動したら歌詞を非表示する
                 if (this.textData[i].x < this.heartX) {
                     this.indexStart++;
-                    var wordY = this.textData[i].y;
-                    var nowLine = "";
-                    if (wordY > 0 && wordY < 720 / 3) {
-                        nowLine = "first";
-                    } else if (wordY >= 720 / 3 && wordY < (720 / 3) * 2) {
-                        nowLine = "second";
-                    } else if (wordY >= (720 / 3) * 2 && wordY < 720) {
-                        nowLine = "third";
-                    }
+                    const laneIndex = this.getLaneIndex(this.textData[i].y);
                     if (
-                        !this.laneHeartObjectArray[0].playAnimationFlag &&
-                        nowLine == "first"
+                        -1 < laneIndex &&
+                        !this.laneHeartObjectArray[laneIndex].playAnimationFlag
                     ) {
-                        this.laneHeartObjectArray[0].playStretchHeart();
-                        this.setHeartTween(this.laneHeartObjectArray[0].image);
-                        this.heartParticleArray[0].explode();
-                    }
-                    if (
-                        !this.laneHeartObjectArray[1].playAnimationFlag &&
-                        nowLine == "second"
-                    ) {
-                        this.laneHeartObjectArray[1].playStretchHeart();
-                        this.setHeartTween(this.laneHeartObjectArray[1].image);
-                        this.heartParticleArray[1].explode();
-                    }
-                    if (
-                        !this.laneHeartObjectArray[2].playAnimationFlag &&
-                        nowLine == "third"
-                    ) {
-                        this.laneHeartObjectArray[2].playStretchHeart();
-                        this.setHeartTween(this.laneHeartObjectArray[2].image);
-                        this.heartParticleArray[2].explode();
+                        this.laneHeartObjectArray[laneIndex].playStretchHeart();
+                        this.setHeartTween(
+                            this.laneHeartObjectArray[laneIndex].image
+                        );
+                        this.heartParticleArray[laneIndex].explode();
                     }
 
                     // 歌詞の削除
@@ -590,54 +562,20 @@ export default class GameMain extends Phaser.Scene {
      * スコアの計算を行う
      */
     private calcScore(textIndex: number, score: number): number {
-        var textColor = this.textData[textIndex].style.stroke;
-        if (
-            this.textData[textIndex].y > 0 &&
-            this.textData[textIndex].y < 200
-        ) {
-            if (
-                this.laneHeartObjectArray[0].image.texture.key.includes(
-                    textColor
-                )
-            ) {
-                score = score + 50;
-                this.laneScoreSet[0] += 50;
+        const laneIndex = this.getLaneIndex(this.textData[textIndex].y);
+        if (-1 < laneIndex) {
+            const laneColor = ["#ff8e1e", "#ffdc00", "#47ff47"]; // todo: 歌詞の色付け処理との紐づけ
+            const isSuccess = laneColor[laneIndex].includes(
+                this.textData[textIndex].style.stroke
+            );
+            score += isSuccess ? 50 : 10;
+
+            if (isSuccess) {
+                this.laneScoreArray[laneIndex].addSuccess();
             } else {
-                score = score + 10;
-                this.laneScoreSet[0] += 10;
-            }
-        } else if (
-            this.textData[textIndex].y >= 250 &&
-            this.textData[textIndex].y < 400
-        ) {
-            if (
-                this.laneHeartObjectArray[1].image.texture.key.includes(
-                    textColor
-                )
-            ) {
-                score = score + 50;
-                this.laneScoreSet[1] += 50;
-            } else {
-                score = score + 10;
-                this.laneScoreSet[1] += 10;
-            }
-        } else if (
-            this.textData[textIndex].y >= 450 &&
-            this.textData[textIndex].y < 700
-        ) {
-            if (
-                this.laneHeartObjectArray[2].image.texture.key.includes(
-                    textColor
-                )
-            ) {
-                score = score + 50;
-                this.laneScoreSet[2] += 50;
-            } else {
-                score = score + 10;
-                this.laneScoreSet[2] += 10;
+                this.laneScoreArray[laneIndex].addFailed();
             }
         }
-
         return score;
     }
 
@@ -670,6 +608,22 @@ export default class GameMain extends Phaser.Scene {
             //easingの指定
             ease: "Linear",
         });
+    }
+
+    // y座標からレーンのインデックス取得
+    private getLaneIndex(posY: number): number {
+        for (let i = 0; i < this.lanePosition.length; i++) {
+            const laneHeightHalf =
+                (this.firstLaneLine.height * this.firstLaneLine.scaleY) / 2;
+            const lanePos = this.lanePosition[i];
+            if (
+                lanePos - laneHeightHalf < posY &&
+                posY < lanePos + laneHeightHalf
+            ) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private changeNextScene(): void {
