@@ -2,8 +2,8 @@ import visualizerService from "../../domain/service/visualizerService";
 import * as Phaser from "phaser";
 import { POINT_SIZE } from "../constants/constants";
 
-const POSITION = { x: 70, y: 400 }; // 左下端の座標
-const SIZE = { width: 800, height: 300 }; // 描画サイズ
+const POSITION = { x: 1240, y: 30 }; // 右上端の座標
+const SIZE = { width: 205, height: 590 }; // 描画サイズ
 
 export default class Visualizer {
     private readonly scene: Phaser.Scene;
@@ -19,7 +19,14 @@ export default class Visualizer {
     create() {
         this.getRectPos(0).forEach((v) =>
             this.rects.push(
-                this.scene.add.rectangle(v.x, v.y, v.width, v.height, 0xff00ff)
+                this.scene.add.rectangle(
+                    v.x,
+                    v.y,
+                    v.width,
+                    v.height,
+                    v.color,
+                    0.9
+                )
             )
         );
     }
@@ -30,6 +37,7 @@ export default class Visualizer {
             this.rects[index]?.setPosition(value.x, value.y);
             this.rects[index]?.displayWidth = value.width;
             this.rects[index]?.displayHeight = value.height;
+            this.rects[index]?.fillColor = value.color;
         });
     }
 
@@ -38,24 +46,50 @@ export default class Visualizer {
         y: number;
         width: number;
         height: number;
+        color: number;
     }[] {
-        const width = SIZE.width / POINT_SIZE;
-
+        const height = SIZE.height / POINT_SIZE;
         const gains = this.service.getGain(position);
+        const brightness = Math.min(1.0,
+            0.5 + 8 * gains.reduce(
+                (prev, current) => prev + current / gains.length
+            )
+        );
 
-        const positions = gains.map((gain, index) => {
+        return gains.map((gain, index) => {
             // そのままの値だとメリハリが足りないので、tanhを掛けて補正する
             const tuned_gain = Math.tanh(gain) / Math.tanh(1.0);
-            const height = 1 + SIZE.height * tuned_gain;
+            const width = Math.min(1 + (SIZE.width * tuned_gain) * 1.5, SIZE.width);
 
             return {
-                x: POSITION.x + index * width,
-                y: POSITION.y - height / 2,
+                x: POSITION.x - width / 2,
+                y: POSITION.y + height * index,
                 width,
                 height,
+                color: this.getColor(index, brightness),
             };
         });
+    }
 
-        return positions;
+    private getColor(index: number, brightness: number) {
+        const red = [255, 109, 30];
+        const green = [41, 255, 12];
+        const blue = [4, 180, 254];
+        const colors = [red, green, blue];
+
+        const grad = index / POINT_SIZE;
+        const red_percent = Math.max(1 - grad * 3, 0); // 33.3% まで緩やかに下り残りは0
+        const blue_percent = Math.max(grad * 3 - 2, 0); // 66.6% までは0で緩やかに1に近づく
+        const green_percent = 1 - red_percent - blue_percent; // のこり
+        const percents = [red_percent, green_percent, blue_percent];
+
+        return [0, 1, 2]
+            .map((colorId) => {
+                return percents
+                    .map((percent, index) => colors[index][colorId] * percent * brightness)
+                    .map((val) => Math.floor(val))
+                    .reduce((prev, val) => prev + val, 0);
+            })
+            .reduce((prev, val, index) => prev + (val << (8 * (2 - index))), 0);
     }
 }
