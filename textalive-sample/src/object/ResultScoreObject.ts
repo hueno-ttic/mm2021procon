@@ -27,10 +27,10 @@ export default class ResultScoreObject {
         this._resultNameImage = null;
         this._underLineImage = null;
         this._laneImages = new Array<Phaser.GameObjects.Image>(
-            GameMain.LANE_HEART_OBJECT_ARRAY_SIZE
+            GameMain.LANE_SIZE
         );
         this._laneScoreTexts = new Array<Phaser.GameObjects.Text>(
-            GameMain.LANE_HEART_OBJECT_ARRAY_SIZE
+            GameMain.LANE_SIZE
         );
     }
 

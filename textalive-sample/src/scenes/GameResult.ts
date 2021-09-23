@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import DepthDefine from "../object/DepthDefine";
 import ResultScoreObject from "../object/ResultScoreObject";
 import TotalResultObject from "../object/TotalResultObject";
+import ScoreCounter from "../object/ScoreCounter";
 
 import imageResult from "../assets/result/*.png";
 
@@ -130,7 +131,7 @@ export default class GameResultScene extends Phaser.Scene {
             .setDepth(DepthDefine.OBJECT - 1)
             .setOrigin(0.5, 0);
 
-        // スコア
+        // スコア画像と背景
         const scoreDepth = DepthDefine.OBJECT;
         this._scoreBackgroundImage = this.add.image(
             1040,
@@ -148,6 +149,12 @@ export default class GameResultScene extends Phaser.Scene {
             "score_image"
         );
 
+        // レーンごとのリザルト
+        const result = this.registry.get("gameResult") as GameScore;
+        const laneScores = [
+            result.laneScore.map((score) => score.success),
+            result.laneScore.map((score) => score.failed),
+        ];
         const resultNameKeys = ["score_excellent", "score_bad"];
         for (let i = 0; i < this._resultScores.length; i++) {
             this._resultScores[i].create({
@@ -155,7 +162,7 @@ export default class GameResultScene extends Phaser.Scene {
                 resultNameKey: resultNameKeys[i],
                 underlineKey: "line",
                 laneKeys: ["lane_1", "lane_2", "lane_3"],
-                laneScores: [0, 1, 2], // todo: シーン間のパラメータ受け渡し
+                laneScores: laneScores[i],
                 depth: scoreDepth,
                 posX: this._scoreBackgroundImage.x - 180,
                 posY:
@@ -166,11 +173,12 @@ export default class GameResultScene extends Phaser.Scene {
             });
         }
 
+        // スコア
         this._total.create({
             scene: this,
             totalImageKey: "score_total",
             underLineKey: "line",
-            totalResult: 100, // todo: シーン間のパラメータ受け渡し
+            totalResult: result.totalScore,
             depth: scoreDepth,
             posX: this._scoreBackgroundImage.x - 180,
             posY:
@@ -227,4 +235,9 @@ export default class GameResultScene extends Phaser.Scene {
 
         this._total.update();
     }
+}
+
+interface GameScore {
+    laneScore: ScoreCounter[];
+    totalScore: number;
 }
