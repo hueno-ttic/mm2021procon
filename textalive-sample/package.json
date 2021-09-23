@@ -4,7 +4,10 @@
     "version": "1.0.0",
     "description": "いろいろなtextaliveの詰め合わせ",
     "scripts": {
+        "predev": "ts-node ./src/scripts/build_fft.ts",
         "dev": "parcel src/index.html --out-dir dev",
+        "dev:nocache": "parcel src/index.html --out-dir dev",
+        "prebuild": "ts-node ./src/scripts/build_fft.ts",
         "build": "parcel build src/index.html --public-url ./ --out-dir docs --no-source-maps",
         "clean": "del-cli .cache dev docs",
         "precommit": "lint-staged",
@@ -17,9 +20,11 @@
     "author": "TTIC",
     "license": "MIT",
     "dependencies": {
+        "@types/node": "^16.9.6",
         "axios": "^0.21.4",
         "phaser": "^3.24.1",
-        "textalive-app-api": "0.3.0"
+        "textalive-app-api": "0.3.0",
+        "ts-node": "^10.2.1"
     },
     "devDependencies": {
         "del-cli": "^4.0.1",

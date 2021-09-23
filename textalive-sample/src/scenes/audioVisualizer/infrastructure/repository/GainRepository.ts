@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import fft from "../../../../assets/fft/*.data";
+import fft from "../../../../assets/fft/build/*.data";
 
 export default class GainRepository {
     private readonly size: number;
@@ -9,23 +9,13 @@ export default class GainRepository {
         this.size = size;
         this.gains = [[]];
 
-        // バックグラウンドで周波数成分の準備を行うプロセス
         // TODO: 一旦固定のJSON 実際は曲ごとにJSONを読み分ける
         (async () => {
             const response = await axios.get<
                 number[][],
                 AxiosResponse<number[][]>
             >(fft["fft"]);
-
-            console.log("data size: " + (response.data.length * 10 /1000) + "sec");
-            console.log("analyze start");
-            console.time("analyze");
-            for(const idx in response.data) {
-                this.gains[idx] = this.reduceArray(response.data[idx], this.size, idx);
-                // メインスレッドの計算資源を食いつぶさないように await する
-                await new Promise(resolve => setTimeout(resolve, 0));
-            }
-            console.timeEnd("analyze");
+            this.gains = response.data;
         })();
     }
 
@@ -50,33 +40,5 @@ export default class GainRepository {
 
         // データがないときは0埋めしたゲインを返却
         return Array<number>(this.size).fill(0.0);
-    }
-
-    /**
-     * 周波数成分をserviceで読み込める形に畳み込む
-     * @param originArray
-     * @param targetSize
-     */
-    private reduceArray(originArray: number[], targetSize, index): number[] {
-        // データに不足がある場合は0埋め
-        if (!originArray) {
-            return Array<number>(this.size).fill(0.0);
-        }
-
-        const size = originArray.length / targetSize;
-        return Array.from({ length: targetSize }, (_, idx) =>
-            originArray.slice(
-                // 配列の範囲を超えてスライスしないようにする
-                Math.min(0, (idx - 1) * size),
-                Math.min(idx * size, originArray.length)
-            )
-        )
-            .map((array) => array.map((v) => Math.abs((v - 128) / 128))) // 周波数領域ごとのゲインを正規化
-            .map((array) => this.avg(array)); // 周波数ごとのゲインを平滑化
-    }
-
-    // 平均を取る
-    private avg(value: number[]): number {
-        return value.reduce((acc, val) => acc + val / value.length, 0);
     }
 }

@@ -1,7 +1,7 @@
 import visualizerService from "../../domain/service/visualizerService";
 import * as Phaser from "phaser";
+import { POINT_SIZE } from "../constants/constants";
 
-const POINT_SIZE = 128; // FFTの分割サイズ
 const POSITION = { x: 70, y: 400 }; // 左下端の座標
 const SIZE = { width: 800, height: 300 }; // 描画サイズ
 
@@ -18,16 +18,18 @@ export default class Visualizer {
 
     create() {
         this.getRectPos(0).forEach((v) =>
-            this.rects.push(this.scene.add.rectangle(v.x, v.y, v.width, v.height, 0xff00ff))
+            this.rects.push(
+                this.scene.add.rectangle(v.x, v.y, v.width, v.height, 0xff00ff)
+            )
         );
     }
 
     update(position: number) {
         const points = this.getRectPos(position);
         points.forEach((value, index) => {
-            this.rects[index].setPosition(value.x, value.y);
-            this.rects[index].displayWidth = value.width;
-            this.rects[index].displayHeight = value.height;
+            this.rects[index]?.setPosition(value.x, value.y);
+            this.rects[index]?.displayWidth = value.width;
+            this.rects[index]?.displayHeight = value.height;
         });
     }
 
