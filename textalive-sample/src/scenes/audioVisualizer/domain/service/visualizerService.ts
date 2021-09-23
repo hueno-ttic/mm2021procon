@@ -13,7 +13,9 @@ export default class visualizerService {
 
     public getGain(position: number): number[] {
         // データソースからゲインを取得して [時間][周波数] の行列から [周波数][時間] の行列に変換する
-        const gains = this.transpose(this.repository.getGain(position ?? 0.0, TIME_SMOOTH));
+        const gains = this.transpose(
+            this.repository.getGain(position ?? 0.0, TIME_SMOOTH)
+        );
 
         // 周波数ごとにスムージングして出力
         return gains.map((gain) => this.smoothing(gain));

@@ -1,4 +1,4 @@
-import axios, {AxiosResponse} from "axios";
+import axios, { AxiosResponse } from "axios";
 import fft from "../../../../assets/fft/*.data";
 
 export default class GainRepository {
@@ -11,8 +11,13 @@ export default class GainRepository {
 
         // TODO: 一旦固定のJSON 実際は曲ごとにJSONを読み分ける
         (async () => {
-            const response = await axios.get<number[][], AxiosResponse<number[][]>>(fft["fft"]);
-            this.gains = response.data.map((gain, idx) => this.reduceArray(gain, this.size, idx));
+            const response = await axios.get<
+                number[][],
+                AxiosResponse<number[][]>
+            >(fft["fft"]);
+            this.gains = response.data.map((gain, idx) =>
+                this.reduceArray(gain, this.size, idx)
+            );
         })();
     }
 
@@ -26,7 +31,12 @@ export default class GainRepository {
         const index = Math.floor(position / 10);
 
         // gainにデータがあればそれを返却
-        if (position >= 0 && this.gains.length > index && this.gains[index] && this.gains[index].length > 0) {
+        if (
+            position >= 0 &&
+            this.gains.length > index &&
+            this.gains[index] &&
+            this.gains[index].length > 0
+        ) {
             return this.gains[index];
         }
 

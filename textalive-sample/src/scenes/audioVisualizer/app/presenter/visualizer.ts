@@ -41,7 +41,7 @@ export default class Visualizer {
 
         const positions = gains.map((gain, index) => {
             // そのままの値だとメリハリが足りないので、tanhを掛けて補正する
-            const tuned_gain =   Math.tanh(gain) / Math.tanh(1.0);
+            const tuned_gain = Math.tanh(gain) / Math.tanh(1.0);
             const height = 1 + SIZE.height * tuned_gain;
 
             return {
