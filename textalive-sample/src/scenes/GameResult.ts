@@ -5,6 +5,7 @@ import TotalResultObject from "../object/TotalResultObject";
 import ScoreCounter from "../object/ScoreCounter";
 
 import imageResult from "../assets/result/*.png";
+import music from "../assets/sound/music/*.wav";
 
 export default class GameResultScene extends Phaser.Scene {
     // 背景
@@ -32,6 +33,9 @@ export default class GameResultScene extends Phaser.Scene {
     // ボタン
     private _moveSelectMusicButtonBgImage: Phaser.GameObjects.Image;
     private _moveSelectMusicButtonImage: Phaser.GameObjects.Image;
+
+    // サウンド
+    private _bgm: Phaser.Sound.BaseSound;
 
     static readonly SCORE_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle =
         {
@@ -73,6 +77,9 @@ export default class GameResultScene extends Phaser.Scene {
         // ボタン
         this._moveSelectMusicButtonBgImage = null;
         this._moveSelectMusicButtonImage = null;
+
+        // サウンド
+        this._bgm = null;
     }
 
     preload(): void {
@@ -110,6 +117,9 @@ export default class GameResultScene extends Phaser.Scene {
             "button_select_music_image",
             imageResult.result_move_musicselect
         );
+
+        // サウンド
+        this.load.audio("result_music", music.result);
     }
 
     create(): void {
@@ -223,6 +233,7 @@ export default class GameResultScene extends Phaser.Scene {
         this._moveSelectMusicButtonBgImage.setDepth(buttonDepth - 1);
         this._moveSelectMusicButtonBgImage.setInteractive();
         this._moveSelectMusicButtonBgImage.on("pointerdown", () => {
+            this._bgm.stop();
             this.scene.start("MusicSelect");
         });
 
@@ -232,6 +243,12 @@ export default class GameResultScene extends Phaser.Scene {
             "button_select_music_image"
         );
         this._moveSelectMusicButtonImage.setDepth(buttonDepth);
+
+        // サウンド
+        this._bgm = this.sound.add("result_music", {
+            loop: true,
+        });
+        this._bgm.play();
     }
 
     update(): void {
