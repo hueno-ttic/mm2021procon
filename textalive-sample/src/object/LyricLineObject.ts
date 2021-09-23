@@ -15,15 +15,12 @@ export default class LyricLineObject {
 
     public initLyricLine(lyrics) {
         // 歌詞の初期設定
-        for (let i = 0;  i < lyrics.length; i++) {
-            this.lyricLine[i] = this.scene.add.text(
-                0,
-                636,
-                lyrics[i].getText(),
-                {
+        for (let i = 0; i < lyrics.length; i++) {
+            this.lyricLine[i] = this.scene.add
+                .text(0, 636, lyrics[i].getText(), {
                     font: "32px Arial",
-                }
-            ).setVisible(false);
+                })
+                .setVisible(false);
             this.lyricLine[i].setStroke(lyrics[i].color, 4);
         }
 
@@ -58,7 +55,7 @@ export default class LyricLineObject {
         for (let i = currentLyricIndex + 1; i < this.lyricLineAddPos; i++) {
             this.lyricLine[i].x = 180 + lyricLineLength * 35;
             if (this.lyricLine[i].text.match(/^[A-Za-z0-9]*$/)) {
-                lyricLineLength += this.lyricLine[i].text.length/2;
+                lyricLineLength += this.lyricLine[i].text.length / 2;
             } else {
                 lyricLineLength += this.lyricLine[i].text.length;
             }
@@ -74,7 +71,7 @@ export default class LyricLineObject {
             this.lyricLine[i].setVisible(true);
             this.lyricLine[i].setStroke(lyrics[i].color, 4);
             if (lyrics[i].getText().match(/^[A-Za-z0-9]*$/)) {
-                lyricLineLength += lyrics[i].getText().length/2;
+                lyricLineLength += lyrics[i].getText().length / 2;
             } else {
                 lyricLineLength += lyrics[i].getText().length;
             }
