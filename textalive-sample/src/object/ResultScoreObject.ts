@@ -31,6 +31,7 @@ export default class ResultScoreObject {
     }
 
     create(param: ResultScoreObjectCreateParam): void {
+        // 判定名キャプション
         this._resultNameImage = param.scene.add.image(
             param.posX,
             param.posY,
@@ -40,6 +41,7 @@ export default class ResultScoreObject {
             .setDepth(param.depth ? param.depth : 0)
             .setOrigin(0, 0.5);
 
+        // キャプション下のライン
         this._underLineImage = param.scene.add.image(
             param.posX,
             param.posY + this._resultNameImage.height / 2 + 10,
@@ -49,6 +51,7 @@ export default class ResultScoreObject {
             .setDepth(param.depth ? param.depth : 0)
             .setOrigin(0, 0.5);
 
+        // 各レーンの表示
         this._laneImages = new Array<Phaser.GameObjects.Image>(
             param.laneKeys.length
         );
@@ -61,6 +64,8 @@ export default class ResultScoreObject {
                 this._underLineImage.height / 2 +
                 30 +
                 50 * i;
+
+            // レーン名
             const image = param.scene.add.image(
                 param.posX + 10,
                 posY,
@@ -69,6 +74,7 @@ export default class ResultScoreObject {
             image.setDepth(param.depth ? param.depth : 0).setOrigin(0, 0.5);
             this._laneImages[i] = image;
 
+            // スコア
             const text = param.scene.add.text(
                 param.posX + 300,
                 posY,
