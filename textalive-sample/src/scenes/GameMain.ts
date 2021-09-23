@@ -51,6 +51,10 @@ export default class GameMain extends Phaser.Scene {
     public gameTouchX;
     public gameTouchY;
 
+    // キーボードのキー入力イベント用
+    private keys;
+    static readonly KEY_DELAY: number = 250;
+
     // APIから取得した歌詞情報
     public lyrics;
 
@@ -366,6 +370,10 @@ export default class GameMain extends Phaser.Scene {
             this.pointerdown();
         });
 
+        // 入力キーのセットアップ
+        // addKeysにカンマ区切りで含めたキー種のみがキー入力イベントを取得できるようになる
+        this.keys = this.input.keyboard.addKeys("W,S,UP,DOWN");
+
         // --------------------------------
         // デバッグ用
         if (this.enableDebugInfo) {
@@ -393,12 +401,41 @@ export default class GameMain extends Phaser.Scene {
             return;
         }
 
+        const moveLanePos = [this.firstLane, this.secondLane, this.thirdLane];
+
+        // クリックした際の挙動
         if (pointer.isDown) {
             this.gameTouchX = pointer.x;
             this.gameTouchY = pointer.y;
 
             // パーティクルを発動
             this.touchEffect.explodeStar(8, this.gameTouchX, this.gameTouchY);
+
+            // クリックした際に3レーンのいずれかに移動する
+            const touchLaneIndex = this.getLaneIndex(this.gameTouchY);
+            if (-1 < touchLaneIndex) {
+                this.lyricY = moveLanePos[touchLaneIndex];
+            }
+        }
+
+        // キー入力で移動する
+        const currentLaneIndex = this.getLaneIndex(this.lyricY);
+        if (
+            this.input.keyboard.checkDown(this.keys.UP, GameMain.KEY_DELAY) ||
+            this.input.keyboard.checkDown(this.keys.W, GameMain.KEY_DELAY)
+        ) {
+            const nextLaneIndex = Math.max(currentLaneIndex - 1, 0);
+            this.lyricY = moveLanePos[nextLaneIndex];
+        }
+        if (
+            this.input.keyboard.checkDown(this.keys.DOWN, GameMain.KEY_DELAY) ||
+            this.input.keyboard.checkDown(this.keys.S, GameMain.KEY_DELAY)
+        ) {
+            const nextLaneIndex = Math.min(
+                currentLaneIndex + 1,
+                GameMain.LANE_SIZE - 1
+            );
+            this.lyricY = moveLanePos[nextLaneIndex];
         }
 
         // チュートリアルから一定のインターバル後
@@ -451,17 +488,6 @@ export default class GameMain extends Phaser.Scene {
         // ハートの伸縮
         for (let i = 0; i < this.laneHeartObjectArray.length; i++) {
             this.laneHeartObjectArray[i].update();
-        }
-
-        // クリックした際に3レーンのいずれかに移動する
-        const touchLaneIndex = this.getLaneIndex(this.gameTouchY);
-        if (-1 < touchLaneIndex) {
-            const moveLanePos = [
-                this.firstLane,
-                this.secondLane,
-                this.thirdLane,
-            ];
-            this.lyricY = moveLanePos[touchLaneIndex];
         }
 
         // 操作しているアーティストの位置更新
@@ -570,18 +596,19 @@ export default class GameMain extends Phaser.Scene {
      * スコアの計算を行う
      */
     private calcScore(textIndex: number, score: number): number {
-        const laneIndex = this.getLaneIndex(this.textData[textIndex].y);
-        if (-1 < laneIndex) {
+        const lyricPosLaneIndex = this.getLaneIndex(this.textData[textIndex].y);
+        if (-1 < lyricPosLaneIndex) {
             const laneColor = ["#ff8e1e", "#ffdc00", "#47ff47"]; // todo: 歌詞の色付け処理との紐づけ
-            const isSuccess = laneColor[laneIndex].includes(
-                this.textData[textIndex].style.stroke
+            const answerLaneIndex = laneColor.findIndex(
+                (color) => color == this.textData[textIndex].style.stroke
             );
-            score += isSuccess ? 50 : 10;
+            const isSuccess = lyricPosLaneIndex == answerLaneIndex;
 
+            score += isSuccess ? 50 : 10;
             if (isSuccess) {
-                this.laneScoreArray[laneIndex].addSuccess();
+                this.laneScoreArray[answerLaneIndex].addSuccess();
             } else {
-                this.laneScoreArray[laneIndex].addFailed();
+                this.laneScoreArray[answerLaneIndex].addFailed();
             }
         }
         return score;
@@ -638,6 +665,11 @@ export default class GameMain extends Phaser.Scene {
         switch (this.sceneChangeStatus) {
             case "":
                 console.log("完了画面へ");
+                this.registry.set("gameResult", {
+                    laneScore: this.laneScoreArray,
+                    totalScore: this.score,
+                });
+
                 if (this.game.scene.getScene("GameResult")) {
                     console.log("GameResult remove");
                     this.scene.remove("GameResult");
