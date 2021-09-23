@@ -8,17 +8,19 @@ const SIZE = { width: 800, height: 300 }; // 描画サイズ
 export default class Visualizer {
     private readonly scene: Phaser.Scene;
     private readonly service: visualizerService;
-    private readonly rects: Phaser.GameObjects.Rectangle[];
+    private rects: Phaser.GameObjects.Rectangle[];
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
         this.service = new visualizerService(POINT_SIZE);
-        this.rects = this.getRectPos(0).map((v) =>
-            this.scene.add.rectangle(v.x, v.y, v.width, v.height, 0xff00ff)
-        );
+        this.rects = [];
     }
 
-    init() {}
+    create() {
+        this.getRectPos(0).forEach((v) =>
+            this.rects.push(this.scene.add.rectangle(v.x, v.y, v.width, v.height, 0xff00ff))
+        );
+    }
 
     update(position: number) {
         const points = this.getRectPos(position);

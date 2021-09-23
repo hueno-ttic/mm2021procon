@@ -177,7 +177,6 @@ export default class GameMain extends Phaser.Scene {
 
         // Visualizer
         this.visualizer = new Visualizer(this);
-        this.visualizer.init();
 
         // 歌詞の色付けロジック
         this.lyricLogicObject = new LyricLogicObject(this.api);
@@ -357,6 +356,9 @@ export default class GameMain extends Phaser.Scene {
             this.add.image(160, 225, "frame").setDepth(DepthDefine.UI_OBJECT),
             this.add.image(640, 650, "tapstart").setDepth(DepthDefine.UI_OBJECT)
         );
+
+        // visualizer
+        this.visualizer.create();
 
         // --------------------------------
         // Input処理
