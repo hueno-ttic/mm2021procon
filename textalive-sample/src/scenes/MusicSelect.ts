@@ -27,7 +27,7 @@ export default class MusicSelectScene extends Phaser.Scene {
         this.load.image("natsu", images["04_natsu"]);
         this.load.image("hisoka", images["05_hisoka"]);
         this.load.image("freedom", images["06_freedom"]);
-        this.load.audio("menu_music",music.menu);
+        this.load.audio("menu_music", music.menu);
     }
 
     create(): void {
