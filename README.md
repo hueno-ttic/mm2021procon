@@ -24,16 +24,14 @@ todo 用意してYoutubeに上げたものを参照する
 
 ### 対応環境
 こちらのアプリは以下の環境での動作が可能です。
-- PC
-  - Firefox
-  - Chrome
-- iPhone
-  - Safari
-- Android
-  - Chrome
+|デバイス|対応ブラウザ|
+|:--|:--|
+|PC|Firefox<br>Chrome|
+|iOS|Safari|
+|Android|Chrome|
 
 ### 注意事項
-本ゲームで遊ぶ際には以下の点に注意してください。
+こちらのアプリで遊ぶ際には以下の点に注意してください。
 - スマートフォンで遊ぶ場合は本体を横向きにする
 - iOS環境のSafariで遊ぶ際には「設定」→「Safari」→「タブバーを表示」をオフにする
 
