@@ -512,9 +512,9 @@ export default class GameMain extends Phaser.Scene {
             }
 
             const time = this.api.getPositionTime();
-            var lyric = this.api.getCurrentLyric(time);
-            var lyricText;
-            var lyricIndex;
+            let lyric = this.api.getCurrentLyric(time);
+            let lyricText;
+            let lyricIndex;
             if (lyric != null) {
                 lyricText = lyric.text;
                 lyricIndex = lyric.index;

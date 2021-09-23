@@ -1,5 +1,6 @@
 import Phaser from "phaser";
-import gameImage from "../assets/game_main/*.png";
+
+const LYRIC_TEXT_LENGHT = 17;
 
 export default class LyricLineObject {
     public scene;
@@ -25,13 +26,24 @@ export default class LyricLineObject {
         }
 
         // 最初に表示する歌詞のセット
+        this.appearLyric(lyrics, 0);
+    }
+
+    // 決められた位置から歌詞を表示させる
+    private appearLyric(lyrics, pos) {
+        // 余計な出力を消すため初期化
         for (let i = 0; i < lyrics.length; i++) {
+            this.lyricLine[i].setVisible(false);
+        }
+
+        // 決められた数だけ歌詞を表示
+        for (let i = pos; i < lyrics.length; i++) {
             this.lyricLine[i].x = 180 + this.textLineLength * 35;
             this.lyricLine[i].setStroke(lyrics[i].color, 4);
             this.lyricLine[i].setVisible(true);
             this.textLineLength += lyrics[i].getText().length;
             this.lyricLineAddPos++;
-            if (this.textLineLength > 15) {
+            if (this.textLineLength > LYRIC_TEXT_LENGHT) {
                 break;
             }
         }
@@ -64,7 +76,7 @@ export default class LyricLineObject {
         // 残りの歌詞を追加する
         for (let i = this.lyricLineAddPos; i < lyrics.length; i++) {
             // 下部の歌詞表示上限判定
-            if (lyricLineLength > 17) {
+            if (lyricLineLength > LYRIC_TEXT_LENGHT) {
                 break;
             }
             this.lyricLine[i].x = 180 + lyricLineLength * 35;
