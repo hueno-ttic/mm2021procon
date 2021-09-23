@@ -15,9 +15,12 @@ export default class GainRepository {
                 number[][],
                 AxiosResponse<number[][]>
             >(fft["fft"]);
-            this.gains = response.data.map((gain, idx) =>
-                this.reduceArray(gain, this.size, idx)
-            );
+
+            for(const idx in response.data) {
+                this.gains[idx] = this.reduceArray(response.data[idx], this.size, idx);
+                // メインスレッドの計算資源を食いつぶさないように await する
+                await new Promise(resolve => setTimeout(resolve, 0));
+            }
         })();
     }
 
