@@ -28,7 +28,7 @@ export default class TitleScene extends Phaser.Scene {
     preload(): void {
         // imageの読み込み
         this.load.image("back_ground", titleImage.back_ground);
-        this.load.image("project_mirai", titleImage.project_mirai);
+        this.load.image("main_title", titleImage.main_title);
         this.load.image("sub_title", titleImage.sub_title);
         this.load.image("back_title", titleImage.back_title);
         this.load.image("click_start", titleImage.click_start);
@@ -40,8 +40,7 @@ export default class TitleScene extends Phaser.Scene {
         const bg = this.add.image(500, 350, "back_ground");
         bg.setDepth(-10);
 
-        const gameTitle = this.add.image(640, 230, "project_mirai");
-        gameTitle.setDisplaySize(950, 90);
+        const gameTitle = this.add.image(640, 230, "main_title");
         this.add.image(640, 315, "sub_title");
 
         this.back_title = this.add.image(640, 570, "back_title");
