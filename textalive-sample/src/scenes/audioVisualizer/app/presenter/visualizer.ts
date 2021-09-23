@@ -1,60 +1,61 @@
 import visualizerService from "../../domain/service/visualizerService";
 import * as Phaser from "phaser";
-import Vector2 = Phaser.Math.Vector2;
-import GainRepository from "../../infrastructure/repository/GainRepository";
+import { POINT_SIZE } from "../constants/constants";
 
-const POINT_SIZE = 32; // FFTの分割サイズ
 const POSITION = { x: 70, y: 400 }; // 左下端の座標
-const SIZE = { width: 800, height: 100 }; // 描画サイズ
+const SIZE = { width: 800, height: 300 }; // 描画サイズ
 
 export default class Visualizer {
-  private readonly scene: Phaser.Scene;
-  private readonly service: visualizerService;
-  private readonly rects: Phaser.GameObjects.Rectangle[];
+    private readonly scene: Phaser.Scene;
+    private readonly service: visualizerService;
+    private rects: Phaser.GameObjects.Rectangle[];
 
-  constructor(scene: Phaser.Scene) {
-    this.scene = scene;
-    this.service = new visualizerService(POINT_SIZE);
-    this.rects = this.getRectPos(0).map((v) =>
-        this.scene.add.rectangle(v.x, v.y, v.width, v.height, 0xff00ff)
-    );
-  }
+    constructor(scene: Phaser.Scene) {
+        this.scene = scene;
+        this.service = new visualizerService(POINT_SIZE);
+        this.rects = [];
+    }
 
-  init() {
+    create() {
+        this.getRectPos(0).forEach((v) =>
+            this.rects.push(
+                this.scene.add.rectangle(v.x, v.y, v.width, v.height, 0xff00ff)
+            )
+        );
+    }
 
-  }
+    update(position: number) {
+        const points = this.getRectPos(position);
+        points.forEach((value, index) => {
+            this.rects[index]?.setPosition(value.x, value.y);
+            this.rects[index]?.displayWidth = value.width;
+            this.rects[index]?.displayHeight = value.height;
+        });
+    }
 
-  update(position: number) {
-    const points = this.getRectPos(position);
-    points.forEach((value, index) => {
-      this.rects[index].setPosition(value.x, value.y);
-      this.rects[index].displayWidth = value.width;
-      this.rects[index].displayHeight = value.height;
-    });
-  }
+    private getRectPos(position: number): {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    }[] {
+        const width = SIZE.width / POINT_SIZE;
 
-  private getRectPos(position: number): {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }[] {
-    const width = SIZE.width / POINT_SIZE;
+        const gains = this.service.getGain(position);
 
-    const gains = this.service.getGain(position);
+        const positions = gains.map((gain, index) => {
+            // そのままの値だとメリハリが足りないので、tanhを掛けて補正する
+            const tuned_gain = Math.tanh(gain) / Math.tanh(1.0);
+            const height = 1 + SIZE.height * tuned_gain;
 
-    const positions = gains.map((gain, index) => {
-      const height = SIZE.height * gain;
+            return {
+                x: POSITION.x + index * width,
+                y: POSITION.y - height / 2,
+                width,
+                height,
+            };
+        });
 
-      return {
-        x: POSITION.x + index * width,
-        y: POSITION.y - height / 2,
-        width,
-        height,
-      };
-
-    });
-
-    return positions;
-  }
+        return positions;
+    }
 }

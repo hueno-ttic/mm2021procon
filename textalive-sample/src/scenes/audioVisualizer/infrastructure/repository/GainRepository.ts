@@ -1,32 +1,44 @@
-const MAX_TIME = 300 * 100; // 周波数情報の最大時間( 300sec )
+import axios, { AxiosResponse } from "axios";
+import fft from "../../../../assets/fft/build/*.data";
 
 export default class GainRepository {
     private readonly size: number;
-    private readonly gains: number[][];
+    private gains: number[][];
 
     constructor(size: number) {
         this.size = size;
-        this.gains = [];
+        this.gains = [[]];
 
-        // TODO: 一旦ランダムな波形情報をつかう。実際はjsonから読み込む
-        for(let i = 0; i < MAX_TIME; i++) {
-            const gainList = [];
-            for(let j = 0; j < this.size; j++) {
-                gainList.push(Math.random());
-            }
-            this.gains.push(gainList);
-        }
+        // TODO: 一旦固定のJSON 実際は曲ごとにJSONを読み分ける
+        (async () => {
+            const response = await axios.get<
+                number[][],
+                AxiosResponse<number[][]>
+            >(fft["fft"]);
+            this.gains = response.data;
+        })();
     }
 
     public getGain(position: number, width: number = 3): number[][] {
-        return Array.from(
-            {length: width * 2},
-            (v, k) =>
-                this.getGainByPosition(position - width + k)
-        )
+        return Array.from({ length: width * 2 }, (v, k) =>
+            this.getGainByPosition(position - width + k)
+        );
     }
 
     private getGainByPosition(position: number): number[] {
-        return (position >= 0)? this.gains[Math.floor(position / 10)] : Array<number>(this.size).fill(0.0);
+        const index = Math.floor(position / 10);
+
+        // gainにデータがあればそれを返却
+        if (
+            position >= 0 &&
+            this.gains.length > index &&
+            this.gains[index] &&
+            this.gains[index].length > 0
+        ) {
+            return this.gains[index];
+        }
+
+        // データがないときは0埋めしたゲインを返却
+        return Array<number>(this.size).fill(0.0);
     }
 }

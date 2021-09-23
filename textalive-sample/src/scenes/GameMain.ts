@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import Phaser, { NONE } from "phaser";
 import LaneHeartObject from "../object/LaneHeartObject";
 import AudienceObject from "../object/AudienceObject";
 import GameResultScene from "./GameResult";
@@ -181,7 +181,6 @@ export default class GameMain extends Phaser.Scene {
 
         // Visualizer
         this.visualizer = new Visualizer(this);
-        this.visualizer.init();
 
         // 歌詞の色付けロジック
         this.lyricLogicObject = new LyricLogicObject(this.api);
@@ -362,6 +361,9 @@ export default class GameMain extends Phaser.Scene {
             this.add.image(640, 650, "tapstart").setDepth(DepthDefine.UI_OBJECT)
         );
 
+        // visualizer
+        this.visualizer.create();
+
         // --------------------------------
         // Input処理
         this.input.on("pointerdown", () => {
@@ -490,7 +492,7 @@ export default class GameMain extends Phaser.Scene {
 
         // 操作しているアーティストの位置更新
         if (this.api.player.isPlaying) {
-            this.liveArtist.update(this.lyricY);
+            this.liveArtist.setArtistY(this.lyricY);
         }
 
         // 曲がスタートしてから動く
@@ -549,6 +551,12 @@ export default class GameMain extends Phaser.Scene {
             }
         }
 
+        if (this.api.player.findChorus(this.api.getPositionTime())) {
+            this.liveArtist.setIsUplifting(true);
+        } else {
+            this.liveArtist.setIsUplifting(false);
+        }
+
         // テキストの描画更新
         for (let i = this.indexStart; i < this.textData.length; i++) {
             // 文字を移動させる
@@ -574,6 +582,11 @@ export default class GameMain extends Phaser.Scene {
                     this.textData[i].destroy(this);
                     // score計算を行う
                     this.score = this.calcScore(i, this.score);
+                    if (!this.isSuccessLyric(i)) {
+                        this.liveArtist.setEmotion("sad");
+                    } else {
+                        this.liveArtist.setEmotion("default");
+                    }
                     this.scoreText.setText("Score : " + this.score);
                 }
             }
@@ -582,12 +595,24 @@ export default class GameMain extends Phaser.Scene {
         this.timeProgressBar.update();
         this.timeInfo.update();
         this.visualizer.update(this.api.getPositionTime());
-
+        this.liveArtist.update();
         // --------------------------------
         // デバッグ用
         if (this.enableDebugInfo) {
             this.debugInfo.update();
         }
+    }
+
+    /**
+     * 歌詞の色とレーンの色が一致しているかの判定。合っていたらtrueが返る
+     */
+    private isSuccessLyric(textIndex: number): Boolean {
+        const lyricPosLaneIndex = this.getLaneIndex(this.textData[textIndex].y);
+        const laneColor = ["#ff8e1e", "#ffdc00", "#47ff47"]; // todo: 歌詞の色付け処理との紐づけ
+        const answerLaneIndex = laneColor.findIndex(
+            (color) => color == this.textData[textIndex].style.stroke
+        );
+        return lyricPosLaneIndex == answerLaneIndex;
     }
 
     /**
