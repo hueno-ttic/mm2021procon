@@ -1,30 +1,37 @@
-const MAX_TIME = 300 * 100; // 周波数情報の最大時間( 300sec )
-
-import fftjson from "../fixture/fft.json";
-const analyzed: number[][] = fftjson;
+import axios, {AxiosResponse} from "axios";
+import fft from "../../../../assets/fft/*.data";
 
 export default class GainRepository {
     private readonly size: number;
-    private readonly gains: number[][];
+    private gains: number[][];
 
     constructor(size: number) {
         this.size = size;
-        this.gains = [];
+        this.gains = [[]];
 
         // TODO: 一旦固定のJSON 実際は曲ごとにJSONを読み分ける
-        this.gains = analyzed.map(this.reduceArray);
+        (async () => {
+            const response = await axios.get<number[][], AxiosResponse<number[][]>>(fft["fft"]);
+            this.gains = response.data.map((gain, idx) => this.reduceArray(gain, this.size, idx));
+        })();
     }
 
     public getGain(position: number, width: number = 3): number[][] {
-        return Array.from(
-            { length: width * 2 },
-            (v, k) =>
-                this.getGainByPosition(position - width + k)
+        return Array.from({ length: width * 2 }, (v, k) =>
+            this.getGainByPosition(position - width + k)
         );
     }
 
     private getGainByPosition(position: number): number[] {
-        return position >= 0 ? this.gains[Math.floor(position / 10)] : Array<number>(this.size).fill(0.0);
+        const index = Math.floor(position / 10);
+
+        // gainにデータがあればそれを返却
+        if (position >= 0 && this.gains.length > index && this.gains[index] && this.gains[index].length > 0) {
+            return this.gains[index];
+        }
+
+        // データがないときは0埋めしたゲインを返却
+        return Array<number>(this.size).fill(0.0);
     }
 
     /**
@@ -32,8 +39,13 @@ export default class GainRepository {
      * @param originArray
      * @param targetSize
      */
-    private reduceArray(originArray: number[], targetSize): number[] {
-        const size = originArray.length / this.size;
+    private reduceArray(originArray: number[], targetSize, index): number[] {
+        // データに不足がある場合は0埋め
+        if (!originArray) {
+            return Array<number>(this.size).fill(0.0);
+        }
+
+        const size = originArray.length / targetSize;
         return Array.from({ length: targetSize }, (_, idx) =>
             originArray.slice(
                 // 配列の範囲を超えてスライスしないようにする
@@ -41,12 +53,12 @@ export default class GainRepository {
                 Math.min(idx * size, originArray.length)
             )
         )
-        .map(array => array.map((v) => Math.abs(v - 128))) // 周波数領域ごとのゲインを正規化
-        .map(array => this.avg(array)); // 周波数ごとのゲインを平滑化
+            .map((array) => array.map((v) => Math.abs((v - 128) / 128))) // 周波数領域ごとのゲインを正規化
+            .map((array) => this.avg(array)); // 周波数ごとのゲインを平滑化
     }
 
     // 平均を取る
     private avg(value: number[]): number {
-        return value.reduce((acc, val) => acc + val / value.length);
+        return value.reduce((acc, val) => acc + val / value.length, 0);
     }
 }

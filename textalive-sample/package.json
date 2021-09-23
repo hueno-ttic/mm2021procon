@@ -17,6 +17,7 @@
     "author": "TTIC",
     "license": "MIT",
     "dependencies": {
+        "axios": "^0.21.4",
         "phaser": "^3.24.1",
         "textalive-app-api": "0.3.0"
     },
