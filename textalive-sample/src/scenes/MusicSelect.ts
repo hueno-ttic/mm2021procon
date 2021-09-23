@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import images from "../assets/music_select/*.png";
+import jpeg_images from "../assets/thumbnail/*.jpeg";
 import { buildMusicInfo } from "../factory/MusicFactory";
 import GameMain from "./GameMain";
 
@@ -10,46 +11,65 @@ export default class MusicSelectScene extends Phaser.Scene {
         });
     }
 
-    private musicInfoText;
+    private musicInfoText: Phaser.GameObjects.Text;
     private selectedMusicId: number;
     private musics = buildMusicInfo();
+    private thumbnail: Phaser.GameObjects.Image;
 
     preload(): void {
         this.load.image("music_frame", images["music_frame"]);
         this.load.image("music_select_box", images["music_select_box"]);
-        this.load.image("first_note", images["01_first_note"]);
-        this.load.image("usomo", images["02_usomo"]);
-        this.load.image("sonokokoro", images["03_sonokokoro"]);
-        this.load.image("natsu", images["04_natsu"]);
-        this.load.image("hisoka", images["05_hisoka"]);
-        this.load.image("freedom", images["06_freedom"]);
+        this.load.image("first_note", images["first_note"]);
+        this.load.image("usomo", images["usomo"]);
+        this.load.image("usomo_thumbnail", jpeg_images["usomo_thumbnail"]);
+        this.load.image("sonokokoro", images["sonokokoro"]);
+        this.load.image(
+            "sonokokoro_thumbnail",
+            jpeg_images["sonokokoro_thumbnail"]
+        );
+        this.load.image("natsu", images["natsu"]);
+        this.load.image("natsu_thumbnail", jpeg_images["natsu_thumbnail"]);
+        this.load.image("hisoka", images["hisoka"]);
+        this.load.image("hisoka_thumbnail", jpeg_images["hisoka_thumbnail"]);
+        this.load.image("freedom", images["freedom"]);
+        this.load.image("freedom_thumbnail", jpeg_images["freedom_thumbnail"]);
+        this.load.image("back_ground", images["back_ground"]);
+        this.load.image("title", images["music_select_title"]);
+        this.load.image("decide", images["decide"]);
     }
 
     create(): void {
-        this.add
-            .text(50, 70, "Music Select", { font: "32px" })
-            .setColor("white")
-            .setStroke("#00bfff", 2);
-
-        // 画面全体スケールに対して0.625
-        // xは画面サイズから0.33倍した位置
-        // yは画面サイズから0.486倍した位置
-        this.add.image(420, 350, "music_frame").setDisplaySize(800, 450);
+        this.add.image(640, 360, "back_ground").setDisplaySize(1280, 720);
+        this.add.image(180, 70, "title");
 
         // 円を描画する
         const circle = this.add.graphics();
-        circle.lineStyle(3, 0xffffff, 0.6).strokeCircle(1350, 350, 350);
+        circle.lineStyle(3, 0x000000, 0.6).strokeCircle(1350, 350, 350);
+
+        const defaultMusic = this.musics
+            .filter((music) => music.id === 1)
+            .pop();
+        this.selectedMusicId = defaultMusic.id;
+        this.registry.set("selectedMusic", defaultMusic.id);
+        this.musicInfoText = this.add.text(
+            45,
+            620,
+            `${defaultMusic.title}/${defaultMusic.author}`,
+            {
+                fontFamily: "Makinas-4-Square",
+                color: "0x000000",
+            }
+        );
+        this.musicInfoText.scale *= 2;
+
+        this.thumbnail = this.add
+            .image(420, 350, `${defaultMusic.label}_thumbnail`)
+            .setDisplaySize(790, 440);
 
         // 楽曲選択用のボックスを配置する
-        var dispBoxX = 1050;
+        var dispBoxX = 1000;
         var additionalBoxX = 0;
-        var dispBoxY = 50;
-
-        this.musicInfoText = this.add.text(45, 600, "楽曲を選択してください", {
-            fontFamily: "Makinas-4-Square",
-        });
-
-        this.musicInfoText.scale *= 2;
+        var dispBoxY = 40;
 
         this.musics.forEach((music, index) => {
             if (index == 0 || index == 5) {
@@ -59,32 +79,29 @@ export default class MusicSelectScene extends Phaser.Scene {
             } else {
                 additionalBoxX = 0;
             }
-            dispBoxY += 80;
+            dispBoxY += 85;
             const image = this.add.image(
                 dispBoxX + additionalBoxX,
                 dispBoxY,
                 music.label
             );
-            image.setDisplaySize(300, 80);
+            image.setScale(0.6);
             image.setInteractive();
 
             image.on("pointerdown", () => {
-                if (music.id === this.selectedMusicId) {
-                    this.moveGameMain();
-                    return;
-                }
-
                 this.registry.set("selectedMusic", music.id);
                 this.selectedMusicId = music.id;
                 this.musicInfoText.setText(`${music.title}/${music.author}`);
+                this.thumbnail.setTexture(`${music.label}_thumbnail`);
             });
         });
 
-        const text = this.add.text(
-            700,
-            650,
-            "楽曲の画像を2回連続で押すと次の画面に進む"
-        );
+        const decideButton = this.add
+            .image(1140, 640, "decide")
+            .setInteractive();
+        decideButton.on("pointerdown", () => {
+            this.moveGameMain();
+        });
     }
 
     private moveGameMain() {
