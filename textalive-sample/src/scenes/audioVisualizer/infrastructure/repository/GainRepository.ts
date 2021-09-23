@@ -9,6 +9,7 @@ export default class GainRepository {
         this.size = size;
         this.gains = [[]];
 
+        // バックグラウンドで周波数成分の準備を行うプロセス
         // TODO: 一旦固定のJSON 実際は曲ごとにJSONを読み分ける
         (async () => {
             const response = await axios.get<
@@ -16,11 +17,15 @@ export default class GainRepository {
                 AxiosResponse<number[][]>
             >(fft["fft"]);
 
+            console.log("data size: " + (response.data.length * 10 /1000) + "sec");
+            console.log("analyze start");
+            console.time("analyze");
             for(const idx in response.data) {
                 this.gains[idx] = this.reduceArray(response.data[idx], this.size, idx);
                 // メインスレッドの計算資源を食いつぶさないように await する
                 await new Promise(resolve => setTimeout(resolve, 0));
             }
+            console.timeEnd("analyze");
         })();
     }
 
