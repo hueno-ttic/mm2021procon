@@ -26,12 +26,8 @@ export default class ResultScoreObject {
     init(): void {
         this._resultNameImage = null;
         this._underLineImage = null;
-        this._laneImages = new Array<Phaser.GameObjects.Image>(
-            GameMain.LANE_SIZE
-        );
-        this._laneScoreTexts = new Array<Phaser.GameObjects.Text>(
-            GameMain.LANE_SIZE
-        );
+        this._laneImages = null;
+        this._laneScoreTexts = null;
     }
 
     create(param: ResultScoreObjectCreateParam): void {
@@ -53,6 +49,12 @@ export default class ResultScoreObject {
             .setDepth(param.depth ? param.depth : 0)
             .setOrigin(0, 0.5);
 
+        this._laneImages = new Array<Phaser.GameObjects.Image>(
+            param.laneKeys.length
+        );
+        this._laneScoreTexts = new Array<Phaser.GameObjects.Text>(
+            param.laneKeys.length
+        );
         for (let i = 0; i < this._laneImages.length; i++) {
             const posY =
                 this._underLineImage.y +
