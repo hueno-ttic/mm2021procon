@@ -3,6 +3,7 @@ import images from "../assets/music_select/*.png";
 import jpeg_images from "../assets/thumbnail/*.jpeg";
 import { buildMusicInfo } from "../factory/MusicFactory";
 import GameMain from "./GameMain";
+import music from "../assets/sound/music/*.wav";
 
 export default class MusicSelectScene extends Phaser.Scene {
     constructor() {
@@ -15,6 +16,9 @@ export default class MusicSelectScene extends Phaser.Scene {
     private selectedMusicId: number;
     private musics = buildMusicInfo();
     private thumbnail: Phaser.GameObjects.Image;
+
+    // メニューの音楽
+    private menuMusic: Phaser.Sound.BaseSound;
 
     preload(): void {
         this.load.image("music_frame", images["music_frame"]);
@@ -36,6 +40,7 @@ export default class MusicSelectScene extends Phaser.Scene {
         this.load.image("back_ground", images["back_ground"]);
         this.load.image("title", images["music_select_title"]);
         this.load.image("decide", images["decide"]);
+        this.load.audio("menu_music", music.menu);
     }
 
     create(): void {
@@ -70,6 +75,14 @@ export default class MusicSelectScene extends Phaser.Scene {
         var dispBoxX = 1000;
         var additionalBoxX = 0;
         var dispBoxY = 40;
+
+        this.menuMusic = this.sound.add("menu_music", {
+            loop: true,
+            volume: 0.5,
+        });
+        if (this.menuMusic) {
+            this.menuMusic.play();
+        }
 
         this.musics.forEach((music, index) => {
             if (index == 0 || index == 5) {
@@ -108,6 +121,7 @@ export default class MusicSelectScene extends Phaser.Scene {
         if (this.game.scene.getScene("GameMain")) {
             this.scene.remove("GameMain");
         }
+        this.menuMusic.stop();
         this.scene.add("GameMain", GameMain);
         this.scene.start("GameMain");
     }

@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 import image from "../assets/*.png";
 export default class SplashScene extends Phaser.Scene {
+    private isFading = false;
+
     constructor() {
         super({
             key: "SplashScene",
@@ -28,14 +30,22 @@ export default class SplashScene extends Phaser.Scene {
                             Phaser.Cameras.Scene2D.Events.FADE_IN_COMPLETE,
                             () => {
                                 this.input.on("pointerdown", () => {
-                                    this.cameras.main.fadeOut(1000, 0, 0, 0);
-                                    this.cameras.main.once(
-                                        Phaser.Cameras.Scene2D.Events
-                                            .FADE_OUT_COMPLETE,
-                                        () => {
-                                            this.scene.start("TitleScene");
-                                        }
-                                    );
+                                    if (!this.isFading) {
+                                        this.cameras.main.fadeOut(
+                                            1000,
+                                            0,
+                                            0,
+                                            0
+                                        );
+                                        this.cameras.main.once(
+                                            Phaser.Cameras.Scene2D.Events
+                                                .FADE_OUT_COMPLETE,
+                                            () => {
+                                                this.scene.start("TitleScene");
+                                            }
+                                        );
+                                        this.isFading = true;
+                                    }
                                 });
                             }
                         );
