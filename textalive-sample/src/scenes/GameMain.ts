@@ -530,7 +530,7 @@ export default class GameMain extends Phaser.Scene {
                 lyricText != " "
             ) {
                 this.textData[lyricIndex] = this.add.text(
-                    800,
+                    1000,
                     this.lyricY - 20,
                     lyricText,
                     { font: "50px Arial" }
