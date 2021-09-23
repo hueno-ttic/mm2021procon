@@ -63,11 +63,3 @@ textalive-sampleディレクトリで `npm run lint:write` を実行してくだ
 
 ### PRマージ前にやること
 Github Actionsでlintが成功していることを確認してください。
-
-## 開発メンバー
-- すぱりだ
-- りおんぬ
-- 長岡
-- さくらもどき
-- ななしお
-- やつはし
