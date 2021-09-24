@@ -1,4 +1,4 @@
-import Phaser, { NONE } from "phaser";
+import Phaser, { Game, NONE } from "phaser";
 import LaneHeartObject from "../object/LaneHeartObject";
 import AudienceObject from "../object/AudienceObject";
 import GameResultScene from "./GameResult";
@@ -10,6 +10,7 @@ import TutorialObject from "../object/TutorialObject";
 import LyricLineObject from "../object/LyricLineObject";
 import ScoreCounter from "../object/ScoreCounter";
 import HeartEffect from "../object/HeartEffect";
+import HeartJudgeEffectObject from "../object/HeartJudgeEffectObject";
 import TouchEffect from "../object/TouchEffect";
 import DepthDefine from "../object/DepthDefine";
 import LyricLogicObject from "../object/LyricLogicObject";
@@ -72,6 +73,8 @@ export default class GameMain extends Phaser.Scene {
     // ハートオブジェクト
     private laneHeartObjectArray: Array<LaneHeartObject>;
     private heartParticleArray: Array<HeartEffect>;
+    // ハート時の判定
+    private heartJudgeEffectArray: Array<HeartJudgeEffectObject>;
 
     // ハートのX座標
     public heartX = 120;
@@ -150,10 +153,14 @@ export default class GameMain extends Phaser.Scene {
 
         this.laneHeartObjectArray = new Array(GameMain.LANE_SIZE);
         this.heartParticleArray = new Array(GameMain.LANE_SIZE);
+        this.heartJudgeEffectArray = new Array(GameMain.LANE_SIZE);
         for (let i = 0; i < GameMain.LANE_SIZE; i++) {
             this.laneHeartObjectArray[i] = new LaneHeartObject();
             this.heartParticleArray[i] = new HeartEffect();
+            this.heartJudgeEffectArray[i] = new HeartJudgeEffectObject(this);
         }
+
+        for (let i = 0; i < GameMain.LANE_SIZE; i++) {}
 
         // 観客
         this.audienceObject = new AudienceObject(this);
@@ -219,6 +226,8 @@ export default class GameMain extends Phaser.Scene {
         this.load.image("heart_yellow", image["heart_yellow"]);
         this.load.image("heart_green", image["heart_green"]);
         this.load.image("heart_blue", image["heart_blue"]);
+        this.load.image("excellent", gameImage["Excellent"]);
+        this.load.image("bad", gameImage["Bad"]);
 
         // ライン
         this.load.image("line_red", gameImage["Lane03"]);
@@ -589,6 +598,12 @@ export default class GameMain extends Phaser.Scene {
 
                     // 歌詞の削除
                     this.textData[i].destroy(this);
+                    // Bad or Excellentを出現させる
+                    this.heartJudgeEffectArray[laneIndex].update(
+                        this.heartX,
+                        this.textData[i].y,
+                        this.isSuccessLyric(i)
+                    );
                     // score計算を行う
                     this.score = this.calcScore(i, this.score);
                     if (!this.isSuccessLyric(i)) {
