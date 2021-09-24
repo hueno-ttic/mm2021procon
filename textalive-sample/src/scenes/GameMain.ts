@@ -402,8 +402,6 @@ export default class GameMain extends Phaser.Scene {
         // チュートリアルの終了判定
         if (pointer.isDown && this.tutorial.tutorialCounter > 50) {
             this.tutorial.end();
-            // 一時停止ボタンの表示
-            this.pauseButton.setVisible(true);
         }
         // チュートリアルが終わるまでゲームを始めない
         if (!this.tutorial.tutorialFlag) {
@@ -460,6 +458,9 @@ export default class GameMain extends Phaser.Scene {
             this.api.player.requestPlay();
             this.musicStartState = "requestedPlay";
             this.musicStartRequestTime = performance.now();
+
+            // 一時停止ボタンの表示
+            this.pauseButton.setVisible(true);
 
             // 歌詞の色付け
             this.lyricLogicObject.setLyricColor();
