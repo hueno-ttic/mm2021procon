@@ -30,7 +30,6 @@ export default class GameMain extends Phaser.Scene {
 
     public api: TextaliveApiManager;
 
-    public musicStart = false;
     public sceneChangeStatus = "";
 
     public firstLane: number = 120;
@@ -111,6 +110,10 @@ export default class GameMain extends Phaser.Scene {
     // チュートリアル関連
     private tutorial: TutorialObject;
 
+    // 曲開始処理用
+    private musicStartState: string;
+    private musicStartRequestTime: number;
+
     // ポーズボタン
     private pauseButton: UIPauseButtonObject;
 
@@ -174,6 +177,10 @@ export default class GameMain extends Phaser.Scene {
 
         // チュートリアル
         this.tutorial = new TutorialObject();
+
+        // 曲開始処理用
+        this.musicStartState = "";
+        this.musicStartRequestTime = 0;
 
         // ボタン
         this.pauseButton = new UIPauseButtonObject();
@@ -247,8 +254,9 @@ export default class GameMain extends Phaser.Scene {
         TimeProgressBarObject.preload(this.load);
 
         // ボタン
-        this.load.image("button_play", uiImage["start"]);
+        this.load.image("button_play", uiImage["play"]);
         this.load.image("button_pause", uiImage["pause"]);
+        this.load.image("button_start", uiImage["start"]);
     }
 
     create(): void {
@@ -347,6 +355,7 @@ export default class GameMain extends Phaser.Scene {
             scene: this,
             pauseImageKey: "button_pause",
             playImageKey: "button_play",
+            startImageKey: "button_start",
             posX: 1200,
             posY: 670,
             textaliveManager: this.api,
@@ -445,11 +454,12 @@ export default class GameMain extends Phaser.Scene {
         if (
             !this.api.player.isPlaying &&
             !this.api.player.isLoading &&
-            !this.musicStart &&
+            this.musicStartState == "" &&
             this.tutorial.gameStartCounter > 100
         ) {
             this.api.player.requestPlay();
-            this.musicStart = true;
+            this.musicStartState = "requestedPlay";
+            this.musicStartRequestTime = performance.now();
 
             // 歌詞の色付け
             this.lyricLogicObject.setLyricColor();
@@ -465,6 +475,14 @@ export default class GameMain extends Phaser.Scene {
             // 楽曲情報をコンソール出力
             if (this.enableDebugInfo) {
                 this.debugInfo.dispConsoleSongInfo();
+            }
+        } else if (this.musicStartState == "requestedPlay") {
+            if (this.api.player.isPlaying) {
+                this.pauseButton.setStatus("pause");
+                this.musicStartState = "musicStarted";
+            } else if (performance.now() - this.musicStartRequestTime > 1000) {
+                // Phaser と TextAlive App API の更新処理が同期取れないので1秒以上開始できていなければ、自動再生に失敗したとみなす
+                this.pauseButton.setStatus("start");
             }
         }
 
