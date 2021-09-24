@@ -2,7 +2,6 @@ export default class LyricLogicObject {
     public textAliveAPI;
     public targetTime = 1500; // ms
     public targetTime2 = 1000; // ms
-    public now_color = "#ff8e1e";
 
     constructor(textAliveAPI) {
         this.textAliveAPI = textAliveAPI;
@@ -12,7 +11,7 @@ export default class LyricLogicObject {
     public setLyricColor() {
         let nextChangeColorTime = 0; // 色切り替え時の最低限の待たないといけない時間
         let preCheckTime = 0; // 色切り替え時の発話スタートタイム
-        let lyricColor = this.getRandomColor();
+        let lyricColor = this.getRandomColor(0);
         for (let i = 0; i < this.textAliveAPI.lyrics.length; i++) {
             if (
                 i < this.textAliveAPI.lyrics.length - 1 && // 最後の文字の次が取得できないため
@@ -23,15 +22,14 @@ export default class LyricLogicObject {
                 nextChangeColorTime =
                     this.textAliveAPI.lyrics[i].startTime + this.targetTime;
                 preCheckTime = this.textAliveAPI.lyrics[i].startTime;
-                lyricColor = this.getRandomColor();
-                this.now_color = lyricColor;
+                lyricColor = this.getRandomColor(i);
             }
             this.textAliveAPI.lyrics[i].color = lyricColor;
         }
     }
 
     // 前回と同じ色にはならないようにランダムに色を返す
-    private getRandomColor(): string {
+    private getRandomColor(index): string {
         let color;
         let num = Math.floor(Math.random() * 3);
         switch (num) {
@@ -49,10 +47,16 @@ export default class LyricLogicObject {
                 break;
         }
 
-        // 連続して同じ色にならないようにする
-        if (this.now_color === color) {
-            this.getRandomColor();
+        // 初手だけは完全ランダム
+        if (index == 0) {
+            return color;
         }
-        return color;
+
+        // 連続して同じ色にならないようにする
+        if (this.textAliveAPI.lyrics[index - 1].color == color) {
+            return this.getRandomColor(index);
+        } else {
+            return color;
+        }
     }
 }
