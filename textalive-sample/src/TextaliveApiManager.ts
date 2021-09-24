@@ -1,5 +1,6 @@
 import Lyric from "./Lyric";
 import CharText from "./CharText";
+import config = require('./config.json');
 
 import {
     Ease,
@@ -40,7 +41,7 @@ export default class TextaliveApiManager {
             app: {
                 appAuthor: "TTIC",
                 appName: "TextAliveSample",
-                token: "GYtUEuVODFiceV7w",
+                token: config.textalive_token,
             },
             mediaElement: document.querySelector<HTMLElement>("#media"),
             valenceArousalEnabled: true, // 覚醒度と感情価の取得
