@@ -8,7 +8,7 @@ import MusicSelectScene from "./scenes/MusicSelect";
 
 // ゲームの基本設定
 const config: Phaser.Types.Core.GameConfig = {
-    title: "sampleLyric", // タイトル
+    title: "VoiceShooter", // タイトル
     version: "0.0.1", // バージョン
     width: 1280, // 画面幅
     height: 720, // 画面高さ
