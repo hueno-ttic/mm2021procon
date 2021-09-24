@@ -9,14 +9,14 @@ export default class HeartJudgeEffectObject {
     }
 
     explode(x, y, judge): void {
-        let effect = "";
+        let effect = "excellent_red";
         if (judge) {
             if (this.gameMain.firstLane - 20 === y) {
-                effect = "excellent";
+                effect = "excellent_red";
             } else if (this.gameMain.secondLane - 20 === y) {
-                effect = "excellent";
+                effect = "excellent_yellow";
             } else if (this.gameMain.thirdLane - 20 === y) {
-                effect = "excellent";
+                effect = "excellent_green";
             }
         } else {
             effect = "bad";

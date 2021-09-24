@@ -226,7 +226,9 @@ export default class GameMain extends Phaser.Scene {
         this.load.image("heart_yellow", image["heart_yellow"]);
         this.load.image("heart_green", image["heart_green"]);
         this.load.image("heart_blue", image["heart_blue"]);
-        this.load.image("excellent", gameImage["Excellent"]);
+        this.load.image("excellent_red", gameImage["Excellent_red"]);
+        this.load.image("excellent_yellow", gameImage["Excellent_yellow"]);
+        this.load.image("excellent_green", gameImage["Excellent_green"]);
         this.load.image("bad", gameImage["Bad"]);
 
         // ライン
