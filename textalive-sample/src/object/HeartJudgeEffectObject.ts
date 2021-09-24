@@ -11,15 +11,15 @@ export default class HeartJudgeEffectObject {
     explode(x, y, judge): void {
         let effect = "";
         if (judge) {
-            if (this.gameMain.firstLane-20 === y) {
+            if (this.gameMain.firstLane - 20 === y) {
                 effect = "excellent";
-            } else if (this.gameMain.secondLane-20 === y) {
+            } else if (this.gameMain.secondLane - 20 === y) {
                 effect = "excellent";
-            } else if (this.gameMain.thirdLane-20 === y) {
+            } else if (this.gameMain.thirdLane - 20 === y) {
                 effect = "excellent";
             }
         } else {
-            effect = "bad"
+            effect = "bad";
         }
 
         let effectImage = this.gameMain.add
