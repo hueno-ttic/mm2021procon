@@ -160,8 +160,6 @@ export default class GameMain extends Phaser.Scene {
             this.heartJudgeEffectArray[i] = new HeartJudgeEffectObject(this);
         }
 
-        for (let i = 0; i < GameMain.LANE_SIZE; i++) {}
-
         // 観客
         this.audienceObject = new AudienceObject(this);
 
