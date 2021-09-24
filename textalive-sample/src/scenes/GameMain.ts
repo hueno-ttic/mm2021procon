@@ -291,7 +291,7 @@ export default class GameMain extends Phaser.Scene {
 
         // スコアの設定
         this.scoreText = this.add.text(30, 650, "Score：0", {
-            font: "18px Arial",
+            font: "15px Makinas-4-Square",
         });
         this.scoreText.setStroke("#161616", 4);
 
