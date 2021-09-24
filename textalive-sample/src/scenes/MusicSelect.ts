@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import images from "../assets/music_select/*.png";
 import jpeg_images from "../assets/thumbnail/*.jpeg";
+import no_image from "../assets/thumbnail/no_image_thumbnail.png";
 import { buildMusicInfo } from "../factory/MusicFactory";
 import GameMain from "./GameMain";
 import music from "../assets/sound/music/*.wav";
@@ -24,6 +25,7 @@ export default class MusicSelectScene extends Phaser.Scene {
         this.load.image("music_frame", images["music_frame"]);
         this.load.image("music_select_box", images["music_select_box"]);
         this.load.image("first_note", images["first_note"]);
+        this.load.image("first_note_thumbnail", no_image);
         this.load.image("usomo", images["usomo"]);
         this.load.image("usomo_thumbnail", jpeg_images["usomo_thumbnail"]);
         this.load.image("sonokokoro", images["sonokokoro"]);
@@ -56,16 +58,12 @@ export default class MusicSelectScene extends Phaser.Scene {
             .pop();
         this.selectedMusicId = defaultMusic.id;
         this.registry.set("selectedMusic", defaultMusic.id);
-        this.musicInfoText = this.add.text(
-            45,
-            620,
-            `${defaultMusic.title}/${defaultMusic.author}`,
-            {
+        this.musicInfoText = this.add
+            .text(45, 620, `${defaultMusic.title}/${defaultMusic.author}`, {
                 fontFamily: "Makinas-4-Square",
-                color: "0x000000",
-            }
-        );
-        this.musicInfoText.scale *= 2;
+            })
+            .setStroke("#ffffff", 2)
+            .setFontSize(40);
 
         this.thumbnail = this.add
             .image(420, 350, `${defaultMusic.label}_thumbnail`)
