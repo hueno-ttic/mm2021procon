@@ -39,7 +39,7 @@ export default class GameResultScene extends Phaser.Scene {
 
     static readonly SCORE_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle =
         {
-            font: "18px Arial",
+            font: "30px Makinas-4-Square",
         };
 
     constructor() {
