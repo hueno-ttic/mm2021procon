@@ -53,12 +53,15 @@ export default class TitleScene extends Phaser.Scene {
         this.back_title.setInteractive();
         this.back_title.on("pointerdown", () => {
             if (!this.isFading) {
-            this.confirmSe.play();
-            this.cameras.main.fadeOut(1000, 255, 255, 255);
-                this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
-                    this.titleMusic.stop();
-                    this.scene.start("MusicSelect");
-                });
+                this.confirmSe.play();
+                this.cameras.main.fadeOut(1000, 255, 255, 255);
+                this.cameras.main.once(
+                    Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+                    () => {
+                        this.titleMusic.stop();
+                        this.scene.start("MusicSelect");
+                    }
+                );
                 this.isFading = true;
             }
         });
@@ -69,11 +72,14 @@ export default class TitleScene extends Phaser.Scene {
 
         this.click_start.on("pointerdown", () => {
             if (!this.isFading) {
-            this.confirmSe.play();
-            this.cameras.main.fadeOut(1000, 255, 255, 255);
-                this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
-                    this.scene.start("MusicSelect");
-                });
+                this.confirmSe.play();
+                this.cameras.main.fadeOut(1000, 255, 255, 255);
+                this.cameras.main.once(
+                    Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+                    () => {
+                        this.scene.start("MusicSelect");
+                    }
+                );
                 this.isFading = true;
             }
         });
