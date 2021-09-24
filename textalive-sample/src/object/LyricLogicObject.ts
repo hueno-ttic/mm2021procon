@@ -2,7 +2,6 @@ export default class LyricLogicObject {
     public textAliveAPI;
     public targetTime = 1500; // ms
     public targetTime2 = 1000; // ms
-    public now_color = "#ff8e1e";
 
     constructor(textAliveAPI) {
         this.textAliveAPI = textAliveAPI;
@@ -24,7 +23,6 @@ export default class LyricLogicObject {
                     this.textAliveAPI.lyrics[i].startTime + this.targetTime;
                 preCheckTime = this.textAliveAPI.lyrics[i].startTime;
                 lyricColor = this.getRandomColor(i);
-                this.now_color = lyricColor;
             }
             this.textAliveAPI.lyrics[i].color = lyricColor;
         }
