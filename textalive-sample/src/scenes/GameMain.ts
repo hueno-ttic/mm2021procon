@@ -599,7 +599,7 @@ export default class GameMain extends Phaser.Scene {
                     // 歌詞の削除
                     this.textData[i].destroy(this);
                     // Bad or Excellentを出現させる
-                    this.heartJudgeEffectArray[laneIndex].update(
+                    this.heartJudgeEffectArray[laneIndex].explode(
                         this.heartX,
                         this.textData[i].y,
                         this.isSuccessLyric(i)
