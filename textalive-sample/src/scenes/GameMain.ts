@@ -22,6 +22,7 @@ import gameImage from "../assets/game_main/*.png";
 import uiImage from "../assets/ui/*.png";
 import soundSe from "../assets/sound/se/*.wav";
 import Visualizer from "./audioVisualizer/app/presenter/visualizer";
+import config = require("../config.json");
 
 export default class GameMain extends Phaser.Scene {
     private musics = buildMusicInfo();
@@ -189,7 +190,7 @@ export default class GameMain extends Phaser.Scene {
 
         // --------------------------------
         // デバッグ用
-        this.enableDebugInfo = false;
+        this.enableDebugInfo = config.degug_mode;
         if (this.enableDebugInfo) {
             this.debugInfo = new DebugInfo();
         } else {
