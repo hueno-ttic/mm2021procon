@@ -98,28 +98,46 @@ export default class AudienceObject {
     }
 
     updateAudience(laneAudience, counter) {
-        let numX = Math.floor(Math.random() * AUDIENCE_SET_SIZE_X);
+        let numX = 0;
+        // 前から詰めるように修正
+        let counterX = counter / 5;
+        if (counterX < AUDIENCE_SET_SIZE_X / 5) {
+            numX = Math.floor((Math.random() * AUDIENCE_SET_SIZE_X) / 5);
+        } else if (
+            counterX >= AUDIENCE_SET_SIZE_X / 5 &&
+            counterX < (AUDIENCE_SET_SIZE_X * 2) / 5
+        ) {
+            numX =
+                AUDIENCE_SET_SIZE_X / 5 +
+                Math.floor((Math.random() * AUDIENCE_SET_SIZE_X) / 5);
+        } else if (
+            counterX >= (AUDIENCE_SET_SIZE_X * 2) / 5 &&
+            counterX < (AUDIENCE_SET_SIZE_X * 3) / 5
+        ) {
+            numX =
+                (AUDIENCE_SET_SIZE_X * 2) / 5 +
+                Math.floor((Math.random() * AUDIENCE_SET_SIZE_X) / 5);
+        } else if (
+            counterX >= (AUDIENCE_SET_SIZE_X * 3) / 5 &&
+            counterX < (AUDIENCE_SET_SIZE_X * 4) / 5
+        ) {
+            numX =
+                (AUDIENCE_SET_SIZE_X * 3) / 5 +
+                Math.floor((Math.random() * AUDIENCE_SET_SIZE_X) / 5);
+        } else if (
+            counterX >= (AUDIENCE_SET_SIZE_X * 4) / 5 &&
+            counterX < AUDIENCE_SET_SIZE_X
+        ) {
+            numX =
+                (AUDIENCE_SET_SIZE_X * 4) / 5 +
+                Math.floor((Math.random() * AUDIENCE_SET_SIZE_X) / 5);
+        }
+
         let numY = Math.floor(Math.random() * AUDIENCE_SET_SIZE_Y);
         if (laneAudience[numY][numX].alpha === 0) {
             laneAudience[numY][numX].alpha = 0.5;
             return;
-        } else {
-            for (let i = -1; i < 1; i++) {
-                for (let j = -1; j < 1; j++) {
-                    if (
-                        numY + i > 0 &&
-                        numY + i < AUDIENCE_SET_SIZE_Y &&
-                        numX + i > 0 &&
-                        numX + i < AUDIENCE_SET_SIZE_X
-                    ) {
-                        if (laneAudience[numY][numX].alpha === 0) {
-                            laneAudience[numY][numX].alpha = 0.5;
-                            return;
-                        }
-                    }
-                }
-            }
-            this.updateAudience(laneAudience, counter);
         }
+        this.updateAudience(laneAudience, counter);
     }
 }

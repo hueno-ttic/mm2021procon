@@ -540,12 +540,20 @@ export default class GameMain extends Phaser.Scene {
                 // 歌詞表示の更新
                 this.lyricLineObject.updateLyricLine(this.lyrics, lyricIndex);
                 // 観客の表示情報を更新
-                // todo スコアによって出し方を変えるかもしれない
-                if (this.lyricY === this.firstLane) {
+                if (
+                    this.lyricY === this.firstLane &&
+                    this.isSuccessLyric(lyricIndex)
+                ) {
                     this.audienceObject.update("first");
-                } else if (this.lyricY === this.secondLane) {
+                } else if (
+                    this.lyricY === this.secondLane &&
+                    this.isSuccessLyric(lyricIndex)
+                ) {
                     this.audienceObject.update("second");
-                } else if (this.lyricY === this.thirdLane) {
+                } else if (
+                    this.lyricY === this.thirdLane &&
+                    this.isSuccessLyric(lyricIndex)
+                ) {
                     this.audienceObject.update("third");
                 }
             }
