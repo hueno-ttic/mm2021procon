@@ -108,7 +108,8 @@ export default class TextaliveApiManager {
         let wordIndex = 0;
         while (w) {
             // 歌詞の除外条件
-            if (this.excludeLyricList.includes(w)) {
+            if (this.excludeLyricList.includes(w.text)) {
+                w = w.next;
                 continue;
             }
 
