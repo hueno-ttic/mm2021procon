@@ -17,6 +17,7 @@ export function buildMusicInfo(): MusicInfo[] {
                 lyricDiffId: 5123,
             },
         },
+        youTubeKey: "Se89rQPp5tk",
     };
 
     let natsu: MusicInfo = {
@@ -35,6 +36,7 @@ export function buildMusicInfo(): MusicInfo[] {
                 lyricDiffId: 5133,
             },
         },
+        youTubeKey: "3wbZUkPxHEg",
     };
 
     let kokoro: MusicInfo = {
@@ -53,6 +55,7 @@ export function buildMusicInfo(): MusicInfo[] {
                 lyricDiffId: 5177,
             },
         },
+        youTubeKey: "bMtYf3R0zhY",
     };
 
     let hisoka: MusicInfo = {
@@ -71,6 +74,7 @@ export function buildMusicInfo(): MusicInfo[] {
                 lyricDiffId: 5149,
             },
         },
+        youTubeKey: "Ch4RQPG1Tmo",
     };
 
     let freedom: MusicInfo = {
@@ -89,6 +93,7 @@ export function buildMusicInfo(): MusicInfo[] {
                 lyricDiffId: 5171,
             },
         },
+        youTubeKey: "pAaD4Hta0ns",
     };
 
     let first_note: MusicInfo = {
@@ -107,6 +112,7 @@ export function buildMusicInfo(): MusicInfo[] {
                 lyricDiffId: 5093,
             },
         },
+        youTubeKey: "0XG_isaNVRA",
     };
 
     return [usomo, natsu, kokoro, hisoka, freedom, first_note];

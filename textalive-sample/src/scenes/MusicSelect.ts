@@ -1,11 +1,14 @@
 import Phaser from "phaser";
 import images from "../assets/music_select/*.png";
-import jpeg_images from "../assets/thumbnail/*.jpeg";
 import no_image from "../assets/thumbnail/no_image_thumbnail.png";
 import { buildMusicInfo } from "../factory/MusicFactory";
 import GameMain from "./GameMain";
 import music from "../assets/sound/music/*.wav";
 
+interface displayPosition {
+    displayX: number;
+    displayY: number;
+}
 export default class MusicSelectScene extends Phaser.Scene {
     constructor() {
         super({
@@ -14,9 +17,9 @@ export default class MusicSelectScene extends Phaser.Scene {
     }
 
     private musicInfoText: Phaser.GameObjects.Text;
-    private selectedMusicId: number;
     private musics = buildMusicInfo();
     private thumbnail: Phaser.GameObjects.Image;
+    private selectedFrame: Phaser.GameObjects.Image;
 
     // メニューの音楽
     private menuMusic: Phaser.Sound.BaseSound;
@@ -25,24 +28,23 @@ export default class MusicSelectScene extends Phaser.Scene {
         this.load.image("music_frame", images["music_frame"]);
         this.load.image("music_select_box", images["music_select_box"]);
         this.load.image("first_note", images["first_note"]);
-        this.load.image("first_note_thumbnail", no_image);
         this.load.image("usomo", images["usomo"]);
-        this.load.image("usomo_thumbnail", jpeg_images["usomo_thumbnail"]);
         this.load.image("sonokokoro", images["sonokokoro"]);
-        this.load.image(
-            "sonokokoro_thumbnail",
-            jpeg_images["sonokokoro_thumbnail"]
-        );
         this.load.image("natsu", images["natsu"]);
-        this.load.image("natsu_thumbnail", jpeg_images["natsu_thumbnail"]);
         this.load.image("hisoka", images["hisoka"]);
-        this.load.image("hisoka_thumbnail", jpeg_images["hisoka_thumbnail"]);
         this.load.image("freedom", images["freedom"]);
-        this.load.image("freedom_thumbnail", jpeg_images["freedom_thumbnail"]);
         this.load.image("back_ground", images["back_ground"]);
         this.load.image("title", images["music_select_title"]);
         this.load.image("decide", images["decide"]);
         this.load.audio("menu_music", music.menu);
+        this.load.image("no_image", no_image);
+        this.load.image("selected_frame", images["selected_frame"]);
+        this.musics.forEach((music) => {
+            this.load.image(
+                `${music.label}_thumbnail`,
+                `http://img.youtube.com/vi/${music.youTubeKey}/maxresdefault.jpg`
+            );
+        });
     }
 
     create(): void {
@@ -56,23 +58,24 @@ export default class MusicSelectScene extends Phaser.Scene {
         const defaultMusic = this.musics
             .filter((music) => music.id === 1)
             .pop();
-        this.selectedMusicId = defaultMusic.id;
         this.registry.set("selectedMusic", defaultMusic.id);
         this.musicInfoText = this.add
             .text(45, 620, `${defaultMusic.title}/${defaultMusic.author}`, {
                 fontFamily: "Makinas-4-Square",
             })
-            .setStroke("#ffffff", 2)
+            .setStroke("#000000", 2)
             .setFontSize(40);
 
         this.thumbnail = this.add
-            .image(420, 350, `${defaultMusic.label}_thumbnail`)
+            .image(
+                420,
+                350,
+                this.textures.get(`${defaultMusic.label}_thumbnail`) ===
+                    this.textures.get("__MISSING")
+                    ? "no_image"
+                    : `${defaultMusic.label}_thumbnail`
+            )
             .setDisplaySize(790, 440);
-
-        // 楽曲選択用のボックスを配置する
-        var dispBoxX = 1000;
-        var additionalBoxX = 0;
-        var dispBoxY = 40;
 
         this.menuMusic = this.sound.add("menu_music", {
             loop: true,
@@ -82,18 +85,23 @@ export default class MusicSelectScene extends Phaser.Scene {
             this.menuMusic.play();
         }
 
+        this.selectedFrame = this.add
+            .image(1075, 125, "selected_frame")
+            .setScale(1.05);
+        this.tweens.add({
+            targets: this.selectedFrame,
+            alpha: 0,
+            duration: 1000,
+            ease: "Power0",
+            repeat: -1,
+        });
+
+        // 楽曲選択用のボックスを配置する
         this.musics.forEach((music, index) => {
-            if (index == 0 || index == 5) {
-                additionalBoxX = 75;
-            } else if (index == 1 || index == 4) {
-                additionalBoxX = 25;
-            } else {
-                additionalBoxX = 0;
-            }
-            dispBoxY += 85;
+            const musicPosition = this.calcMusicPosition(index);
             const image = this.add.image(
-                dispBoxX + additionalBoxX,
-                dispBoxY,
+                musicPosition.displayX,
+                musicPosition.displayY,
                 music.label
             );
             image.setScale(0.6);
@@ -101,9 +109,18 @@ export default class MusicSelectScene extends Phaser.Scene {
 
             image.on("pointerdown", () => {
                 this.registry.set("selectedMusic", music.id);
-                this.selectedMusicId = music.id;
                 this.musicInfoText.setText(`${music.title}/${music.author}`);
-                this.thumbnail.setTexture(`${music.label}_thumbnail`);
+                this.thumbnail.setTexture(
+                    this.textures.get(`${music.label}_thumbnail`) ===
+                        this.textures.get("__MISSING")
+                        ? "no_image"
+                        : `${music.label}_thumbnail`
+                );
+                this.thumbnail.setDisplaySize(790, 440);
+                this.selectedFrame.setPosition(
+                    musicPosition.displayX,
+                    musicPosition.displayY
+                );
             });
         });
 
@@ -122,5 +139,29 @@ export default class MusicSelectScene extends Phaser.Scene {
         this.menuMusic.stop();
         this.scene.add("GameMain", GameMain);
         this.scene.start("GameMain");
+    }
+
+    private calcMusicPosition(index: number): displayPosition {
+        var dispBoxX = 1000;
+        var additionalBoxX = 0;
+        var dispBoxY = 40;
+        var additionalBoxY = 85;
+        switch (index) {
+            case 0:
+            case 5:
+                additionalBoxX = 75;
+                break;
+            case 1:
+            case 4:
+                additionalBoxX = 25;
+                break;
+            default:
+                additionalBoxX = 0;
+                break;
+        }
+        return {
+            displayX: dispBoxX + additionalBoxX,
+            displayY: dispBoxY + additionalBoxY * (index + 1),
+        };
     }
 }
