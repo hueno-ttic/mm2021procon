@@ -5,6 +5,7 @@ import TotalResultObject from "../object/TotalResultObject";
 import ScoreCounter from "../object/ScoreCounter";
 
 import imageResult from "../assets/result/*.png";
+import music from "../assets/sound/music/*.wav";
 
 export default class GameResultScene extends Phaser.Scene {
     // 背景
@@ -32,6 +33,9 @@ export default class GameResultScene extends Phaser.Scene {
     // ボタン
     private _moveSelectMusicButtonBgImage: Phaser.GameObjects.Image;
     private _moveSelectMusicButtonImage: Phaser.GameObjects.Image;
+
+    // サウンド
+    private _bgm: Phaser.Sound.BaseSound;
 
     static readonly SCORE_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle =
         {
@@ -73,6 +77,9 @@ export default class GameResultScene extends Phaser.Scene {
         // ボタン
         this._moveSelectMusicButtonBgImage = null;
         this._moveSelectMusicButtonImage = null;
+
+        // サウンド
+        this._bgm = null;
     }
 
     preload(): void {
@@ -95,6 +102,7 @@ export default class GameResultScene extends Phaser.Scene {
         this.load.image("lane_1", imageResult.result_lane_1);
         this.load.image("lane_2", imageResult.result_lane_2);
         this.load.image("lane_3", imageResult.result_lane_3);
+        this.load.image("count", imageResult.result_count);
 
         // リザルト
         this.load.image("result_cleared", imageResult.result_cleared);
@@ -109,6 +117,9 @@ export default class GameResultScene extends Phaser.Scene {
             "button_select_music_image",
             imageResult.result_move_musicselect
         );
+
+        // サウンド
+        this.load.audio("result_music", music.result);
     }
 
     create(): void {
@@ -141,7 +152,7 @@ export default class GameResultScene extends Phaser.Scene {
         this._scoreBackgroundImage
             .setDepth(scoreDepth - 1)
             .setOrigin(0.5, 0)
-            .setDisplaySize(394, 500);
+            .setDisplaySize(394, 460);
 
         this._scoreImage = this.add.image(
             this._scoreBackgroundImage.x,
@@ -153,15 +164,20 @@ export default class GameResultScene extends Phaser.Scene {
         const result = this.registry.get("gameResult") as GameScore;
         const laneScores = [
             result.laneScore.map((score) => score.success),
-            result.laneScore.map((score) => score.failed),
+            [
+                result.laneScore.reduce((sum, value) => {
+                    return sum + value.failed;
+                }, 0),
+            ],
         ];
         const resultNameKeys = ["score_excellent", "score_bad"];
+        const laneKeys = [["lane_1", "lane_2", "lane_3"], ["count"]];
         for (let i = 0; i < this._resultScores.length; i++) {
             this._resultScores[i].create({
                 scene: this,
                 resultNameKey: resultNameKeys[i],
                 underlineKey: "line",
-                laneKeys: ["lane_1", "lane_2", "lane_3"],
+                laneKeys: laneKeys[i],
                 laneScores: laneScores[i],
                 depth: scoreDepth,
                 posX: this._scoreBackgroundImage.x - 180,
@@ -186,14 +202,14 @@ export default class GameResultScene extends Phaser.Scene {
                 this._scoreImage.height +
                 30 +
                 200 * this._resultScores.length +
-                5,
+                -60,
         });
 
         // 楽曲情報
         // todo: シーン間のパラメータ受け渡し
         this._selectSongText = this.add.text(
             50,
-            this.game.scale.gameSize.height - 85,
+            this.game.scale.gameSize.height - 100,
             "夏をなぞって / シロクマ消しゴム",
             { font: "40px Arial" }
         );
@@ -217,6 +233,7 @@ export default class GameResultScene extends Phaser.Scene {
         this._moveSelectMusicButtonBgImage.setDepth(buttonDepth - 1);
         this._moveSelectMusicButtonBgImage.setInteractive();
         this._moveSelectMusicButtonBgImage.on("pointerdown", () => {
+            this._bgm.stop();
             this.scene.start("MusicSelect");
         });
 
@@ -226,6 +243,12 @@ export default class GameResultScene extends Phaser.Scene {
             "button_select_music_image"
         );
         this._moveSelectMusicButtonImage.setDepth(buttonDepth);
+
+        // サウンド
+        this._bgm = this.sound.add("result_music", {
+            loop: true,
+        });
+        this._bgm.play();
     }
 
     update(): void {
