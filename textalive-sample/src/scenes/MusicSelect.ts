@@ -25,6 +25,8 @@ export default class MusicSelectScene extends Phaser.Scene {
     // メニューの音楽
     private menuMusic: Phaser.Sound.BaseSound;
 
+    private isFading: Boolean = false;
+
     preload(): void {
         this.load.image("music_frame", images["music_frame"]);
         this.load.image("music_select_box", images["music_select_box"]);
@@ -51,6 +53,7 @@ export default class MusicSelectScene extends Phaser.Scene {
     }
 
     create(): void {
+        this.isFading = false;
         const selectSound = this.sound.add("select_sound", { volume: 0.5 });
         const decideSound = this.sound.add("decide_sound", { volume: 0.5 });
 
@@ -137,10 +140,13 @@ export default class MusicSelectScene extends Phaser.Scene {
             .image(1140, 640, "decide")
             .setInteractive();
         decideButton.on("pointerdown", () => {
-            if (decideSound) {
-                decideSound.play();
+            if (!this.isFading) {
+                if (decideSound) {
+                    decideSound.play();
+                    console.log("saund");
+                }
+                this.moveGameMain();
             }
-            this.moveGameMain();
         });
     }
 
@@ -148,9 +154,17 @@ export default class MusicSelectScene extends Phaser.Scene {
         if (this.game.scene.getScene("GameMain")) {
             this.scene.remove("GameMain");
         }
+        console.log("go to gamemain");
         this.menuMusic.stop();
         this.scene.add("GameMain", GameMain);
-        this.scene.start("GameMain");
+        this.cameras.main.fadeOut(1000, 255, 255, 255);
+        this.cameras.main.once(
+            Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+            () => {
+                this.scene.start("GameMain");
+            }
+        );
+        this.isFading = true;
     }
 
     private calcMusicPosition(index: number): displayPosition {
