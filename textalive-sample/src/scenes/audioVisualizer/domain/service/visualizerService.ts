@@ -21,6 +21,10 @@ export default class visualizerService {
         return gains.map((gain) => this.smoothing(gain));
     }
 
+    public isLoading(): boolean {
+        return this.repository.isLoading();
+    }
+
     /**
      * 入力された値を平滑化する
      * @param value
