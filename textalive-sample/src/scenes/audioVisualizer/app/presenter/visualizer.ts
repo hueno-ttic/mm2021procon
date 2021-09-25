@@ -80,13 +80,16 @@ export default class Visualizer {
         });
     }
 
+    public isLoading(): boolean {
+        return this.service.isLoading();
+    }
+
     /**
      * 床の要素を描画する
      * @param v
      */
     private drawFloor(v: Position) {
         const graphics = this.scene.add.graphics();
-
         const alpha = 0.15;
         graphics
             .fillGradientStyle(
