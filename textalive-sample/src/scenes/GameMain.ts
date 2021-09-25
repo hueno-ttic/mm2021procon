@@ -90,9 +90,11 @@ export default class GameMain extends Phaser.Scene {
 
     // 曲情報
     private selectedMusic;
+    public lyricIndex: number = 0;
 
     // 歌詞表示部分
     private lyricLineObject: LyricLineObject;
+    private preCurrentLyricIndex: number = 0;
 
     public initFlag: Boolean = true;
 
@@ -565,10 +567,15 @@ export default class GameMain extends Phaser.Scene {
                     lyricText,
                     { font: "50px GenEiLateGoN" }
                 );
+                // 歌詞表示の更新
+                this.preCurrentLyricIndex =
+                    this.lyricLineObject.updateLyricLine(
+                        this.lyrics,
+                        lyricIndex
+                    );
+
                 this.textData[lyricIndex].setStroke(lyric.color, 10);
                 this.textData[lyricIndex].setDepth(DepthDefine.OBJECT + 10);
-                // 歌詞表示の更新
-                this.lyricLineObject.updateLyricLine(this.lyrics, lyricIndex);
                 // 観客の表示情報を更新
                 if (
                     this.lyricY === this.firstLane &&
@@ -586,6 +593,16 @@ export default class GameMain extends Phaser.Scene {
                 ) {
                     this.audienceObject.update("third");
                 }
+            }
+
+            // 歌詞の更新にズレがある場合に歌詞を最初から表示し直す
+            if (this.preCurrentLyricIndex != lyricIndex) {
+                this.preCurrentLyricIndex =
+                    this.lyricLineObject.reloadLyricLine(
+                        this.lyrics,
+                        time,
+                        this.preCurrentLyricIndex
+                    );
             }
         }
 
@@ -640,6 +657,7 @@ export default class GameMain extends Phaser.Scene {
         this.timeInfo.update();
         this.visualizer.update(this.api.getPositionTime());
         this.liveArtist.update();
+
         // --------------------------------
         // デバッグ用
         if (this.enableDebugInfo) {
