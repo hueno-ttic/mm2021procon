@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import fft from "../../../../assets/fft/build/*.data";
 
-const DUMMY_LENGTH = 10 * 100; // ダミーのデータを用意する時間( 10 sec )
+const DUMMY_LENGTH = 30 * 100; // ダミーのデータを用意する時間( 10 sec )
 const LENGTH_OF_SILENCE = 100; // ダミーデータの無音時間( 1 sec )
 
 export default class GainRepository {
