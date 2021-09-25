@@ -22,21 +22,18 @@ export default class LyricLineObject {
 
     // 決められた位置から歌詞を表示させる
     private appearLyric(lyrics, pos) {
-        console.log("pos : "+pos);
-        console.log(lyrics);
-        console.log("appearLyricが始まったよ")
         // 決められた数だけ歌詞を表示
         let lyricLineLength = 0;
         this.lyricLineAddPos = pos;
         for (let i = pos; i < lyrics.length; i++) {
-            if  (typeof this.lyricLine[i] === "undefined") {
+            if (typeof this.lyricLine[i] === "undefined") {
                 this.lyricLine[i] = this.scene.add
-                .text(0, 636, lyrics[i].getText(), {
-                    font: "32px Arial",
-                });
-                console.log("undef text : "+ lyrics[i].getText());
+                    .text(0, 636, lyrics[i].getText(), {
+                        font: "32px Arial",
+                    });
+                console.log("undef text : " + lyrics[i].getText());
             }
-            console.log("text : "+ lyrics[i].getText());
+            console.log("text : " + lyrics[i].getText());
             this.lyricLine[i].x = 180 + lyricLineLength * 35;
             this.lyricLine[i].setStroke(lyrics[i].color, 4);
             this.lyricLine[i].setVisible(true);
@@ -46,26 +43,33 @@ export default class LyricLineObject {
                 break;
             }
         }
-        console.log(" this.lyricLineAddPos" +  this.lyricLineAddPos);
     }
 
-    public reloadLyricLine(lyrics, currentLyricIndex) {
-        
-    
-            // 打ち出した歌詞より前のデータが残っていない確認して、あったら削除
-            for (let i = 0; i < currentLyricIndex - 1; i++) {
-                if (typeof this.lyricLine[i] !== "undefined") {
-                    this.lyricLine[i].setVisible(false);
-                    this.lyricLine[i].destroy(true);
-                    console.log("消した")
-                }
+    public reloadLyricLine(lyrics, currentLyricTime) {
+
+        let lyricPoint = 0;
+        // 今歌詞がどの部分なのか探索
+        for (let i = 0; i < lyrics.length; i++) {
+            if (lyrics[i].startTime > currentLyricTime) {
+                lyricPoint = i;
+                break;
             }
+        }
 
-            // 再設定
-            this.appearLyric(lyrics, currentLyricIndex);
-            return;
+        // 打ち出した歌詞より前のデータが残っていない確認して、あったら削除
+        for (let i = 0; i < lyricPoint - 1; i++) {
+            if (typeof this.lyricLine[i] !== "undefined") {
+                this.lyricLine[i].setVisible(false);
+                this.lyricLine[i].destroy(true);
+            }
+        }
+
+        // 歌詞の再表示
+        this.appearLyric(lyrics, lyricPoint);
+        return lyricPoint-1; // 表示の先頭の一つ前がpreCurrentLyricIndexになる
     }
 
+    
     public updateLyricLine(lyrics, currentLyricIndex) {
 
         // 打ち出した歌詞より前のデータが残っていない確認して、あったら削除
@@ -75,7 +79,6 @@ export default class LyricLineObject {
                 this.lyricLine[i].destroy(true);
             }
         }
-
 
         if (typeof this.lyricLine[currentLyricIndex] === "undefined") {
             return;
@@ -116,8 +119,6 @@ export default class LyricLineObject {
             }
             this.lyricLineAddPos++;
         }
-
         return currentLyricIndex;
-
     }
 }

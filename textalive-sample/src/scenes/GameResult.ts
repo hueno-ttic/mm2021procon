@@ -43,7 +43,7 @@ export default class GameResultScene extends Phaser.Scene {
 
     static readonly SCORE_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle =
         {
-            font: "18px Arial",
+            font: "18px Aldrich",
         };
 
     constructor() {
@@ -220,7 +220,7 @@ export default class GameResultScene extends Phaser.Scene {
             45,
             this.game.scale.gameSize.height - 100,
             `${this._musicInfo.title}/${this._musicInfo.author}`,
-            { fontFamily: "Makinas-4-Square" }
+            { fontFamily: "GenEiLateGoN" }
         );
         this._selectSongText
             .setDepth(DepthDefine.OBJECT)
@@ -259,6 +259,7 @@ export default class GameResultScene extends Phaser.Scene {
         // サウンド
         this._bgm = this.sound.add("result_music", {
             loop: true,
+            volume: 0.5,
         });
         this._bgm.play();
     }

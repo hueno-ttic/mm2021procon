@@ -303,8 +303,8 @@ export default class GameMain extends Phaser.Scene {
         this.liveArtist.create(this.selectedMusic);
 
         // スコアの設定
-        this.scoreText = this.add.text(30, 650, "Score：0", {
-            font: "15px Makinas-4-Square",
+        this.scoreText = this.add.text(30, 660, "Score：0", {
+            font: "15px Aldrich",
         });
         this.scoreText.setStroke("#161616", 4);
 
@@ -457,16 +457,13 @@ export default class GameMain extends Phaser.Scene {
             this.lyricY = moveLanePos[nextLaneIndex];
         }
 
-        if (!this.api.player.isLoading) {
-
-        }
-
         // チュートリアルから一定のインターバル後
         // ロードが終わり次第、楽曲をスタート
         this.tutorial.gameStartCounter++;
         if (
             !this.api.player.isPlaying &&
             !this.api.player.isLoading &&
+            !this.visualizer.isLoading() &&
             this.musicStartState == "" &&
             this.tutorial.gameStartCounter > 100
         ) {
@@ -567,7 +564,7 @@ export default class GameMain extends Phaser.Scene {
                     1000,
                     this.lyricY - 20,
                     lyricText,
-                    { font: "50px Arial" }
+                    { font: "50px GenEiLateGoN" }
                 );
                 // 歌詞表示の更新
                 this.preCurrentLyricIndex = this.lyricLineObject.updateLyricLine(this.lyrics, this.lyricIndex);
@@ -592,23 +589,17 @@ export default class GameMain extends Phaser.Scene {
                     this.audienceObject.update("third");
                 }
             }
+
+            // 歌詞の更新にズレがある場合に歌詞を最初から表示し直す
+            if (this.preCurrentLyricIndex != this.lyricIndex) {
+                this.preCurrentLyricIndex = this.lyricLineObject.reloadLyricLine(this.lyrics, time);
+            }    
         }
 
         if (this.api.player.findChorus(this.api.getPositionTime())) {
             this.liveArtist.setIsUplifting(true);
         } else {
             this.liveArtist.setIsUplifting(false);
-        }
-
-        // 歌詞表示にずれがあったときにもう再度歌詞
-        console.log(" preCurrentLyricIndex "+ this.preCurrentLyricIndex);
-        console.log("this.lyricIndex : "+ this.lyricIndex);
-        console.log("this.initFlag : "+ this.initFlag);
-
-        if (!this.initFlag && this.lyricIndex != null && (this.preCurrentLyricIndex != this.lyricIndex || typeof this.preCurrentLyricIndex == "undefined")) {
-            console.log("reloadLyricLineに入ったよ");
-
-            this.lyricLineObject.reloadLyricLine(this.lyrics, this.lyricIndex);
         }
 
         // テキストの描画更新
