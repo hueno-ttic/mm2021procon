@@ -33,6 +33,10 @@ export default class Visualizer {
         });
     }
 
+    public isLoading(): boolean {
+        return this.service.isLoading();
+    }
+
     private getRectPos(position: number): {
         x: number;
         y: number;

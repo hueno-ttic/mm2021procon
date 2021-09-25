@@ -4,6 +4,7 @@ import fft from "../../../../assets/fft/build/*.data";
 export default class GainRepository {
     private readonly size: number;
     private gains: number[][];
+    private loadStatus: boolean = true;
 
     constructor(size: number) {
         this.size = size;
@@ -15,7 +16,9 @@ export default class GainRepository {
                 number[][],
                 AxiosResponse<number[][]>
             >(fft["fft"]);
+
             this.gains = response.data;
+            this.loadStatus = false;
         })();
     }
 
@@ -23,6 +26,10 @@ export default class GainRepository {
         return Array.from({ length: width * 2 }, (v, k) =>
             this.getGainByPosition(position - width + k)
         );
+    }
+
+    public isLoading() {
+        return this.loadStatus;
     }
 
     private getGainByPosition(position: number): number[] {
