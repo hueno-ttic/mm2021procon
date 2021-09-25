@@ -1,3 +1,4 @@
+import GameMain from "../scenes/GameMain";
 import TextaliveApiManager from "../TextaliveApiManager";
 import UIImageButtonObject from "./UIImageButtonObject";
 
@@ -5,6 +6,7 @@ export interface UIPauseButtonObjectCreateParam {
     scene: Phaser.Scene;
     pauseImageKey: string;
     playImageKey: string;
+    startImageKey: string;
     imageDepth?: number;
     posX: number;
     posY: number;
@@ -19,15 +21,16 @@ export default class UIPauseButtonObject {
         this.init();
     }
 
-    init(): void {
+    public init(): void {
         this._button = null;
         this._textaliveManager = null;
     }
 
-    create(param: UIPauseButtonObjectCreateParam): void {
+    public create(param: UIPauseButtonObjectCreateParam): void {
         const imageKeyMap = new Map<string, string>([
             ["pause", param.pauseImageKey],
             ["play", param.playImageKey],
+            ["start", param.startImageKey],
         ]);
 
         this._button = new UIImageButtonObject();
@@ -54,15 +57,29 @@ export default class UIPauseButtonObject {
         }
 
         if (this._textaliveManager.player.isPlaying) {
-            this._button.status = "play";
-            this._textaliveManager.player.requestPause();
+            this._setStatus("play");
         } else {
-            this._button.status = "pause";
-            this._textaliveManager.player.requestPlay();
+            this._setStatus("pause");
         }
     }
 
-    setVisible(value: boolean): void {
+    public setStatus(status: string): void {
+        this._setStatus(status);
+    }
+
+    private _setStatus(status: string): void {
+        this._button.status = status;
+        switch (status) {
+            case "play":
+                this._textaliveManager.player.requestPause();
+                break;
+            case "pause":
+                this._textaliveManager.player.requestPlay();
+                break;
+        }
+    }
+
+    public setVisible(value: boolean): void {
         this._button.setVisible(value);
     }
 }
