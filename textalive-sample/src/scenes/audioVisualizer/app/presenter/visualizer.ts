@@ -2,43 +2,42 @@ import visualizerService from "../../domain/service/visualizerService";
 import * as Phaser from "phaser";
 import { POINT_SIZE } from "../constants/constants";
 
-const POSITION = { x: 1240, y: 30 }; // 右上端の座標
-const SIZE = { width: 205, height: 590 }; // 描画サイズ
+class Position {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: number;
+}
+
+const FLOOR_POSITION = { x: 1240, y: 38 }; // 右上端の座標
+const FLOOR_SIZE = { width: 200, height: 570 }; // 描画サイズ
 
 const SCREEN_POSITION = { x: 1245, y: 38 }; // 左上端の座標
-const SCREEN_SIZE = {
-    width: 22,
-    height: 570,
-}; // 描画サイズ
+const SCREEN_SIZE = { width: 22, height: 570 }; // 描画サイズ
 
 export default class Visualizer {
     private readonly scene: Phaser.Scene;
     private readonly service: visualizerService;
-    private rects: Phaser.GameObjects.Rectangle[];
-    private screen: Phaser.GameObjects.Rectangle[];
+    private floor: Phaser.GameObjects.Graphics[];
+    private readonly screen: Phaser.GameObjects.Rectangle[];
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
         this.service = new visualizerService(POINT_SIZE);
-        this.rects = [];
         this.screen = [];
+        this.floor = [];
     }
 
     create() {
         const gains = this.service.getGain(0);
-        this.getRectPos(gains).forEach((v) =>
-            this.rects.push(
-                this.scene.add.rectangle(
-                    v.x,
-                    v.y,
-                    v.width,
-                    v.height,
-                    v.color,
-                    0.2
-                )
-            )
-        );
 
+        // フロア上に反射するオーディオスペクトラム
+        this.getFloorPos(gains).forEach((v) => {
+            this.drawFloor(v);
+        });
+
+        // モニター上に表示されるオーディオスペクトラム
         this.getScreenPos(gains).forEach((v, index) =>
             this.screen.push(
                 this.scene.add
@@ -55,49 +54,94 @@ export default class Visualizer {
     update(position: number) {
         const gains = this.service.getGain(position);
 
-        this.getRectPos(gains).forEach((value, index) => {
-            this.rects[index]?.setPosition(value.x, value.y);
-            this.rects[index]?.displayWidth = value.width;
-            this.rects[index]?.displayHeight = value.height;
-            this.rects[index]?.fillColor = value.color;
-        });
+        // 床の描画
+        this.floor.forEach((attenation) => attenation.destroy(true));
+        const floor = this.getFloorPos(gains);
+        floor.forEach((v) => this.drawFloor(v));
 
-        this.getScreenPos(gains).forEach((value, index) => {
-            this.screen[index]?.setPosition(value.x, value.y);
-            this.screen[index]?.displayWidth = value.width;
-            this.screen[index]?.displayHeight = value.height;
-            this.screen[index]?.fillColor = value.color;
+        // モニターの描画
+        this.updatePosition(this.screen, this.getScreenPos(gains));
+    }
+
+    /**
+     * 表示要素を指定したPositionで更新する
+     * @param target
+     * @param positions
+     */
+    private updatePosition(
+        target: Phaser.GameObjects.Rectangle[],
+        positions: Position[]
+    ) {
+        positions.forEach((value, index) => {
+            target[index]?.setPosition(value.x, value.y);
+            target[index]?.displayWidth = value.width;
+            target[index]?.displayHeight = value.height;
+            target[index]?.fillColor = value.color;
         });
     }
 
-    private getScreenPos(gains: number[]): {
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-        color: number;
-    }[] {
-        const height = SCREEN_SIZE.height / POINT_SIZE;
-        const brightness = Math.min(
-            1.0,
-            0.5 +
-                8 *
-                    gains.reduce(
-                        (prev, current) => prev + current / gains.length
-                    )
+    /**
+     * 床の要素を描画する
+     * @param v
+     */
+    private drawFloor(v: Position) {
+        const graphics = this.scene.add.graphics();
+
+        const alpha = 0.15;
+        graphics
+            .fillGradientStyle(
+                v.color,
+                v.color,
+                v.color,
+                v.color,
+                0,
+                alpha,
+                0,
+                alpha
+            )
+            .setDepth(0)
+            .setBlendMode(Phaser.BlendModes.ADD)
+            .fillRect(FLOOR_POSITION.x - v.width, v.y, v.width, v.height);
+        this.floor.push(graphics);
+    }
+
+    private getScreenPos(gains: number[]): Position[] {
+        return this.getPos(gains, SCREEN_POSITION, SCREEN_SIZE);
+    }
+
+    private getFloorPos(gains: number[]): Position[] {
+        const pos = this.getPos(gains, FLOOR_POSITION, FLOOR_SIZE);
+        return pos;
+    }
+
+    /**
+     * 周波数分布からPositionを作成する
+     * @param gains
+     * @param pos
+     * @param size
+     */
+    private getPos(
+        gains: number[],
+        pos: { x: number; y: number },
+        size: { width: number; height: number }
+    ): Position[] {
+        const height = size.height / POINT_SIZE;
+        const gainAverage = gains.reduce(
+            (prev, current) => prev + current / gains.length
         );
+        const brightness = Math.min(1.0, 0.5 + 8 * gainAverage);
 
         return gains.map((gain, index) => {
             // そのままの値だとメリハリが足りないので、tanhを掛けて補正する
             const tuned_gain = Math.tanh(gain) / Math.tanh(1.0);
             const width = Math.min(
-                1 + SCREEN_SIZE.width * tuned_gain * 1.5,
-                SCREEN_SIZE.width
+                1 + size.width * tuned_gain * 1.5,
+                size.width
             );
 
             return {
-                x: SCREEN_POSITION.x, //+ width / 2,
-                y: SCREEN_POSITION.y + height * index,
+                x: pos.x,
+                y: pos.y + height * index,
                 width,
                 height,
                 color: this.getColor(index, brightness),
@@ -105,41 +149,11 @@ export default class Visualizer {
         });
     }
 
-    private getRectPos(gains: number[]): {
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-        color: number;
-    }[] {
-        const height = SIZE.height / POINT_SIZE;
-        const brightness = Math.min(
-            1.0,
-            0.5 +
-                8 *
-                    gains.reduce(
-                        (prev, current) => prev + current / gains.length
-                    )
-        );
-
-        return gains.map((gain, index) => {
-            // そのままの値だとメリハリが足りないので、tanhを掛けて補正する
-            const tuned_gain = Math.tanh(gain) / Math.tanh(1.0);
-            const width = Math.min(
-                1 + SIZE.width * tuned_gain * 1.5,
-                SIZE.width
-            );
-
-            return {
-                x: POSITION.x - width / 2,
-                y: POSITION.y + height * index,
-                width,
-                height,
-                color: this.getColor(index, brightness),
-            };
-        });
-    }
-
+    /**
+     * 指定した位置の色(16進数)を取得する
+     * @param index
+     * @param brightness
+     */
     private getColor(index: number, brightness: number) {
         const red = [255, 109, 30];
         const yellow = [246, 205, 11];

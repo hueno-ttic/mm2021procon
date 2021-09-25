@@ -85,6 +85,7 @@ export default class AudienceObject {
         });
 
         this.artist.setScale(1);
+        this.artist.setDepth(10);
         this.artist.anims.play(this.emotion);
     }
 
