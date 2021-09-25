@@ -546,21 +546,22 @@ export default class GameMain extends Phaser.Scene {
             const time = this.api.getPositionTime();
             let lyric = this.api.getCurrentLyric(time);
             let lyricText;
+            let lyricIndex;
             if (lyric != null) {
                 lyricText = lyric.text;
-                this.lyricIndex = lyric.index;
+                lyricIndex = lyric.index;
             }
 
             // 横に流れる歌詞データの追加
             lyricText = this.api.getCurrentLyricText(time);
-            this.lyricIndex = this.api.getCurrentLyricIndex(time);
+            lyricIndex = this.api.getCurrentLyricIndex(time);
             if (
-                typeof this.textData[this.lyricIndex] === "undefined" &&
+                typeof this.textData[lyricIndex] === "undefined" &&
                 lyricText != null &&
                 lyricText != "" &&
                 lyricText != " "
             ) {
-                this.textData[this.lyricIndex] = this.add.text(
+                this.textData[lyricIndex] = this.add.text(
                     1000,
                     this.lyricY - 20,
                     lyricText,
@@ -570,36 +571,36 @@ export default class GameMain extends Phaser.Scene {
                 this.preCurrentLyricIndex =
                     this.lyricLineObject.updateLyricLine(
                         this.lyrics,
-                        this.lyricIndex
+                        lyricIndex
                     );
 
-                this.textData[this.lyricIndex].setStroke(lyric.color, 10);
-                this.textData[this.lyricIndex].setDepth(
+                this.textData[lyricIndex].setStroke(lyric.color, 10);
+                this.textData[lyricIndex].setDepth(
                     DepthDefine.OBJECT + 10
                 );
                 // 観客の表示情報を更新
                 if (
                     this.lyricY === this.firstLane &&
-                    this.isSuccessLyric(this.lyricIndex)
+                    this.isSuccessLyric(lyricIndex)
                 ) {
                     this.audienceObject.update("first");
                 } else if (
                     this.lyricY === this.secondLane &&
-                    this.isSuccessLyric(this.lyricIndex)
+                    this.isSuccessLyric(lyricIndex)
                 ) {
                     this.audienceObject.update("second");
                 } else if (
                     this.lyricY === this.thirdLane &&
-                    this.isSuccessLyric(this.lyricIndex)
+                    this.isSuccessLyric(lyricIndex)
                 ) {
                     this.audienceObject.update("third");
                 }
             }
 
             // 歌詞の更新にズレがある場合に歌詞を最初から表示し直す
-            if (this.preCurrentLyricIndex != this.lyricIndex) {
+            if (this.preCurrentLyricIndex != lyricIndex) {
                 this.preCurrentLyricIndex =
-                    this.lyricLineObject.reloadLyricLine(this.lyrics, time);
+                    this.lyricLineObject.reloadLyricLine(this.lyrics, time, this.preCurrentLyricIndex);
             }
         }
 

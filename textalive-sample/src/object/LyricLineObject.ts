@@ -35,13 +35,15 @@ export default class LyricLineObject {
                         font: "32px Arial",
                     }
                 );
-                console.log("undef text : " + lyrics[i].getText());
             }
-            console.log("text : " + lyrics[i].getText());
             this.lyricLine[i].x = 180 + lyricLineLength * 35;
             this.lyricLine[i].setStroke(lyrics[i].color, 4);
             this.lyricLine[i].setVisible(true);
-            lyricLineLength += lyrics[i].getText().length;
+            if (lyrics[i].getText().match(/^[A-Za-z0-9]*$/)) {
+                lyricLineLength += lyrics[i].getText().length / 2;
+            } else {
+                lyricLineLength += lyrics[i].getText().length;
+            }
             this.lyricLineAddPos++;
             if (lyricLineLength > LYRIC_TEXT_LENGHT) {
                 break;
@@ -49,7 +51,7 @@ export default class LyricLineObject {
         }
     }
 
-    public reloadLyricLine(lyrics, currentLyricTime) {
+    public reloadLyricLine(lyrics, currentLyricTime, preCurrentLyricIndex) {
         let lyricPoint = 0;
         // 今歌詞がどの部分なのか探索
         for (let i = 0; i < lyrics.length; i++) {
@@ -57,6 +59,12 @@ export default class LyricLineObject {
                 lyricPoint = i;
                 break;
             }
+        }
+
+        let currentIndex = preCurrentLyricIndex+1;
+        // 特にずれてなかったのでここで終わる
+        if (lyricPoint === currentIndex) {
+            return lyricPoint;
         }
 
         // 打ち出した歌詞より前のデータが残っていない確認して、あったら削除
