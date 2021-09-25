@@ -1,3 +1,4 @@
+const CHUNK_LENGTH = 30; // 一つのファイルに書き込む長さ(sec)
 export default class BuildFftRepository {
     private readonly size: number;
 
@@ -6,7 +7,17 @@ export default class BuildFftRepository {
     }
 
     public convertFftData(gains: number[][]) {
-        return gains.map((gain) => this.reduceArray(gain, this.size));
+        const converted = gains.map((gain) =>
+            this.reduceArray(gain, this.size)
+        );
+        return this.sliceArray(converted, CHUNK_LENGTH * 100);
+    }
+
+    private sliceArray(array: number[][], splits: number): number[][][] {
+        const length = Math.floor(array.length / splits) + 1;
+        return Array.from({ length }, (_, idx) => {
+            return array.slice(idx * splits, (idx + 1) * splits);
+        });
     }
 
     /**
