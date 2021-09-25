@@ -98,7 +98,10 @@ export default class GameResultScene extends Phaser.Scene {
         this.load.image("result_image", imageResult.result_result);
 
         // サムネイル
-        //this.load.image(`${this._musicInfo.label}_thumbnail`, `http://img.youtube.com/vi/${this._musicInfo.youTubeKey}/maxresdefault.jpg`);
+        this.load.image(
+            `${this._musicInfo.label}_thumbnail`,
+            `http://img.youtube.com/vi/${this._musicInfo.youTubeKey}/maxresdefault.jpg`
+        );
 
         // スコア
         this.load.image("score_bg", imageResult.result_score_background);
@@ -231,7 +234,7 @@ export default class GameResultScene extends Phaser.Scene {
         this._playResultImage = this.add.image(
             this._scoreBackgroundImage.x,
             this._scoreBackgroundImage.y - 40,
-            "result_cleared"
+            this.isClear() ? "result_cleared" : "result_failed"
         );
         this._playResultImage.setDepth(DepthDefine.OBJECT + 1);
 
@@ -270,6 +273,20 @@ export default class GameResultScene extends Phaser.Scene {
         }
 
         this._total.update();
+    }
+
+    private isClear(): boolean {
+        const result = this.registry.get("gameResult") as GameScore;
+        const successCount = result.laneScore.reduce((sum, value) => {
+            return sum + value.success;
+        }, 0);
+        const totalCount = result.laneScore.reduce((sum, value) => {
+            return sum + value.total;
+        }, 0);
+
+        const successRate = successCount / totalCount;
+        // 60%以上成功していたらクリア
+        return !(successRate < 0.6);
     }
 }
 
