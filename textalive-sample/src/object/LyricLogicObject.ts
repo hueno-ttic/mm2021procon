@@ -17,7 +17,7 @@ export default class LyricLogicObject {
                 i < this.textAliveAPI.lyrics.length - 1 && // 最後の文字の次が取得できないため
                 nextChangeColorTime < this.textAliveAPI.lyrics[i].startTime && // 色を変える際の最低限の間隔の担保
                 this.textAliveAPI.lyrics[i + 1].startTime - preCheckTime >=
-                this.targetTime2 // 最低限の発話幅の担保
+                    this.targetTime2 // 最低限の発話幅の担保
             ) {
                 nextChangeColorTime =
                     this.textAliveAPI.lyrics[i].startTime + this.targetTime;

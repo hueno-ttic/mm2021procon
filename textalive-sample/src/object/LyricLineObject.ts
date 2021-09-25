@@ -27,10 +27,14 @@ export default class LyricLineObject {
         this.lyricLineAddPos = pos;
         for (let i = pos; i < lyrics.length; i++) {
             if (typeof this.lyricLine[i] === "undefined") {
-                this.lyricLine[i] = this.scene.add
-                    .text(0, 636, lyrics[i].getText(), {
+                this.lyricLine[i] = this.scene.add.text(
+                    0,
+                    636,
+                    lyrics[i].getText(),
+                    {
                         font: "32px Arial",
-                    });
+                    }
+                );
                 console.log("undef text : " + lyrics[i].getText());
             }
             console.log("text : " + lyrics[i].getText());
@@ -46,7 +50,6 @@ export default class LyricLineObject {
     }
 
     public reloadLyricLine(lyrics, currentLyricTime) {
-
         let lyricPoint = 0;
         // 今歌詞がどの部分なのか探索
         for (let i = 0; i < lyrics.length; i++) {
@@ -66,12 +69,10 @@ export default class LyricLineObject {
 
         // 歌詞の再表示
         this.appearLyric(lyrics, lyricPoint);
-        return lyricPoint-1; // 表示の先頭の一つ前がpreCurrentLyricIndexになる
+        return lyricPoint - 1; // 表示の先頭の一つ前がpreCurrentLyricIndexになる
     }
 
-    
     public updateLyricLine(lyrics, currentLyricIndex) {
-
         // 打ち出した歌詞より前のデータが残っていない確認して、あったら削除
         for (let i = 0; i < currentLyricIndex - 1; i++) {
             if (typeof this.lyricLine[i] !== "undefined") {
@@ -105,10 +106,14 @@ export default class LyricLineObject {
             if (lyricLineLength > LYRIC_TEXT_LENGHT) {
                 break;
             }
-            this.lyricLine[i] = this.scene.add
-                .text(0, 636, lyrics[i].getText(), {
+            this.lyricLine[i] = this.scene.add.text(
+                0,
+                636,
+                lyrics[i].getText(),
+                {
                     font: "32px Arial",
-                });
+                }
+            );
             this.lyricLine[i].x = 180 + lyricLineLength * 35;
             this.lyricLine[i].setVisible(true);
             this.lyricLine[i].setStroke(lyrics[i].color, 4);
