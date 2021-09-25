@@ -4,6 +4,7 @@ import no_image from "../assets/thumbnail/no_image_thumbnail.png";
 import { buildMusicInfo } from "../factory/MusicFactory";
 import GameMain from "./GameMain";
 import music from "../assets/sound/music/*.wav";
+import sounds from "../assets/sound/se/*.wav";
 
 interface displayPosition {
     displayX: number;
@@ -45,9 +46,14 @@ export default class MusicSelectScene extends Phaser.Scene {
                 `http://img.youtube.com/vi/${music.youTubeKey}/maxresdefault.jpg`
             );
         });
+        this.load.audio("select_sound", sounds["decide"]);
+        this.load.audio("decide_sound", sounds["confirm"]);
     }
 
     create(): void {
+        const selectSound = this.sound.add("select_sound", { volume: 0.5 });
+        const decideSound = this.sound.add("decide_sound", { volume: 0.5 });
+
         this.add.image(640, 360, "back_ground").setDisplaySize(1280, 720);
         this.add.image(180, 70, "title");
 
@@ -121,6 +127,9 @@ export default class MusicSelectScene extends Phaser.Scene {
                     musicPosition.displayX,
                     musicPosition.displayY
                 );
+                if (selectSound) {
+                    selectSound.play();
+                }
             });
         });
 
@@ -128,6 +137,9 @@ export default class MusicSelectScene extends Phaser.Scene {
             .image(1140, 640, "decide")
             .setInteractive();
         decideButton.on("pointerdown", () => {
+            if (decideSound) {
+                decideSound.play();
+            }
             this.moveGameMain();
         });
     }
