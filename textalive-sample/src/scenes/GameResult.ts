@@ -259,7 +259,7 @@ export default class GameResultScene extends Phaser.Scene {
         // サウンド
         this._bgm = this.sound.add("result_music", {
             loop: true,
-            volume: 0.5
+            volume: 0.5,
         });
         this._bgm.play();
     }
