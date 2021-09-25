@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 import DepthDefine from "../object/DepthDefine";
+import { MusicInfo } from "../interface/MusicInfo";
+import { buildMusicInfo } from "../factory/MusicFactory";
 import ResultScoreObject from "../object/ResultScoreObject";
 import TotalResultObject from "../object/TotalResultObject";
 import ScoreCounter from "../object/ScoreCounter";
@@ -8,6 +10,9 @@ import imageResult from "../assets/result/*.png";
 import music from "../assets/sound/music/*.wav";
 
 export default class GameResultScene extends Phaser.Scene {
+    // 選曲情報
+    private _musicInfo: MusicInfo;
+
     // 背景
     private _backgroundImage: Phaser.GameObjects.Image;
 
@@ -16,7 +21,6 @@ export default class GameResultScene extends Phaser.Scene {
 
     // サムネイル
     private _thumbnailImage: Phaser.GameObjects.Image;
-    private _thumbnailFrameImage: Phaser.GameObjects.Image;
 
     // スコア
     private _scoreBackgroundImage: Phaser.GameObjects.Image;
@@ -24,7 +28,7 @@ export default class GameResultScene extends Phaser.Scene {
     private _resultScores: ResultScoreObject[];
     private _total: TotalResultObject;
 
-    // 楽曲情報
+    // 楽曲情報テキスト
     private _selectSongText: Phaser.GameObjects.Text;
 
     // リザルト
@@ -49,6 +53,11 @@ export default class GameResultScene extends Phaser.Scene {
     }
 
     init() {
+        // 選曲情報
+        this._musicInfo = buildMusicInfo()
+            .filter((music) => music.id === this.registry.get("selectedMusic"))
+            .pop();
+
         // 背景
         this._backgroundImage = null;
 
@@ -57,7 +66,6 @@ export default class GameResultScene extends Phaser.Scene {
 
         // サムネイル
         this._thumbnailImage = null;
-        this._thumbnailFrameImage = null;
 
         // スコア
         this._scoreBackgroundImage = null;
@@ -68,7 +76,7 @@ export default class GameResultScene extends Phaser.Scene {
         }
         this._total = new TotalResultObject();
 
-        // 楽曲情報
+        // 楽曲情報テキスト
         this._selectSongText = null;
 
         // リザルト
@@ -90,7 +98,7 @@ export default class GameResultScene extends Phaser.Scene {
         this.load.image("result_image", imageResult.result_result);
 
         // サムネイル
-        this.load.image("tmb_frame", imageResult.result_thumbnail_frame);
+        //this.load.image(`${this._musicInfo.label}_thumbnail`, `http://img.youtube.com/vi/${this._musicInfo.youTubeKey}/maxresdefault.jpg`);
 
         // スコア
         this.load.image("score_bg", imageResult.result_score_background);
@@ -136,17 +144,19 @@ export default class GameResultScene extends Phaser.Scene {
         this._resultImage.setDepth(DepthDefine.OBJECT);
 
         // サムネイル
-        // this._thumbnailImage; // todo: シーン間のパラメータ受け渡し
-        this._thumbnailFrameImage = this.add.image(420, 100, "tmb_frame");
-        this._thumbnailFrameImage
-            .setDepth(DepthDefine.OBJECT - 1)
-            .setOrigin(0.5, 0);
+        this._thumbnailImage = this.add
+            .image(420, 350, `${this._musicInfo.label}_thumbnail`)
+            .setDepth(DepthDefine.OBJECT)
+            .setScale(0.6, 0.6);
 
         // スコア画像と背景
         const scoreDepth = DepthDefine.OBJECT;
         this._scoreBackgroundImage = this.add.image(
             1040,
-            this._thumbnailFrameImage.y,
+            this._thumbnailImage.y -
+                (this._thumbnailImage.height * this._thumbnailImage.scaleY) /
+                    2 -
+                10,
             "score_bg"
         );
         this._scoreBackgroundImage
@@ -206,14 +216,16 @@ export default class GameResultScene extends Phaser.Scene {
         });
 
         // 楽曲情報
-        // todo: シーン間のパラメータ受け渡し
         this._selectSongText = this.add.text(
-            50,
+            45,
             this.game.scale.gameSize.height - 100,
-            "夏をなぞって / シロクマ消しゴム",
-            { font: "40px Arial" }
+            `${this._musicInfo.title}/${this._musicInfo.author}`,
+            { fontFamily: "Makinas-4-Square" }
         );
-        this._selectSongText.setDepth(DepthDefine.OBJECT).setStroke("black", 5);
+        this._selectSongText
+            .setDepth(DepthDefine.OBJECT)
+            .setStroke("#000000", 2)
+            .setFontSize(40);
 
         // リザルト
         this._playResultImage = this.add.image(
