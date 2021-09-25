@@ -575,9 +575,7 @@ export default class GameMain extends Phaser.Scene {
                     );
 
                 this.textData[lyricIndex].setStroke(lyric.color, 10);
-                this.textData[lyricIndex].setDepth(
-                    DepthDefine.OBJECT + 10
-                );
+                this.textData[lyricIndex].setDepth(DepthDefine.OBJECT + 10);
                 // 観客の表示情報を更新
                 if (
                     this.lyricY === this.firstLane &&
@@ -600,7 +598,11 @@ export default class GameMain extends Phaser.Scene {
             // 歌詞の更新にズレがある場合に歌詞を最初から表示し直す
             if (this.preCurrentLyricIndex != lyricIndex) {
                 this.preCurrentLyricIndex =
-                    this.lyricLineObject.reloadLyricLine(this.lyrics, time, this.preCurrentLyricIndex);
+                    this.lyricLineObject.reloadLyricLine(
+                        this.lyrics,
+                        time,
+                        this.preCurrentLyricIndex
+                    );
             }
         }
 

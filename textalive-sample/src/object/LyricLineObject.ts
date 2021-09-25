@@ -61,7 +61,7 @@ export default class LyricLineObject {
             }
         }
 
-        let currentIndex = preCurrentLyricIndex+1;
+        let currentIndex = preCurrentLyricIndex + 1;
         // 特にずれてなかったのでここで終わる
         if (lyricPoint === currentIndex) {
             return lyricPoint;
