@@ -461,6 +461,7 @@ export default class GameMain extends Phaser.Scene {
         if (
             !this.api.player.isPlaying &&
             !this.api.player.isLoading &&
+            !this.visualizer.isLoading() &&
             this.musicStartState == "" &&
             this.tutorial.gameStartCounter > 100
         ) {
