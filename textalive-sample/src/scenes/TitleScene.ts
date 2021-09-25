@@ -4,6 +4,7 @@ import FlowingStarsManager from "../object/FlowingStarsObject";
 import image from "../assets/*.png";
 import titleImage from "../assets/title/*.png";
 import music from "../assets/sound/music/*.wav";
+import SE from "../assets/sound/se/*.wav";
 
 export default class TitleScene extends Phaser.Scene {
     constructor() {
@@ -14,15 +15,19 @@ export default class TitleScene extends Phaser.Scene {
 
     // タイトルの音楽
     private titleMusic: Phaser.Sound.BaseSound;
+    // 次の画面に進むSE
+    private confirmSe: Phaser.Sound.BaseSound;
 
     private back_title;
     private click_start;
     private r = 0;
+    private isFading = false;
 
     private flowingStars: FlowingStarsManager;
 
     init(): void {
         this.flowingStars = new FlowingStarsManager();
+        this.isFading = false;
     }
 
     preload(): void {
@@ -34,6 +39,7 @@ export default class TitleScene extends Phaser.Scene {
         this.load.image("click_start", titleImage.click_start);
         this.load.image("bg_star", titleImage.star);
         this.load.audio("title_music", music.title);
+        this.load.audio("confirm_se", SE.confirm);
     }
 
     create(): void {
@@ -46,8 +52,18 @@ export default class TitleScene extends Phaser.Scene {
         this.back_title = this.add.image(640, 570, "back_title");
         this.back_title.setInteractive();
         this.back_title.on("pointerdown", () => {
-            this.titleMusic.stop();
-            this.scene.start("MusicSelect");
+            if (!this.isFading) {
+                this.confirmSe.play();
+                this.cameras.main.fadeOut(1000, 255, 255, 255);
+                this.cameras.main.once(
+                    Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+                    () => {
+                        this.titleMusic.stop();
+                        this.scene.start("MusicSelect");
+                    }
+                );
+                this.isFading = true;
+            }
         });
         this.back_title.scaleY = this.back_title.scaleY * 0.7;
 
@@ -55,8 +71,17 @@ export default class TitleScene extends Phaser.Scene {
         this.click_start.scale = this.click_start.scale * 0.7;
 
         this.click_start.on("pointerdown", () => {
-            this.titleMusic.stop();
-            this.scene.start("MusicSelect");
+            if (!this.isFading) {
+                this.confirmSe.play();
+                this.cameras.main.fadeOut(1000, 255, 255, 255);
+                this.cameras.main.once(
+                    Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+                    () => {
+                        this.scene.start("MusicSelect");
+                    }
+                );
+                this.isFading = true;
+            }
         });
 
         this.titleMusic = this.sound.add("title_music", {
@@ -66,6 +91,7 @@ export default class TitleScene extends Phaser.Scene {
         if (this.titleMusic) {
             this.titleMusic.play();
         }
+        this.confirmSe = this.sound.add("confirm_se", { volume: 0.5 });
 
         this.flowingStars.create({
             scene: this,
