@@ -90,9 +90,11 @@ export default class GameMain extends Phaser.Scene {
 
     // 曲情報
     private selectedMusic;
+    public lyricIndex:number = 0;
 
     // 歌詞表示部分
     private lyricLineObject: LyricLineObject;
+    private preCurrentLyricIndex: number = 0;
 
     public initFlag: Boolean = true;
 
@@ -455,6 +457,10 @@ export default class GameMain extends Phaser.Scene {
             this.lyricY = moveLanePos[nextLaneIndex];
         }
 
+        if (!this.api.player.isLoading) {
+
+        }
+
         // チュートリアルから一定のインターバル後
         // ロードが終わり次第、楽曲をスタート
         this.tutorial.gameStartCounter++;
@@ -543,45 +549,45 @@ export default class GameMain extends Phaser.Scene {
             const time = this.api.getPositionTime();
             let lyric = this.api.getCurrentLyric(time);
             let lyricText;
-            let lyricIndex;
             if (lyric != null) {
                 lyricText = lyric.text;
-                lyricIndex = lyric.index;
+                this.lyricIndex = lyric.index;
             }
 
             // 横に流れる歌詞データの追加
             lyricText = this.api.getCurrentLyricText(time);
-            lyricIndex = this.api.getCurrentLyricIndex(time);
+            this.lyricIndex = this.api.getCurrentLyricIndex(time);
             if (
-                typeof this.textData[lyricIndex] === "undefined" &&
+                typeof this.textData[this.lyricIndex] === "undefined" &&
                 lyricText != null &&
                 lyricText != "" &&
                 lyricText != " "
             ) {
-                this.textData[lyricIndex] = this.add.text(
+                this.textData[this.lyricIndex] = this.add.text(
                     1000,
                     this.lyricY - 20,
                     lyricText,
                     { font: "50px Arial" }
                 );
-                this.textData[lyricIndex].setStroke(lyric.color, 10);
-                this.textData[lyricIndex].setDepth(DepthDefine.OBJECT + 10);
                 // 歌詞表示の更新
-                this.lyricLineObject.updateLyricLine(this.lyrics, lyricIndex);
+                this.preCurrentLyricIndex = this.lyricLineObject.updateLyricLine(this.lyrics, this.lyricIndex);
+
+                this.textData[this.lyricIndex].setStroke(lyric.color, 10);
+                this.textData[this.lyricIndex].setDepth(DepthDefine.OBJECT + 10);
                 // 観客の表示情報を更新
                 if (
                     this.lyricY === this.firstLane &&
-                    this.isSuccessLyric(lyricIndex)
+                    this.isSuccessLyric(this.lyricIndex)
                 ) {
                     this.audienceObject.update("first");
                 } else if (
                     this.lyricY === this.secondLane &&
-                    this.isSuccessLyric(lyricIndex)
+                    this.isSuccessLyric(this.lyricIndex)
                 ) {
                     this.audienceObject.update("second");
                 } else if (
                     this.lyricY === this.thirdLane &&
-                    this.isSuccessLyric(lyricIndex)
+                    this.isSuccessLyric(this.lyricIndex)
                 ) {
                     this.audienceObject.update("third");
                 }
@@ -592,6 +598,17 @@ export default class GameMain extends Phaser.Scene {
             this.liveArtist.setIsUplifting(true);
         } else {
             this.liveArtist.setIsUplifting(false);
+        }
+
+        // 歌詞表示にずれがあったときにもう再度歌詞
+        console.log(" preCurrentLyricIndex "+ this.preCurrentLyricIndex);
+        console.log("this.lyricIndex : "+ this.lyricIndex);
+        console.log("this.initFlag : "+ this.initFlag);
+
+        if (!this.initFlag && this.lyricIndex != null && (this.preCurrentLyricIndex != this.lyricIndex || typeof this.preCurrentLyricIndex == "undefined")) {
+            console.log("reloadLyricLineに入ったよ");
+
+            this.lyricLineObject.reloadLyricLine(this.lyrics, this.lyricIndex);
         }
 
         // テキストの描画更新
@@ -639,6 +656,7 @@ export default class GameMain extends Phaser.Scene {
         this.timeInfo.update();
         this.visualizer.update(this.api.getPositionTime());
         this.liveArtist.update();
+
         // --------------------------------
         // デバッグ用
         if (this.enableDebugInfo) {

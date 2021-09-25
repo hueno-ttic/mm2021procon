@@ -7,6 +7,7 @@ export default class LyricLineObject {
     public lyricLine: Array<Phaser.GameObjects.Text>;
     public textLineLength = 0;
     public lyricLineAddPos = 0;
+    public preCurrentLyricIndex = 0;
 
     //下部の歌詞部分
     constructor(scene: Phaser.Scene) {
@@ -15,47 +16,69 @@ export default class LyricLineObject {
     }
 
     public initLyricLine(lyrics) {
-        // 歌詞の初期設定
-        for (let i = 0; i < lyrics.length; i++) {
-            this.lyricLine[i] = this.scene.add
-                .text(0, 636, lyrics[i].getText(), {
-                    font: "32px Arial",
-                })
-                .setVisible(false);
-            this.lyricLine[i].setStroke(lyrics[i].color, 4);
-        }
-
         // 最初に表示する歌詞のセット
         this.appearLyric(lyrics, 0);
     }
 
     // 決められた位置から歌詞を表示させる
     private appearLyric(lyrics, pos) {
-        // 余計な出力を消すため初期化
-        for (let i = 0; i < lyrics.length; i++) {
-            this.lyricLine[i].setVisible(false);
-        }
-
+        console.log("pos : "+pos);
+        console.log(lyrics);
+        console.log("appearLyricが始まったよ")
         // 決められた数だけ歌詞を表示
+        let lyricLineLength = 0;
+        this.lyricLineAddPos = pos;
         for (let i = pos; i < lyrics.length; i++) {
-            this.lyricLine[i].x = 180 + this.textLineLength * 35;
+            if  (typeof this.lyricLine[i] === "undefined") {
+                this.lyricLine[i] = this.scene.add
+                .text(0, 636, lyrics[i].getText(), {
+                    font: "32px Arial",
+                });
+                console.log("undef text : "+ lyrics[i].getText());
+            }
+            console.log("text : "+ lyrics[i].getText());
+            this.lyricLine[i].x = 180 + lyricLineLength * 35;
             this.lyricLine[i].setStroke(lyrics[i].color, 4);
             this.lyricLine[i].setVisible(true);
-            this.textLineLength += lyrics[i].getText().length;
+            lyricLineLength += lyrics[i].getText().length;
             this.lyricLineAddPos++;
-            if (this.textLineLength > LYRIC_TEXT_LENGHT) {
+            if (lyricLineLength > LYRIC_TEXT_LENGHT) {
                 break;
             }
         }
+        console.log(" this.lyricLineAddPos" +  this.lyricLineAddPos);
+    }
+
+    public reloadLyricLine(lyrics, currentLyricIndex) {
+        
+    
+            // 打ち出した歌詞より前のデータが残っていない確認して、あったら削除
+            for (let i = 0; i < currentLyricIndex - 1; i++) {
+                if (typeof this.lyricLine[i] !== "undefined") {
+                    this.lyricLine[i].setVisible(false);
+                    this.lyricLine[i].destroy(true);
+                    console.log("消した")
+                }
+            }
+
+            // 再設定
+            this.appearLyric(lyrics, currentLyricIndex);
+            return;
     }
 
     public updateLyricLine(lyrics, currentLyricIndex) {
+
         // 打ち出した歌詞より前のデータが残っていない確認して、あったら削除
         for (let i = 0; i < currentLyricIndex - 1; i++) {
             if (typeof this.lyricLine[i] !== "undefined") {
                 this.lyricLine[i].setVisible(false);
                 this.lyricLine[i].destroy(true);
             }
+        }
+
+
+        if (typeof this.lyricLine[currentLyricIndex] === "undefined") {
+            return;
         }
 
         // 打ち出した歌詞は削除
@@ -79,6 +102,10 @@ export default class LyricLineObject {
             if (lyricLineLength > LYRIC_TEXT_LENGHT) {
                 break;
             }
+            this.lyricLine[i] = this.scene.add
+                .text(0, 636, lyrics[i].getText(), {
+                    font: "32px Arial",
+                });
             this.lyricLine[i].x = 180 + lyricLineLength * 35;
             this.lyricLine[i].setVisible(true);
             this.lyricLine[i].setStroke(lyrics[i].color, 4);
@@ -89,5 +116,8 @@ export default class LyricLineObject {
             }
             this.lyricLineAddPos++;
         }
+
+        return currentLyricIndex;
+
     }
 }
