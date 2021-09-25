@@ -67,7 +67,7 @@ export default class MusicSelectScene extends Phaser.Scene {
         this.registry.set("selectedMusic", defaultMusic.id);
         this.musicInfoText = this.add
             .text(45, 620, `${defaultMusic.title}/${defaultMusic.author}`, {
-                fontFamily: "Makinas-4-Square",
+                fontFamily: "GenEiLateGoN",
             })
             .setStroke("#000000", 2)
             .setFontSize(40);

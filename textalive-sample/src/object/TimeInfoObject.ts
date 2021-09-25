@@ -20,7 +20,7 @@ export default class TimeInfoObject {
     private static readonly IMAGE_DEPTH_VALUE_MIN: number = 0;
     private static readonly IMAGE_DEPTH_VALUE_MAX: number = 1;
     private static readonly TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle =
-        { font: "15px Makinas-4-Square" };
+        { font: "15px Aldrich" };
 
     constructor() {
         this.init();
