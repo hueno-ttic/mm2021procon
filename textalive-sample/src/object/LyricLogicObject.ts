@@ -1,7 +1,7 @@
 export default class LyricLogicObject {
     public textAliveAPI;
-    public targetTime = 1500; // ms
-    public targetTime2 = 1000; // ms
+    public targetTime = 1000; // ms
+    public targetTime2 = 500; // ms
 
     constructor(textAliveAPI) {
         this.textAliveAPI = textAliveAPI;
