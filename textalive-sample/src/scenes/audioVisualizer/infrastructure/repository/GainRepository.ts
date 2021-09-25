@@ -1,5 +1,6 @@
-import axios, { AxiosResponse } from "axios";
+import axios, {AxiosResponse} from "axios";
 import fft from "../../../../assets/fft/build/*.data";
+import json from "../../../../assets/fft/build/*.json";
 
 const DUMMY_LENGTH = 10 * 100; // ダミーのデータを用意する時間( 10 sec )
 const LENGTH_OF_SILENCE = 100; // ダミーデータの無音時間( 1 sec )
@@ -8,6 +9,7 @@ export default class GainRepository {
     private readonly size: number;
     private gains: number[][];
     private loadStatus: boolean = true;
+    private loaded: boolean = false;
 
     constructor(size: number) {
         this.size = size;
@@ -16,17 +18,28 @@ export default class GainRepository {
 
         // TODO: 一旦固定のJSON 実際は曲ごとにJSONを読み分ける
         (async () => {
-            console.log("fft load start");
-            console.time("fft");
-            const response = await axios.get<
-                number[][],
-                AxiosResponse<number[][]>
-            >(fft["fft"]);
+            const files: string[] = json["fft.data"];
+            for (const idx in files) {
+                const file = files[idx].replace(".data", "");
+                console.log("fft load start");
+                console.time("fft");
+                const response = await axios.get<
+                    number[][],
+                    AxiosResponse<number[][]>
+                >(fft[file]);
 
-            this.gains = response.data;
-            this.loadStatus = false;
-            console.log("fft load end");
-            console.timeEnd("fft");
+                // ロード済みなら配列の連結、初回ロード時はダミーデータを置き換え
+                if (!this.loaded) {
+                    this.gains = response.data;
+                    this.loaded = true;
+                } else {
+                    this.gains = this.gains.concat(response.data);
+                }
+
+                this.loadStatus = false;
+                console.log("fft load end");
+                console.timeEnd("fft");
+            }
         })();
     }
 
@@ -58,9 +71,9 @@ export default class GainRepository {
     }
 
     private genDummyData(): number[][] {
-        return Array.from({length: DUMMY_LENGTH}, (v, k) => {
+        return Array.from({ length: DUMMY_LENGTH }, (v, k) => {
             if (k > LENGTH_OF_SILENCE) {
-                return Array.from({ length: this.size } ,(v, idx) => {
+                return Array.from({ length: this.size }, (v, idx) => {
                     return Math.random() * (this.size - idx + this.size) / this.size / 2;
                 });
             } else {
@@ -68,5 +81,4 @@ export default class GainRepository {
             }
         });
     }
-
 }
