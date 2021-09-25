@@ -294,6 +294,9 @@ export default class GameMain extends Phaser.Scene {
             .image(lineX, stage.height, "miscBackground")
             .setOrigin(0, 0);
 
+        // visualizer
+        this.visualizer.create();
+
         // ライブアーティストの設定
         this.liveArtist.create(this.selectedMusic);
 
@@ -379,9 +382,6 @@ export default class GameMain extends Phaser.Scene {
             this.add.image(160, 225, "frame").setDepth(DepthDefine.UI_OBJECT),
             this.add.image(640, 650, "tapstart").setDepth(DepthDefine.UI_OBJECT)
         );
-
-        // visualizer
-        this.visualizer.create();
 
         // --------------------------------
         // Input処理
