@@ -301,8 +301,8 @@ export default class GameMain extends Phaser.Scene {
         this.liveArtist.create(this.selectedMusic);
 
         // スコアの設定
-        this.scoreText = this.add.text(30, 650, "Score：0", {
-            font: "15px Makinas-4-Square",
+        this.scoreText = this.add.text(30, 660, "Score：0", {
+            font: "15px Aldrich",
         });
         this.scoreText.setStroke("#161616", 4);
 
@@ -562,7 +562,7 @@ export default class GameMain extends Phaser.Scene {
                     1000,
                     this.lyricY - 20,
                     lyricText,
-                    { font: "50px Arial" }
+                    { font: "50px GenEiLateGoN" }
                 );
                 this.textData[lyricIndex].setStroke(lyric.color, 10);
                 this.textData[lyricIndex].setDepth(DepthDefine.OBJECT + 10);

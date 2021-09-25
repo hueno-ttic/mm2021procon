@@ -19,7 +19,7 @@ export default class LyricLineObject {
         for (let i = 0; i < lyrics.length; i++) {
             this.lyricLine[i] = this.scene.add
                 .text(0, 636, lyrics[i].getText(), {
-                    font: "32px Arial",
+                    font: "32px GenEiLateGoN",
                 })
                 .setVisible(false);
             this.lyricLine[i].setStroke(lyrics[i].color, 4);
