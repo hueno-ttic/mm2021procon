@@ -79,6 +79,7 @@ export default class TitleScene extends Phaser.Scene {
                 this.cameras.main.once(
                     Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
                     () => {
+                        this.titleMusic.stop();
                         this.scene.start("MusicSelect");
                     }
                 );
