@@ -45,7 +45,6 @@ export default class TitleScene extends Phaser.Scene {
     }
 
     create(): void {
-
         const bg = this.add.image(500, 350, "back_ground");
         bg.setDepth(-10);
 
