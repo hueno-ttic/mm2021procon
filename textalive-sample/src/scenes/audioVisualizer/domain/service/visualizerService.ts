@@ -1,4 +1,5 @@
 import GainRepository from "../../infrastructure/repository/GainRepository";
+import {MusicInfo} from "../../../../interface/MusicInfo";
 
 const TIME_SMOOTH = 20; // x 10msの時間で平滑化する
 
@@ -6,9 +7,9 @@ export default class visualizerService {
     private readonly size: number;
     private readonly repository: GainRepository;
 
-    constructor(size: number) {
+    constructor(size: number, musicInfo: MusicInfo) {
         this.size = size;
-        this.repository = new GainRepository(this.size);
+        this.repository = new GainRepository(this.size, musicInfo);
     }
 
     public getGain(position: number): number[] {

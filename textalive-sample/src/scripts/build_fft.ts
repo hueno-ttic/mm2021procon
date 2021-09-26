@@ -12,6 +12,7 @@ fs.readdirSync(READ_PATH).map((file) => {
     const path = READ_PATH + file;
     console.log("load data file => " + path);
     const gains = JSON.parse(fs.readFileSync(path).toString()) as number[][];
+    console.log("total length : " + gains.length + " => " + path);
     console.log("analyse data file => " + path);
     const chunks = repository.convertFftData(gains);
 
