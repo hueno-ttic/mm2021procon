@@ -5,6 +5,7 @@ import image from "../assets/*.png";
 import titleImage from "../assets/title/*.png";
 import music from "../assets/sound/music/*.wav";
 import SE from "../assets/sound/se/*.wav";
+import SceneManager from "./SceneManager";
 
 export default class TitleScene extends Phaser.Scene {
     constructor() {
@@ -26,6 +27,7 @@ export default class TitleScene extends Phaser.Scene {
     private flowingStars: FlowingStarsManager;
 
     init(): void {
+        SceneManager.setCurrentScene(this);
         this.flowingStars = new FlowingStarsManager();
         this.isFading = false;
     }
@@ -43,6 +45,7 @@ export default class TitleScene extends Phaser.Scene {
     }
 
     create(): void {
+
         const bg = this.add.image(500, 350, "back_ground");
         bg.setDepth(-10);
 

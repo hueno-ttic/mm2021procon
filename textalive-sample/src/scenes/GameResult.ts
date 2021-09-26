@@ -8,6 +8,7 @@ import ScoreCounter from "../object/ScoreCounter";
 
 import imageResult from "../assets/result/*.png";
 import music from "../assets/sound/music/*.wav";
+import SceneManager from "./SceneManager";
 
 export default class GameResultScene extends Phaser.Scene {
     // 選曲情報
@@ -53,6 +54,8 @@ export default class GameResultScene extends Phaser.Scene {
     }
 
     init() {
+        SceneManager.setCurrentScene(this);
+
         // 選曲情報
         this._musicInfo = buildMusicInfo()
             .filter((music) => music.id === this.registry.get("selectedMusic"))

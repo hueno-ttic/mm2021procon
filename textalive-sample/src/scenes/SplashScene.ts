@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import image from "../assets/*.png";
+import SceneManager from "./SceneManager";
 export default class SplashScene extends Phaser.Scene {
     private isFading = false;
 
@@ -7,6 +8,10 @@ export default class SplashScene extends Phaser.Scene {
         super({
             key: "SplashScene",
         });
+    }
+
+    init(): void {
+        SceneManager.setCurrentScene(this);
     }
 
     preload(): void {
