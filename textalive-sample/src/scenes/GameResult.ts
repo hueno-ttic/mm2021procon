@@ -185,7 +185,10 @@ export default class GameResultScene extends Phaser.Scene {
         ];
         const resultNameKeys = ["score_excellent", "score_bad"];
         const laneKeys = [["lane_1", "lane_2", "lane_3"], ["count"]];
+        var scoreDelay = 1000;
         for (let i = 0; i < this._resultScores.length; i++) {
+            scoreDelay += 1500 * i;
+            console.log(scoreDelay);
             this._resultScores[i].create({
                 scene: this,
                 resultNameKey: resultNameKeys[i],
@@ -199,8 +202,10 @@ export default class GameResultScene extends Phaser.Scene {
                     this._scoreImage.height +
                     30 +
                     200 * i,
+                animsDelay: scoreDelay,
             });
         }
+        scoreDelay += 500;
 
         // スコア
         this._total.create({
@@ -216,6 +221,7 @@ export default class GameResultScene extends Phaser.Scene {
                 30 +
                 200 * this._resultScores.length +
                 -60,
+            animsDelay: scoreDelay,
         });
 
         // 楽曲情報
@@ -237,6 +243,16 @@ export default class GameResultScene extends Phaser.Scene {
             this.isClear() ? "result_cleared" : "result_failed"
         );
         this._playResultImage.setDepth(DepthDefine.OBJECT + 1);
+        this._playResultImage.setAlpha(0);
+        scoreDelay += 500;
+        this.tweens.add({
+            targets: this._playResultImage,
+            alpha: 1,
+            duration: 1000,
+            ease: "Power0",
+            repeat: 0,
+            delay: scoreDelay,
+        });
 
         // ボタン
         const buttonDepth = DepthDefine.UI_OBJECT;
@@ -251,6 +267,7 @@ export default class GameResultScene extends Phaser.Scene {
             this._bgm.stop();
             this.scene.start("MusicSelect");
         });
+        this._moveSelectMusicButtonBgImage.setAlpha(0);
 
         this._moveSelectMusicButtonImage = this.add.image(
             this._scoreBackgroundImage.x,
@@ -258,6 +275,18 @@ export default class GameResultScene extends Phaser.Scene {
             "button_select_music_image"
         );
         this._moveSelectMusicButtonImage.setDepth(buttonDepth);
+        this._moveSelectMusicButtonImage.setAlpha(0);
+        this.tweens.add({
+            targets: [
+                this._moveSelectMusicButtonImage,
+                this._moveSelectMusicButtonBgImage,
+            ],
+            alpha: 1,
+            duration: 1000,
+            ease: "Power0",
+            repeat: 0,
+            delay: scoreDelay,
+        });
 
         // サウンド
         this._bgm = this.sound.add("result_music", {
@@ -265,14 +294,6 @@ export default class GameResultScene extends Phaser.Scene {
             volume: 0.5,
         });
         this._bgm.play();
-    }
-
-    update(): void {
-        for (let i = 0; i < this._resultScores.length; i++) {
-            this._resultScores[i].update();
-        }
-
-        this._total.update();
     }
 
     private isClear(): boolean {

@@ -11,6 +11,7 @@ export interface ResultScoreObjectCreateParam {
     depth?: number;
     posX: number;
     posY: number;
+    animsDelay: number;
 }
 
 export default class ResultScoreObject {
@@ -82,11 +83,16 @@ export default class ResultScoreObject {
                 GameResultScene.SCORE_TEXT_STYLE
             );
             text.setDepth(param.depth ? param.depth : 0).setOrigin(1, 0.5);
+            text.setAlpha(0);
             this._laneScoreTexts[i] = text;
+            param.scene.tweens.add({
+                targets: text,
+                alpha: 1,
+                duration: 1000,
+                ease: "Power0",
+                repeat: 0,
+                delay: param.animsDelay + 500 * i,
+            });
         }
-    }
-
-    update(): void {
-        // pass
     }
 }
