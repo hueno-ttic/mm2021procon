@@ -44,7 +44,7 @@ export default class AudienceObject {
         this.artistY = this.gameMain.firstLane;
 
         // 曲の種類によって出し分ける
-        if (selectedMusic.id === 5) {
+        if (selectedMusic.id === 4) {
             this.artistName = "luka";
         } else {
             this.artistName = "miku";
