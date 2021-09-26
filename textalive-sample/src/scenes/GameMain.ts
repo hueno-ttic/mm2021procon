@@ -500,10 +500,6 @@ export default class GameMain extends Phaser.Scene {
                 // Phaser と TextAlive App API の更新処理が同期取れないので1秒以上開始できていなければ、自動再生に失敗したとみなす
                 // 再生処理が単に遅い場合もこの処理に入るがその場合は再生開始時に元の状態に戻す
                 this.pauseButton.setStatus("start");
-                this.pauseButton.setPosition(
-                    this.game.scale.gameSize.width / 2,
-                    this.game.scale.gameSize.height / 2
-                );
                 this.musicStartState = "musicWaitTouchStartButton";
             }
         }
