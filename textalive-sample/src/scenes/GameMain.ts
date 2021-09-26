@@ -514,7 +514,6 @@ export default class GameMain extends Phaser.Scene {
             this.musicStartState == "musicWaitTouchStartButton" &&
             this.api.player.isPlaying
         ) {
-            // 再生が始まった場合、中央に配置したボタンを元の状態に戻す
             this.pauseButton.setStatus("pause");
             this.musicStartState = "musicStarted";
         }
