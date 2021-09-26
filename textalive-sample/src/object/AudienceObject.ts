@@ -4,12 +4,13 @@ import DepthDefine from "../object/DepthDefine";
 
 const AUDIENCE_SET_SIZE_X = 25;
 const AUDIENCE_SET_SIZE_Y = 5;
+const RANDOM_RANGE = 10;
 
 export default class AudienceObject {
-    private gameMain;
-    private firstLane;
-    private secondLane;
-    private thirdLane;
+    private gameMain: GameMain;
+    private firstLane: Phaser.GameObjects.Image[][][];
+    private secondLane: Phaser.GameObjects.Image[][][];
+    private thirdLane: Phaser.GameObjects.Image[][][];
     private firstLaneCounter;
     private secondLaneCounter;
     private thirdLaneCounter;
@@ -55,8 +56,11 @@ export default class AudienceObject {
         for (let i = 0; i < AUDIENCE_SET_SIZE_Y; i++) {
             for (let j = 0; j < AUDIENCE_SET_SIZE_X; j++) {
                 let audience = this.getAudienceType();
+                const rand_x = (Math.random() - 0.5) * RANDOM_RANGE;
+                const rand_y = (Math.random() - 0.5) * RANDOM_RANGE;
+
                 laneAudience[i][j] = this.gameMain.add
-                    .image(baseX - j * diffX, baseY + i * diffY, audience)
+                    .image(baseX - j * diffX + rand_x, baseY + i * diffY + rand_y, audience)
                     .setDepth(DepthDefine.OBJECT + i);
                 laneAudience[i][j].alpha = 0.0;
             }
@@ -135,7 +139,7 @@ export default class AudienceObject {
 
         let numY = Math.floor(Math.random() * AUDIENCE_SET_SIZE_Y);
         if (laneAudience[numY][numX].alpha === 0) {
-            laneAudience[numY][numX].alpha = 0.5;
+            laneAudience[numY][numX].alpha = 0.8;
             return;
         }
         this.updateAudience(laneAudience, counter);
