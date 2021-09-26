@@ -24,6 +24,7 @@ import uiImage from "../assets/ui/*.png";
 import soundSe from "../assets/sound/se/*.wav";
 import Visualizer from "./audioVisualizer/app/presenter/visualizer";
 import config = require("../config.json");
+import SceneManager from "./SceneManager";
 
 export default class GameMain extends Phaser.Scene {
     private musics = buildMusicInfo();
@@ -139,6 +140,7 @@ export default class GameMain extends Phaser.Scene {
     }
 
     init(): void {
+        SceneManager.setCurrentScene(this);
         this.selectedMusicId = this.registry.get("selectedMusic");
         console.log(`選択楽曲id ${this.selectedMusicId}`);
 
