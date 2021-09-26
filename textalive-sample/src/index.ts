@@ -41,7 +41,7 @@ export class Game extends Phaser.Game {
 class Main {
     private game: Game;
 
-    constructor() { }
+    constructor() {}
     initialize() {
         // windowイベントで、ロードされたらゲーム開始
         window.addEventListener("load", () => {
@@ -56,8 +56,13 @@ class Main {
         };
 
         window.onunhandledrejection = (e) => {
-            if (whitListError.white_list_error.indexOf(e.reason.message) === -1) {
-                console.log("ハンドリングされていないリジェクトが起きました", e);
+            if (
+                whitListError.white_list_error.indexOf(e.reason.message) === -1
+            ) {
+                console.log(
+                    "ハンドリングされていないリジェクトが起きました",
+                    e
+                );
                 this.game.sound.stopAll();
                 SceneManager.getCurrentScene().scene.start("error");
             }
