@@ -7,6 +7,7 @@ import GameResult from "./scenes/GameResult";
 import MusicSelectScene from "./scenes/MusicSelect";
 import CriticalError from "./scenes/CriticalError";
 import SceneManager from "./scenes/SceneManager";
+import whitListError = require("./whitListError.json");
 
 // ゲームの基本設定
 const config: Phaser.Types.Core.GameConfig = {
@@ -40,7 +41,7 @@ export class Game extends Phaser.Game {
 class Main {
     private game: Game;
 
-    constructor() {}
+    constructor() { }
     initialize() {
         // windowイベントで、ロードされたらゲーム開始
         window.addEventListener("load", () => {
@@ -55,9 +56,11 @@ class Main {
         };
 
         window.onunhandledrejection = (e) => {
-            console.log("ハンドリングされていないリジェクトが起きました", e);
-            this.game.sound.stopAll();
-            SceneManager.getCurrentScene().scene.start("error");
+            if (whitListError.white_list_error.indexOf(e.reason.message) === -1) {
+                console.log("ハンドリングされていないリジェクトが起きました", e);
+                this.game.sound.stopAll();
+                SceneManager.getCurrentScene().scene.start("error");
+            }
         };
     }
 }
