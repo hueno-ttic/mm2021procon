@@ -9,6 +9,7 @@ import SceneManager from "./SceneManager";
 
 import imageResult from "../assets/result/*.png";
 import music from "../assets/sound/music/*.wav";
+import sounds from "../assets/sound/se/*.wav";
 import no_image from "../assets/thumbnail/no_image_thumbnail.png";
 
 export default class GameResultScene extends Phaser.Scene {
@@ -43,6 +44,8 @@ export default class GameResultScene extends Phaser.Scene {
     // サウンド
     private _bgm: Phaser.Sound.BaseSound;
 
+    private _isFading: Boolean = false;
+
     static readonly SCORE_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle =
         {
             font: "18px Aldrich",
@@ -56,6 +59,8 @@ export default class GameResultScene extends Phaser.Scene {
 
     init() {
         SceneManager.setCurrentScene(this);
+
+        this._isFading = false;
 
         // 選曲情報
         this._musicInfo = buildMusicInfo()
@@ -136,6 +141,7 @@ export default class GameResultScene extends Phaser.Scene {
 
         // サウンド
         this.load.audio("result_music", music.result);
+        this.load.audio("decide_sound", sounds.confirm);
     }
 
     create(): void {
@@ -273,9 +279,20 @@ export default class GameResultScene extends Phaser.Scene {
         );
         this._moveSelectMusicButtonBgImage.setDepth(buttonDepth - 1);
         this._moveSelectMusicButtonBgImage.setInteractive();
+        const decideSound = this.sound.add("decide_sound", { volume: 0.5 });
         this._moveSelectMusicButtonBgImage.on("pointerdown", () => {
-            this._bgm.stop();
-            this.scene.start("MusicSelect");
+            if (decideSound) {
+                decideSound.play();
+            }
+            this.cameras.main.fadeOut(1000, 255, 255, 255);
+            this.cameras.main.once(
+                Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+                () => {
+                    this._bgm.stop();
+                    this.scene.start("MusicSelect");
+                }
+            );
+            this._isFading = true;
         });
         this._moveSelectMusicButtonBgImage.setAlpha(0);
 
