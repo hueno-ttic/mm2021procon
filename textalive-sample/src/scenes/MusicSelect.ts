@@ -5,6 +5,7 @@ import { buildMusicInfo } from "../factory/MusicFactory";
 import GameMain from "./GameMain";
 import music from "../assets/sound/music/*.wav";
 import sounds from "../assets/sound/se/*.wav";
+import SceneManager from "./SceneManager";
 
 interface displayPosition {
     displayX: number;
@@ -26,6 +27,10 @@ export default class MusicSelectScene extends Phaser.Scene {
     private menuMusic: Phaser.Sound.BaseSound;
 
     private isFading: Boolean = false;
+
+    init(): void {
+        SceneManager.setCurrentScene(this);
+    }
 
     preload(): void {
         this.load.image("music_frame", images["music_frame"]);

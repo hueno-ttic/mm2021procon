@@ -1,4 +1,4 @@
-import axios, {AxiosResponse} from "axios";
+import axios, { AxiosResponse } from "axios";
 import fft from "../../../../assets/fft/build/*.data";
 import json from "../../../../assets/fft/build/*.json";
 
@@ -74,7 +74,11 @@ export default class GainRepository {
         return Array.from({ length: DUMMY_LENGTH }, (v, k) => {
             if (k > LENGTH_OF_SILENCE) {
                 return Array.from({ length: this.size }, (v, idx) => {
-                    return Math.random() * (this.size - idx + this.size) / this.size / 2;
+                    return (
+                        (Math.random() * (this.size - idx + this.size)) /
+                        this.size /
+                        2
+                    );
                 });
             } else {
                 return Array<number>(this.size).fill(0.0);
