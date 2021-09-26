@@ -5,10 +5,11 @@ import { buildMusicInfo } from "../factory/MusicFactory";
 import ResultScoreObject from "../object/ResultScoreObject";
 import TotalResultObject from "../object/TotalResultObject";
 import ScoreCounter from "../object/ScoreCounter";
+import SceneManager from "./SceneManager";
 
 import imageResult from "../assets/result/*.png";
 import music from "../assets/sound/music/*.wav";
-import SceneManager from "./SceneManager";
+import no_image from "../assets/thumbnail/no_image_thumbnail.png";
 
 export default class GameResultScene extends Phaser.Scene {
     // 選曲情報
@@ -105,6 +106,7 @@ export default class GameResultScene extends Phaser.Scene {
             `${this._musicInfo.label}_thumbnail`,
             `http://img.youtube.com/vi/${this._musicInfo.youTubeKey}/maxresdefault.jpg`
         );
+        this.load.image("no_image", no_image);
 
         // スコア
         this.load.image("score_bg", imageResult.result_score_background);
@@ -150,8 +152,15 @@ export default class GameResultScene extends Phaser.Scene {
         this._resultImage.setDepth(DepthDefine.OBJECT);
 
         // サムネイル
+        const isNoImage =
+            this.textures.get(`${this._musicInfo.label}_thumbnail`) ==
+            this.textures.get("__MISSING");
         this._thumbnailImage = this.add
-            .image(420, 350, `${this._musicInfo.label}_thumbnail`)
+            .image(
+                420,
+                350,
+                !isNoImage ? `${this._musicInfo.label}_thumbnail` : "no_image"
+            )
             .setDepth(DepthDefine.OBJECT)
             .setScale(0.6, 0.6);
 
@@ -160,8 +169,7 @@ export default class GameResultScene extends Phaser.Scene {
         this._scoreBackgroundImage = this.add.image(
             1040,
             this._thumbnailImage.y -
-                (this._thumbnailImage.height * this._thumbnailImage.scaleY) /
-                    2 -
+                (720 * this._thumbnailImage.scaleY) / 2 -
                 10,
             "score_bg"
         );
