@@ -268,6 +268,7 @@ export default class GameMain extends Phaser.Scene {
         this.load.image("button_play", uiImage["play"]);
         this.load.image("button_pause", uiImage["pause"]);
         this.load.image("button_start", uiImage["start"]);
+        this.load.image("btton_attention_start", uiImage["attention_start"]);
     }
 
     create(): void {
@@ -370,8 +371,11 @@ export default class GameMain extends Phaser.Scene {
             pauseImageKey: "button_pause",
             playImageKey: "button_play",
             startImageKey: "button_start",
+            attentionStartImageKey: "btton_attention_start",
             posX: 1200,
             posY: 670,
+            attentionPosX: 1140,
+            attentionPosY: 570,
             textaliveManager: this.api,
         });
         this.pauseButton.setVisible(false);
