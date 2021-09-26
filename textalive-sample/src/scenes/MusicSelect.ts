@@ -69,8 +69,13 @@ export default class MusicSelectScene extends Phaser.Scene {
         const circle = this.add.graphics();
         circle.lineStyle(3, 0x000000, 0.6).strokeCircle(1350, 350, 350);
 
+        // 2周目以降で前回選択した曲を取得する
+        const defaultMusicId = this.registry.get("selectedMusic")
+            ? this.registry.get("selectedMusic")
+            : 1;
+
         const defaultMusic = this.musics
-            .filter((music) => music.id === 1)
+            .filter((music) => music.id === defaultMusicId)
             .pop();
         this.registry.set("selectedMusic", defaultMusic.id);
         this.musicInfoText = this.add
@@ -99,8 +104,16 @@ export default class MusicSelectScene extends Phaser.Scene {
             this.menuMusic.play();
         }
 
+        const defaultSelectedFramePosition = this.calcMusicPosition(
+            defaultMusic.id - 1
+        );
+
         this.selectedFrame = this.add
-            .image(1075, 125, "selected_frame")
+            .image(
+                defaultSelectedFramePosition.displayX,
+                defaultSelectedFramePosition.displayY,
+                "selected_frame"
+            )
             .setScale(1.05);
         this.tweens.add({
             targets: this.selectedFrame,
@@ -148,7 +161,6 @@ export default class MusicSelectScene extends Phaser.Scene {
             if (!this.isFading) {
                 if (decideSound) {
                     decideSound.play();
-                    console.log("saund");
                 }
                 this.moveGameMain();
             }
@@ -159,7 +171,6 @@ export default class MusicSelectScene extends Phaser.Scene {
         if (this.game.scene.getScene("GameMain")) {
             this.scene.remove("GameMain");
         }
-        console.log("go to gamemain");
         this.menuMusic.stop();
         this.scene.add("GameMain", GameMain);
         this.cameras.main.fadeOut(1000, 255, 255, 255);

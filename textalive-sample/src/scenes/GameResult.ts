@@ -199,7 +199,6 @@ export default class GameResultScene extends Phaser.Scene {
         var scoreDelay = 1000;
         for (let i = 0; i < this._resultScores.length; i++) {
             scoreDelay += 1500 * i;
-            console.log(scoreDelay);
             this._resultScores[i].create({
                 scene: this,
                 resultNameKey: resultNameKeys[i],
