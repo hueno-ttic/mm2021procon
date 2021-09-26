@@ -72,7 +72,7 @@ export default class TitleScene extends Phaser.Scene {
         this.click_start = this.add.image(640, 570, "click_start");
         this.click_start.scale = this.click_start.scale * 0.7;
 
-        this.click_start.on("pointerdown", () => {
+        this.input.on("pointerdown", () => {
             if (!this.isFading) {
                 this.confirmSe.play();
                 this.cameras.main.fadeOut(1000, 255, 255, 255);
