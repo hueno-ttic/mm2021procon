@@ -205,7 +205,7 @@ export default class GameResultScene extends Phaser.Scene {
         ];
         const resultNameKeys = ["score_excellent", "score_bad"];
         const laneKeys = [["lane_1", "lane_2", "lane_3"], ["count"]];
-        var scoreDelay = 1000;
+        let scoreDelay = 1000;
         for (let i = 0; i < this._resultScores.length; i++) {
             scoreDelay += 1500 * i;
             this._resultScores[i].create({
@@ -267,7 +267,7 @@ export default class GameResultScene extends Phaser.Scene {
         this.tweens.add({
             targets: this._playResultImage,
             alpha: 1,
-            duration: 1000,
+            duration: 800,
             ease: "Power0",
             repeat: 0,
             delay: scoreDelay,
@@ -312,7 +312,7 @@ export default class GameResultScene extends Phaser.Scene {
                 this._moveSelectMusicButtonBgImage,
             ],
             alpha: 1,
-            duration: 1000,
+            duration: 800,
             ease: "Power0",
             repeat: 0,
             delay: scoreDelay,
