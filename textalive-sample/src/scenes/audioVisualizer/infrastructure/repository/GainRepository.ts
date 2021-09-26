@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import fft from "../../../../assets/fft/build/*.data";
 import json from "../../../../assets/fft/build/*.json";
+import { MusicInfo } from "../../../../interface/MusicInfo";
 
 const DUMMY_LENGTH = 30 * 100; // ダミーのデータを用意する時間( 10 sec )
 const LENGTH_OF_SILENCE = 100; // ダミーデータの無音時間( 1 sec )
@@ -11,18 +12,16 @@ export default class GainRepository {
     private loadStatus: boolean = true;
     private loaded: boolean = false;
 
-    constructor(size: number) {
+    constructor(size: number, musicInfo: MusicInfo) {
         this.size = size;
         this.gains = this.genDummyData();
         this.loadStatus = false;
 
         // TODO: 一旦固定のJSON 実際は曲ごとにJSONを読み分ける
         (async () => {
-            const files: string[] = json["fft.data"];
+            const files: string[] = json[musicInfo.youTubeKey + ".data"];
             for (const idx in files) {
                 const file = files[idx].replace(".data", "");
-                console.log("fft load start");
-                console.time("fft");
                 const response = await axios.get<
                     number[][],
                     AxiosResponse<number[][]>
@@ -37,8 +36,6 @@ export default class GainRepository {
                 }
 
                 this.loadStatus = false;
-                console.log("fft load end");
-                console.timeEnd("fft");
             }
         })();
     }
