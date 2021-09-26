@@ -85,16 +85,19 @@ export default class MusicSelectScene extends Phaser.Scene {
             .setStroke("#000000", 2)
             .setFontSize(40);
 
-        this.thumbnail = this.add
-            .image(
-                420,
-                350,
-                this.textures.get(`${defaultMusic.label}_thumbnail`) ===
-                    this.textures.get("__MISSING")
-                    ? "no_image"
-                    : `${defaultMusic.label}_thumbnail`
-            )
-            .setDisplaySize(790, 440);
+        this.thumbnail = this.add.image(
+            420,
+            350,
+            this.textures.get(`${defaultMusic.label}_thumbnail`) ===
+                this.textures.get("__MISSING")
+                ? "no_image"
+                : `${defaultMusic.label}_thumbnail`
+        );
+        // サムネイルのアスペクト比を保つために一度addした後にスケールをかける
+        this.thumbnail.setDisplaySize(
+            this.thumbnail.width * 0.6,
+            this.thumbnail.height * 0.6
+        );
 
         this.menuMusic = this.sound.add("menu_music", {
             loop: true,
@@ -143,7 +146,10 @@ export default class MusicSelectScene extends Phaser.Scene {
                         ? "no_image"
                         : `${music.label}_thumbnail`
                 );
-                this.thumbnail.setDisplaySize(790, 440);
+                this.thumbnail.setDisplaySize(
+                    this.thumbnail.width * 0.6,
+                    this.thumbnail.height * 0.6
+                );
                 this.selectedFrame.setPosition(
                     musicPosition.displayX,
                     musicPosition.displayY

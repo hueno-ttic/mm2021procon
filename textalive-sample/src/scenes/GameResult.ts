@@ -154,8 +154,8 @@ export default class GameResultScene extends Phaser.Scene {
         this._backgroundImage.setDepth(DepthDefine.BACK_GROUND);
 
         // キャプチャ
-        this._resultImage = this.add.image(100, 50, "result_image");
-        this._resultImage.setDepth(DepthDefine.OBJECT);
+        this._resultImage = this.add.image(45, 70, "result_image");
+        this._resultImage.setOrigin(0.0, 0.5).setDepth(DepthDefine.OBJECT);
 
         // サムネイル
         const isNoImage =
@@ -167,8 +167,11 @@ export default class GameResultScene extends Phaser.Scene {
                 350,
                 !isNoImage ? `${this._musicInfo.label}_thumbnail` : "no_image"
             )
-            .setDepth(DepthDefine.OBJECT)
-            .setScale(0.6, 0.6);
+            .setDepth(DepthDefine.OBJECT);
+        this._thumbnailImage.setDisplaySize(
+            this._thumbnailImage.width * 0.6,
+            this._thumbnailImage.height * 0.6
+        );
 
         // スコア画像と背景
         const scoreDepth = DepthDefine.OBJECT;
