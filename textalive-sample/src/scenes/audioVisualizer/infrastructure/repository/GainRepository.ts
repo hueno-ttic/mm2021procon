@@ -1,7 +1,7 @@
-import axios, {AxiosResponse} from "axios";
+import axios, { AxiosResponse } from "axios";
 import fft from "../../../../assets/fft/build/*.data";
 import json from "../../../../assets/fft/build/*.json";
-import {MusicInfo} from "../../../../interface/MusicInfo";
+import { MusicInfo } from "../../../../interface/MusicInfo";
 
 const DUMMY_LENGTH = 30 * 100; // ダミーのデータを用意する時間( 10 sec )
 const LENGTH_OF_SILENCE = 100; // ダミーデータの無音時間( 1 sec )
@@ -71,7 +71,11 @@ export default class GainRepository {
         return Array.from({ length: DUMMY_LENGTH }, (v, k) => {
             if (k > LENGTH_OF_SILENCE) {
                 return Array.from({ length: this.size }, (v, idx) => {
-                    return Math.random() * (this.size - idx + this.size) / this.size / 2;
+                    return (
+                        (Math.random() * (this.size - idx + this.size)) /
+                        this.size /
+                        2
+                    );
                 });
             } else {
                 return Array<number>(this.size).fill(0.0);

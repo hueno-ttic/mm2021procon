@@ -1,5 +1,5 @@
 import GainRepository from "../../infrastructure/repository/GainRepository";
-import {MusicInfo} from "../../../../interface/MusicInfo";
+import { MusicInfo } from "../../../../interface/MusicInfo";
 
 const TIME_SMOOTH = 20; // x 10msの時間で平滑化する
 
