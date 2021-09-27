@@ -8,9 +8,9 @@ const RANDOM_RANGE = 10;
 
 export default class AudienceObject {
     private gameMain: GameMain;
-    private firstLane: Phaser.GameObjects.Image[][][];
-    private secondLane: Phaser.GameObjects.Image[][][];
-    private thirdLane: Phaser.GameObjects.Image[][][];
+    private firstLane: Phaser.GameObjects.Image[][];
+    private secondLane: Phaser.GameObjects.Image[][];
+    private thirdLane: Phaser.GameObjects.Image[][];
     private firstLaneCounter;
     private secondLaneCounter;
     private thirdLaneCounter;
@@ -19,19 +19,13 @@ export default class AudienceObject {
         this.gameMain = gameMain;
 
         this.firstLane = Array.from(new Array(AUDIENCE_SET_SIZE_Y), () => {
-            return Array.from(new Array(AUDIENCE_SET_SIZE_Y), () =>
-                new Array(AUDIENCE_SET_SIZE_X).fill(null)
-            );
+            return Array.from(new Array(AUDIENCE_SET_SIZE_Y), () => null);
         });
         this.secondLane = Array.from(new Array(AUDIENCE_SET_SIZE_Y), () => {
-            return Array.from(new Array(AUDIENCE_SET_SIZE_Y), () =>
-                new Array(AUDIENCE_SET_SIZE_X).fill(null)
-            );
+            return Array.from(new Array(AUDIENCE_SET_SIZE_Y), () => null);
         });
         this.thirdLane = Array.from(new Array(AUDIENCE_SET_SIZE_Y), () => {
-            return Array.from(new Array(AUDIENCE_SET_SIZE_Y), () =>
-                new Array(AUDIENCE_SET_SIZE_X).fill(null)
-            );
+            return Array.from(new Array(AUDIENCE_SET_SIZE_Y), () => null);
         });
         this.firstLaneCounter = 0;
         this.secondLaneCounter = 0;
@@ -56,11 +50,17 @@ export default class AudienceObject {
         for (let i = 0; i < AUDIENCE_SET_SIZE_Y; i++) {
             for (let j = 0; j < AUDIENCE_SET_SIZE_X; j++) {
                 let audience = this.getAudienceType();
+
+                // 基準の位置からのズレ
                 const rand_x = (Math.random() - 0.5) * RANDOM_RANGE;
                 const rand_y = (Math.random() - 0.5) * RANDOM_RANGE;
 
                 laneAudience[i][j] = this.gameMain.add
-                    .image(baseX - j * diffX + rand_x, baseY + i * diffY + rand_y, audience)
+                    .image(
+                        baseX - j * diffX + rand_x,
+                        baseY + i * diffY + rand_y,
+                        audience
+                    )
                     .setDepth(DepthDefine.OBJECT + i);
                 laneAudience[i][j].alpha = 0.0;
             }
@@ -101,7 +101,7 @@ export default class AudienceObject {
         }
     }
 
-    updateAudience(laneAudience, counter) {
+    updateAudience(laneAudience: Phaser.GameObjects.Image[][], counter) {
         let numX = 0;
         // 前から詰めるように修正
         let counterX = counter / 5;
@@ -143,5 +143,32 @@ export default class AudienceObject {
             return;
         }
         this.updateAudience(laneAudience, counter);
+    }
+
+    jump() {
+        // 表示されている観客
+        const activeAudience: Phaser.GameObjects.Image[] = this.firstLane
+            .concat(this.secondLane)
+            .concat(this.thirdLane)
+            .reduce((prev, current) => prev.concat(current), [])
+            .reduce((prev, current) => prev.concat(current), [])
+            .filter((v) => v.alpha > 0.5);
+
+        const index = Math.floor(activeAudience.length * Math.random());
+        const target = activeAudience[index];
+        const y = target.y;
+
+        // ジャンプさせるtweenを登録
+        this.gameMain.tweens.add({
+            targets: target,
+            duration: 100,
+            y: y - 25,
+        });
+        this.gameMain.tweens.add({
+            targets: target,
+            delay: 105,
+            duration: 100,
+            y: y,
+        });
     }
 }

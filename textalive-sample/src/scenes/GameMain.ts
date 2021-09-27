@@ -601,16 +601,19 @@ export default class GameMain extends Phaser.Scene {
                     this.isSuccessLyric(lyricIndex)
                 ) {
                     this.audienceObject.update("first");
+                    this.audienceObject.jump();
                 } else if (
                     this.lyricY === this.secondLane &&
                     this.isSuccessLyric(lyricIndex)
                 ) {
                     this.audienceObject.update("second");
+                    this.audienceObject.jump();
                 } else if (
                     this.lyricY === this.thirdLane &&
                     this.isSuccessLyric(lyricIndex)
                 ) {
                     this.audienceObject.update("third");
+                    this.audienceObject.jump();
                 }
             }
 
