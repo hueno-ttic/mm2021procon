@@ -40,7 +40,7 @@ export default class TextaliveApiManager {
         this.player = new Player({
             app: {
                 appAuthor: "TTIC",
-                appName: "TextAliveSample",
+                appName: "VoiceShooting",
                 token: config.textalive_token,
             },
             mediaElement: document.querySelector<HTMLElement>("#media"),
