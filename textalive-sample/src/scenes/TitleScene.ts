@@ -5,6 +5,7 @@ import image from "../assets/*.png";
 import titleImage from "../assets/title/*.png";
 import music from "../assets/sound/music/*.wav";
 import SE from "../assets/sound/se/*.wav";
+import SceneManager from "./SceneManager";
 
 export default class TitleScene extends Phaser.Scene {
     constructor() {
@@ -26,6 +27,7 @@ export default class TitleScene extends Phaser.Scene {
     private flowingStars: FlowingStarsManager;
 
     init(): void {
+        SceneManager.setCurrentScene(this);
         this.flowingStars = new FlowingStarsManager();
         this.isFading = false;
     }
@@ -70,13 +72,14 @@ export default class TitleScene extends Phaser.Scene {
         this.click_start = this.add.image(640, 570, "click_start");
         this.click_start.scale = this.click_start.scale * 0.7;
 
-        this.click_start.on("pointerdown", () => {
+        this.input.on("pointerdown", () => {
             if (!this.isFading) {
                 this.confirmSe.play();
                 this.cameras.main.fadeOut(1000, 255, 255, 255);
                 this.cameras.main.once(
                     Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
                     () => {
+                        this.titleMusic.stop();
                         this.scene.start("MusicSelect");
                     }
                 );

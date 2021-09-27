@@ -1,27 +1,8 @@
 import { MusicInfo } from "../interface/MusicInfo";
 
 export function buildMusicInfo(): MusicInfo[] {
-    let usomo: MusicInfo = {
-        id: 1,
-        title: "嘘も本当も君だから",
-        label: "usomo",
-        author: "真島ゆろ",
-        url: "https://www.youtube.com/watch?v=Se89rQPp5tk",
-        playerVideoOptions: {
-            video: {
-                // 音楽地図訂正履歴: https://songle.jp/songs/2121405/history
-                beatId: 3953908,
-                repetitiveSegmentId: 2099661,
-                // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2FYW_d%2F20210206123357
-                lyricId: 52061,
-                lyricDiffId: 5123,
-            },
-        },
-        youTubeKey: "Se89rQPp5tk",
-    };
-
     let natsu: MusicInfo = {
-        id: 2,
+        id: 1,
         title: "夏をなぞって",
         label: "natsu",
         author: "シロクマ消しゴム",
@@ -37,6 +18,25 @@ export function buildMusicInfo(): MusicInfo[] {
             },
         },
         youTubeKey: "3wbZUkPxHEg",
+    };
+
+    let first_note: MusicInfo = {
+        id: 2,
+        title: "First Note",
+        label: "first_note",
+        author: "blues",
+        url: "https://piapro.jp/t/FDb1/20210213190029",
+        playerVideoOptions: {
+            video: {
+                // 音楽地図訂正履歴: https://songle.jp/songs/2121525/history
+                beatId: 3953882,
+                repetitiveSegmentId: 2099561,
+                // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2FFDb1%2F20210213190029
+                lyricId: 52065,
+                lyricDiffId: 5093,
+            },
+        },
+        youTubeKey: "0XG_isaNVRA",
     };
 
     let kokoro: MusicInfo = {
@@ -58,27 +58,8 @@ export function buildMusicInfo(): MusicInfo[] {
         youTubeKey: "bMtYf3R0zhY",
     };
 
-    let hisoka: MusicInfo = {
-        id: 4,
-        title: "密かなる交信曲",
-        label: "hisoka",
-        author: "濁茶",
-        url: "https://www.youtube.com/watch?v=Ch4RQPG1Tmo",
-        playerVideoOptions: {
-            video: {
-                // 音楽地図訂正履歴: https://songle.jp/songs/2121407/history
-                beatId: 3953917,
-                repetitiveSegmentId: 2099665,
-                // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/www.youtube.com%2Fwatch%3Fv=Ch4RQPG1Tmo
-                lyricId: 52063,
-                lyricDiffId: 5149,
-            },
-        },
-        youTubeKey: "Ch4RQPG1Tmo",
-    };
-
     let freedom: MusicInfo = {
-        id: 5,
+        id: 4,
         title: "Freedom!",
         label: "freedom",
         author: "Chiquewa",
@@ -96,24 +77,43 @@ export function buildMusicInfo(): MusicInfo[] {
         youTubeKey: "pAaD4Hta0ns",
     };
 
-    let first_note: MusicInfo = {
-        id: 6,
-        title: "First Note",
-        label: "first_note",
-        author: "blues",
-        url: "https://piapro.jp/t/FDb1/20210213190029",
+    let hisoka: MusicInfo = {
+        id: 5,
+        title: "密かなる交信曲",
+        label: "hisoka",
+        author: "濁茶",
+        url: "https://www.youtube.com/watch?v=Ch4RQPG1Tmo",
         playerVideoOptions: {
             video: {
-                // 音楽地図訂正履歴: https://songle.jp/songs/2121525/history
-                beatId: 3953882,
-                repetitiveSegmentId: 2099561,
-                // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2FFDb1%2F20210213190029
-                lyricId: 52065,
-                lyricDiffId: 5093,
+                // 音楽地図訂正履歴: https://songle.jp/songs/2121407/history
+                beatId: 3953917,
+                repetitiveSegmentId: 2099665,
+                // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/www.youtube.com%2Fwatch%3Fv=Ch4RQPG1Tmo
+                lyricId: 52063,
+                lyricDiffId: 5149,
             },
         },
-        youTubeKey: "0XG_isaNVRA",
+        youTubeKey: "Ch4RQPG1Tmo",
     };
 
-    return [usomo, natsu, kokoro, hisoka, freedom, first_note];
+    let usomo: MusicInfo = {
+        id: 6,
+        title: "嘘も本当も君だから",
+        label: "usomo",
+        author: "真島ゆろ",
+        url: "https://www.youtube.com/watch?v=Se89rQPp5tk",
+        playerVideoOptions: {
+            video: {
+                // 音楽地図訂正履歴: https://songle.jp/songs/2121405/history
+                beatId: 3953908,
+                repetitiveSegmentId: 2099661,
+                // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2FYW_d%2F20210206123357
+                lyricId: 52061,
+                lyricDiffId: 5123,
+            },
+        },
+        youTubeKey: "Se89rQPp5tk",
+    };
+
+    return [natsu, first_note, kokoro, freedom, hisoka, usomo];
 }

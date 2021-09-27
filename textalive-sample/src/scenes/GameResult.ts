@@ -5,9 +5,12 @@ import { buildMusicInfo } from "../factory/MusicFactory";
 import ResultScoreObject from "../object/ResultScoreObject";
 import TotalResultObject from "../object/TotalResultObject";
 import ScoreCounter from "../object/ScoreCounter";
+import SceneManager from "./SceneManager";
 
 import imageResult from "../assets/result/*.png";
 import music from "../assets/sound/music/*.wav";
+import sounds from "../assets/sound/se/*.wav";
+import no_image from "../assets/thumbnail/no_image_thumbnail.png";
 
 export default class GameResultScene extends Phaser.Scene {
     // 選曲情報
@@ -41,6 +44,8 @@ export default class GameResultScene extends Phaser.Scene {
     // サウンド
     private _bgm: Phaser.Sound.BaseSound;
 
+    private _isFading: Boolean = false;
+
     static readonly SCORE_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle =
         {
             font: "18px Aldrich",
@@ -53,6 +58,10 @@ export default class GameResultScene extends Phaser.Scene {
     }
 
     init() {
+        SceneManager.setCurrentScene(this);
+
+        this._isFading = false;
+
         // 選曲情報
         this._musicInfo = buildMusicInfo()
             .filter((music) => music.id === this.registry.get("selectedMusic"))
@@ -102,6 +111,7 @@ export default class GameResultScene extends Phaser.Scene {
             `${this._musicInfo.label}_thumbnail`,
             `http://img.youtube.com/vi/${this._musicInfo.youTubeKey}/maxresdefault.jpg`
         );
+        this.load.image("no_image", no_image);
 
         // スコア
         this.load.image("score_bg", imageResult.result_score_background);
@@ -131,6 +141,7 @@ export default class GameResultScene extends Phaser.Scene {
 
         // サウンド
         this.load.audio("result_music", music.result);
+        this.load.audio("decide_sound", sounds.confirm);
     }
 
     create(): void {
@@ -143,22 +154,31 @@ export default class GameResultScene extends Phaser.Scene {
         this._backgroundImage.setDepth(DepthDefine.BACK_GROUND);
 
         // キャプチャ
-        this._resultImage = this.add.image(100, 50, "result_image");
-        this._resultImage.setDepth(DepthDefine.OBJECT);
+        this._resultImage = this.add.image(45, 70, "result_image");
+        this._resultImage.setOrigin(0.0, 0.5).setDepth(DepthDefine.OBJECT);
 
         // サムネイル
+        const isNoImage =
+            this.textures.get(`${this._musicInfo.label}_thumbnail`) ==
+            this.textures.get("__MISSING");
         this._thumbnailImage = this.add
-            .image(420, 350, `${this._musicInfo.label}_thumbnail`)
-            .setDepth(DepthDefine.OBJECT)
-            .setScale(0.6, 0.6);
+            .image(
+                420,
+                350,
+                !isNoImage ? `${this._musicInfo.label}_thumbnail` : "no_image"
+            )
+            .setDepth(DepthDefine.OBJECT);
+        this._thumbnailImage.setDisplaySize(
+            this._thumbnailImage.width * 0.6,
+            this._thumbnailImage.height * 0.6
+        );
 
         // スコア画像と背景
         const scoreDepth = DepthDefine.OBJECT;
         this._scoreBackgroundImage = this.add.image(
             1040,
             this._thumbnailImage.y -
-                (this._thumbnailImage.height * this._thumbnailImage.scaleY) /
-                    2 -
+                (720 * this._thumbnailImage.scaleY) / 2 -
                 10,
             "score_bg"
         );
@@ -185,7 +205,9 @@ export default class GameResultScene extends Phaser.Scene {
         ];
         const resultNameKeys = ["score_excellent", "score_bad"];
         const laneKeys = [["lane_1", "lane_2", "lane_3"], ["count"]];
+        let scoreDelay = 1000;
         for (let i = 0; i < this._resultScores.length; i++) {
+            scoreDelay += 1500 * i;
             this._resultScores[i].create({
                 scene: this,
                 resultNameKey: resultNameKeys[i],
@@ -199,8 +221,10 @@ export default class GameResultScene extends Phaser.Scene {
                     this._scoreImage.height +
                     30 +
                     200 * i,
+                animsDelay: scoreDelay,
             });
         }
+        scoreDelay += 500;
 
         // スコア
         this._total.create({
@@ -216,6 +240,7 @@ export default class GameResultScene extends Phaser.Scene {
                 30 +
                 200 * this._resultScores.length +
                 -60,
+            animsDelay: scoreDelay,
         });
 
         // 楽曲情報
@@ -237,6 +262,16 @@ export default class GameResultScene extends Phaser.Scene {
             this.isClear() ? "result_cleared" : "result_failed"
         );
         this._playResultImage.setDepth(DepthDefine.OBJECT + 1);
+        this._playResultImage.setAlpha(0);
+        scoreDelay += 500;
+        this.tweens.add({
+            targets: this._playResultImage,
+            alpha: 1,
+            duration: 800,
+            ease: "Power0",
+            repeat: 0,
+            delay: scoreDelay,
+        });
 
         // ボタン
         const buttonDepth = DepthDefine.UI_OBJECT;
@@ -247,10 +282,22 @@ export default class GameResultScene extends Phaser.Scene {
         );
         this._moveSelectMusicButtonBgImage.setDepth(buttonDepth - 1);
         this._moveSelectMusicButtonBgImage.setInteractive();
+        const decideSound = this.sound.add("decide_sound", { volume: 0.5 });
         this._moveSelectMusicButtonBgImage.on("pointerdown", () => {
-            this._bgm.stop();
-            this.scene.start("MusicSelect");
+            if (decideSound) {
+                decideSound.play();
+            }
+            this.cameras.main.fadeOut(1000, 255, 255, 255);
+            this.cameras.main.once(
+                Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+                () => {
+                    this._bgm.stop();
+                    this.scene.start("MusicSelect");
+                }
+            );
+            this._isFading = true;
         });
+        this._moveSelectMusicButtonBgImage.setAlpha(0);
 
         this._moveSelectMusicButtonImage = this.add.image(
             this._scoreBackgroundImage.x,
@@ -258,6 +305,18 @@ export default class GameResultScene extends Phaser.Scene {
             "button_select_music_image"
         );
         this._moveSelectMusicButtonImage.setDepth(buttonDepth);
+        this._moveSelectMusicButtonImage.setAlpha(0);
+        this.tweens.add({
+            targets: [
+                this._moveSelectMusicButtonImage,
+                this._moveSelectMusicButtonBgImage,
+            ],
+            alpha: 1,
+            duration: 800,
+            ease: "Power0",
+            repeat: 0,
+            delay: scoreDelay,
+        });
 
         // サウンド
         this._bgm = this.sound.add("result_music", {
@@ -265,14 +324,6 @@ export default class GameResultScene extends Phaser.Scene {
             volume: 0.5,
         });
         this._bgm.play();
-    }
-
-    update(): void {
-        for (let i = 0; i < this._resultScores.length; i++) {
-            this._resultScores[i].update();
-        }
-
-        this._total.update();
     }
 
     private isClear(): boolean {

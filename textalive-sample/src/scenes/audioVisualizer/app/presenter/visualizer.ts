@@ -1,7 +1,7 @@
 import visualizerService from "../../domain/service/visualizerService";
 import * as Phaser from "phaser";
 import { POINT_SIZE } from "../constants/constants";
-import {MusicInfo} from "../../../../interface/MusicInfo";
+import { MusicInfo } from "../../../../interface/MusicInfo";
 
 class Position {
     x: number;

@@ -9,6 +9,7 @@ export interface TotalResultObjectCreateParam {
     depth?: number;
     posX: number;
     posY: number;
+    animsDelay: number;
 }
 
 export default class TotalResultObject {
@@ -44,7 +45,17 @@ export default class TotalResultObject {
         );
         this._totalResutlText
             .setDepth(param.depth ? param.depth : 0)
-            .setOrigin(1, 0.5);
+            .setOrigin(1, 0.5)
+            .setAlpha(0);
+
+        param.scene.tweens.add({
+            targets: this._totalResutlText,
+            alpha: 1,
+            duration: 1000,
+            ease: "Power0",
+            repeat: 0,
+            delay: param.animsDelay,
+        });
 
         this._underLineImage = param.scene.add.image(
             param.posX,
@@ -54,9 +65,5 @@ export default class TotalResultObject {
         this._underLineImage
             .setDepth(param.depth ? param.depth : 0)
             .setOrigin(0, 0.5);
-    }
-
-    update(): void {
-        // pass
     }
 }

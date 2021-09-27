@@ -5,6 +5,9 @@ import TitleScene from "./scenes/TitleScene";
 import GameMain from "./scenes/GameMain";
 import GameResult from "./scenes/GameResult";
 import MusicSelectScene from "./scenes/MusicSelect";
+import CriticalError from "./scenes/CriticalError";
+import SceneManager from "./scenes/SceneManager";
+import whitListError = require("./whitListError.json");
 
 // ゲームの基本設定
 const config: Phaser.Types.Core.GameConfig = {
@@ -18,7 +21,14 @@ const config: Phaser.Types.Core.GameConfig = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
     },
-    scene: [SplashScene, TitleScene, GameMain, MusicSelectScene, GameResult],
+    scene: [
+        SplashScene,
+        TitleScene,
+        GameMain,
+        MusicSelectScene,
+        GameResult,
+        CriticalError,
+    ],
 };
 
 // ゲームメインのクラス
@@ -29,13 +39,34 @@ export class Game extends Phaser.Game {
 }
 
 class Main {
+    private game: Game;
+
     constructor() {}
     initialize() {
         // windowイベントで、ロードされたらゲーム開始
         window.addEventListener("load", () => {
             console.log("start");
-            const gameApp = new Game();
+            this.game = new Game();
         });
+
+        window.onerror = (e) => {
+            console.log("ハンドリングされていないエラーが起きました", e);
+            this.game.sound.stopAll();
+            SceneManager.getCurrentScene().scene.start("error");
+        };
+
+        window.onunhandledrejection = (e) => {
+            if (
+                whitListError.white_list_error.indexOf(e.reason.message) === -1
+            ) {
+                console.log(
+                    "ハンドリングされていないリジェクトが起きました",
+                    e
+                );
+                this.game.sound.stopAll();
+                SceneManager.getCurrentScene().scene.start("error");
+            }
+        };
     }
 }
 

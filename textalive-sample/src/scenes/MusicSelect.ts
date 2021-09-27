@@ -5,6 +5,7 @@ import { buildMusicInfo } from "../factory/MusicFactory";
 import GameMain from "./GameMain";
 import music from "../assets/sound/music/*.wav";
 import sounds from "../assets/sound/se/*.wav";
+import SceneManager from "./SceneManager";
 
 interface displayPosition {
     displayX: number;
@@ -26,6 +27,12 @@ export default class MusicSelectScene extends Phaser.Scene {
     private menuMusic: Phaser.Sound.BaseSound;
 
     private isFading: Boolean = false;
+
+    private readonly musicBoxScale: number = 0.5;
+
+    init(): void {
+        SceneManager.setCurrentScene(this);
+    }
 
     preload(): void {
         this.load.image("music_frame", images["music_frame"]);
@@ -64,8 +71,13 @@ export default class MusicSelectScene extends Phaser.Scene {
         const circle = this.add.graphics();
         circle.lineStyle(3, 0x000000, 0.6).strokeCircle(1350, 350, 350);
 
+        // 2周目以降で前回選択した曲を取得する
+        const defaultMusicId = this.registry.get("selectedMusic")
+            ? this.registry.get("selectedMusic")
+            : 1;
+
         const defaultMusic = this.musics
-            .filter((music) => music.id === 1)
+            .filter((music) => music.id === defaultMusicId)
             .pop();
         this.registry.set("selectedMusic", defaultMusic.id);
         this.musicInfoText = this.add
@@ -75,16 +87,19 @@ export default class MusicSelectScene extends Phaser.Scene {
             .setStroke("#000000", 2)
             .setFontSize(40);
 
-        this.thumbnail = this.add
-            .image(
-                420,
-                350,
-                this.textures.get(`${defaultMusic.label}_thumbnail`) ===
-                    this.textures.get("__MISSING")
-                    ? "no_image"
-                    : `${defaultMusic.label}_thumbnail`
-            )
-            .setDisplaySize(790, 440);
+        this.thumbnail = this.add.image(
+            420,
+            350,
+            this.textures.get(`${defaultMusic.label}_thumbnail`) ===
+                this.textures.get("__MISSING")
+                ? "no_image"
+                : `${defaultMusic.label}_thumbnail`
+        );
+        // サムネイルのアスペクト比を保つために一度addした後にスケールをかける
+        this.thumbnail.setDisplaySize(
+            this.thumbnail.width * 0.6,
+            this.thumbnail.height * 0.6
+        );
 
         this.menuMusic = this.sound.add("menu_music", {
             loop: true,
@@ -94,9 +109,17 @@ export default class MusicSelectScene extends Phaser.Scene {
             this.menuMusic.play();
         }
 
+        const defaultSelectedFramePosition = this.calcMusicPosition(
+            defaultMusic.id - 1
+        );
+
         this.selectedFrame = this.add
-            .image(1075, 125, "selected_frame")
-            .setScale(1.05);
+            .image(
+                defaultSelectedFramePosition.displayX,
+                defaultSelectedFramePosition.displayY,
+                "selected_frame"
+            )
+            .setScale(0.9);
         this.tweens.add({
             targets: this.selectedFrame,
             alpha: 0,
@@ -113,7 +136,7 @@ export default class MusicSelectScene extends Phaser.Scene {
                 musicPosition.displayY,
                 music.label
             );
-            image.setScale(0.6);
+            image.setScale(this.musicBoxScale);
             image.setInteractive();
 
             image.on("pointerdown", () => {
@@ -125,7 +148,10 @@ export default class MusicSelectScene extends Phaser.Scene {
                         ? "no_image"
                         : `${music.label}_thumbnail`
                 );
-                this.thumbnail.setDisplaySize(790, 440);
+                this.thumbnail.setDisplaySize(
+                    this.thumbnail.width * 0.6,
+                    this.thumbnail.height * 0.6
+                );
                 this.selectedFrame.setPosition(
                     musicPosition.displayX,
                     musicPosition.displayY
@@ -143,7 +169,6 @@ export default class MusicSelectScene extends Phaser.Scene {
             if (!this.isFading) {
                 if (decideSound) {
                     decideSound.play();
-                    console.log("saund");
                 }
                 this.moveGameMain();
             }
@@ -154,7 +179,6 @@ export default class MusicSelectScene extends Phaser.Scene {
         if (this.game.scene.getScene("GameMain")) {
             this.scene.remove("GameMain");
         }
-        console.log("go to gamemain");
         this.menuMusic.stop();
         this.scene.add("GameMain", GameMain);
         this.cameras.main.fadeOut(1000, 255, 255, 255);
@@ -168,10 +192,16 @@ export default class MusicSelectScene extends Phaser.Scene {
     }
 
     private calcMusicPosition(index: number): displayPosition {
-        var dispBoxX = 1000;
-        var additionalBoxX = 0;
-        var dispBoxY = 40;
-        var additionalBoxY = 85;
+        let dispBoxX = 1000;
+        let additionalBoxX = 0;
+        let dispBoxY =
+            this.thumbnail.y -
+            this.thumbnail.displayHeight / 2 -
+            (129 * this.musicBoxScale) / 2 -
+            10;
+        let additionalBoxY =
+            (this.thumbnail.displayHeight - 129 * this.musicBoxScale) /
+            (this.musics.length - 1);
         switch (index) {
             case 0:
             case 5:

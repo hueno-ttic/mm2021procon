@@ -24,14 +24,14 @@ export default class UIImageButtonObject {
         this.init();
     }
 
-    init(): void {
+    public init(): void {
         this._isVisible = false;
         this._images = null;
         this._responseObject = null;
         this._status = null;
     }
 
-    create(param: UIImageButtonObjectCreateParam): void {
+    public create(param: UIImageButtonObjectCreateParam): void {
         this._images = new Map<string, Phaser.GameObjects.Image>();
         param.imageKeyMap.forEach((imageKey, statusName) => {
             const image = param.scene.add.image(
@@ -74,13 +74,20 @@ export default class UIImageButtonObject {
         this._status = param.firstStatusName;
     }
 
-    setVisible(value: boolean): void {
+    public setVisible(value: boolean): void {
         this._isVisible = value;
         this._images.forEach((image, statusName) => {
             image.setVisible(statusName == this._status && this._isVisible);
         });
 
         this._responseObject.setVisible(this._isVisible);
+    }
+
+    public setPosition(x: number, y: number): void {
+        this._images.forEach((image, _) => {
+            image.setPosition(x, y);
+        });
+        this._responseObject.setPosition(x, y);
     }
 
     get status(): string {

@@ -24,6 +24,7 @@ import uiImage from "../assets/ui/*.png";
 import soundSe from "../assets/sound/se/*.wav";
 import Visualizer from "./audioVisualizer/app/presenter/visualizer";
 import config = require("../config.json");
+import SceneManager from "./SceneManager";
 
 export default class GameMain extends Phaser.Scene {
     private musics = buildMusicInfo();
@@ -139,6 +140,7 @@ export default class GameMain extends Phaser.Scene {
     }
 
     init(): void {
+        SceneManager.setCurrentScene(this);
         this.selectedMusicId = this.registry.get("selectedMusic");
         console.log(`選択楽曲id ${this.selectedMusicId}`);
 
@@ -268,6 +270,7 @@ export default class GameMain extends Phaser.Scene {
         this.load.image("button_play", uiImage["play"]);
         this.load.image("button_pause", uiImage["pause"]);
         this.load.image("button_start", uiImage["start"]);
+        this.load.image("btton_attention_start", uiImage["attention_start"]);
     }
 
     create(): void {
@@ -370,8 +373,11 @@ export default class GameMain extends Phaser.Scene {
             pauseImageKey: "button_pause",
             playImageKey: "button_play",
             startImageKey: "button_start",
+            attentionStartImageKey: "btton_attention_start",
             posX: 1200,
             posY: 670,
+            attentionPosX: 1140,
+            attentionPosY: 570,
             textaliveManager: this.api,
         });
         this.pauseButton.setVisible(false);
@@ -493,10 +499,23 @@ export default class GameMain extends Phaser.Scene {
             if (this.api.player.isPlaying) {
                 this.pauseButton.setStatus("pause");
                 this.musicStartState = "musicStarted";
-            } else if (performance.now() - this.musicStartRequestTime > 1000) {
+            } else if (
+                this.pauseButton.status != "start" &&
+                performance.now() - this.musicStartRequestTime > 1000
+            ) {
                 // Phaser と TextAlive App API の更新処理が同期取れないので1秒以上開始できていなければ、自動再生に失敗したとみなす
+                // 再生処理が単に遅い場合もこの処理に入るがその場合は再生開始時に元の状態に戻す
                 this.pauseButton.setStatus("start");
+                this.musicStartState = "musicWaitTouchStartButton";
             }
+        }
+
+        if (
+            this.musicStartState == "musicWaitTouchStartButton" &&
+            this.api.player.isPlaying
+        ) {
+            this.pauseButton.setStatus("pause");
+            this.musicStartState = "musicStarted";
         }
 
         if (typeof this.api.player.data.song != "undefined") {
