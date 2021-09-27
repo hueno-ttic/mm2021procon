@@ -57,6 +57,7 @@ export default class Visualizer {
 
         // 床の描画
         this.floor.forEach((attenation) => attenation.destroy(true));
+        this.floor = [];
         const floor = this.getFloorPos(gains);
         floor.forEach((v) => this.drawFloor(v));
 
