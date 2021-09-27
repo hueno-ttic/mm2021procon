@@ -6,6 +6,7 @@ export interface TotalResultObjectCreateParam {
     totalImageKey: string;
     underLineKey: string;
     totalResult: number;
+    dispPercentage?: boolean;
     depth?: number;
     posX: number;
     posY: number;
@@ -40,7 +41,9 @@ export default class TotalResultObject {
         this._totalResutlText = param.scene.add.text(
             param.posX + 300,
             param.posY,
-            param.totalResult.toString(),
+            param.dispPercentage
+                ? `${(param.totalResult * 100).toFixed(1)}%`
+                : param.totalResult.toString(),
             GameResultScene.SCORE_TEXT_STYLE
         );
         this._totalResutlText
