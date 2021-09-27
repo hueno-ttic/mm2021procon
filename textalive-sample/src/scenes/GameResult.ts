@@ -169,10 +169,11 @@ export default class GameResultScene extends Phaser.Scene {
             this.textures.get("__MISSING");
         this._thumbnailImage = this.add
             .image(
-                420,
+                45,
                 350,
                 !isNoImage ? `${this._musicInfo.label}_thumbnail` : "no_image"
             )
+            .setOrigin(0.0, 0.5)
             .setDepth(DepthDefine.OBJECT);
         this._thumbnailImage.setDisplaySize(
             this._thumbnailImage.width * 0.6,
@@ -277,7 +278,7 @@ export default class GameResultScene extends Phaser.Scene {
         // 楽曲情報
         this._selectSongText = this.add.text(
             45,
-            this.game.scale.gameSize.height - 100,
+            600,
             `${this._musicInfo.title}/${this._musicInfo.author}`,
             { fontFamily: "GenEiLateGoN" }
         );
@@ -307,7 +308,7 @@ export default class GameResultScene extends Phaser.Scene {
         const buttonDepth = DepthDefine.UI_OBJECT;
         this._moveSelectMusicButtonBgImage = this.add.image(
             this._scoreBackgroundImage.x,
-            this._selectSongText.y + this._selectSongText.height / 2,
+            this._selectSongText.y + this._selectSongText.height / 2 + 20,
             "button_select_music_bg"
         );
         this._moveSelectMusicButtonBgImage.setDepth(buttonDepth - 1);
@@ -330,8 +331,8 @@ export default class GameResultScene extends Phaser.Scene {
         this._moveSelectMusicButtonBgImage.setAlpha(0);
 
         this._moveSelectMusicButtonImage = this.add.image(
-            this._scoreBackgroundImage.x,
-            this._selectSongText.y + this._selectSongText.height / 2,
+            this._moveSelectMusicButtonBgImage.x,
+            this._moveSelectMusicButtonBgImage.y,
             "button_select_music_image"
         );
         this._moveSelectMusicButtonImage.setDepth(buttonDepth);

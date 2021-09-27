@@ -65,7 +65,7 @@ export default class MusicSelectScene extends Phaser.Scene {
         const decideSound = this.sound.add("decide_sound", { volume: 0.5 });
 
         this.add.image(640, 360, "back_ground").setDisplaySize(1280, 720);
-        this.add.image(180, 70, "title");
+        this.add.image(45, 70, "title").setOrigin(0.0, 0.5);
 
         // 円を描画する
         const circle = this.add.graphics();
@@ -81,20 +81,21 @@ export default class MusicSelectScene extends Phaser.Scene {
             .pop();
         this.registry.set("selectedMusic", defaultMusic.id);
         this.musicInfoText = this.add
-            .text(45, 620, `${defaultMusic.title}/${defaultMusic.author}`, {
+            .text(45, 600, `${defaultMusic.title}/${defaultMusic.author}`, {
                 fontFamily: "GenEiLateGoN",
             })
             .setStroke("#000000", 2)
             .setFontSize(40);
 
         this.thumbnail = this.add.image(
-            420,
+            45,
             350,
             this.textures.get(`${defaultMusic.label}_thumbnail`) ===
                 this.textures.get("__MISSING")
                 ? "no_image"
                 : `${defaultMusic.label}_thumbnail`
         );
+        this.thumbnail.setOrigin(0.0, 0.5);
         // サムネイルのアスペクト比を保つために一度addした後にスケールをかける
         this.thumbnail.setDisplaySize(
             this.thumbnail.width * 0.6,
@@ -163,7 +164,7 @@ export default class MusicSelectScene extends Phaser.Scene {
         });
 
         const decideButton = this.add
-            .image(1140, 640, "decide")
+            .image(1140, this.musicInfoText.y + 40, "decide")
             .setInteractive();
         decideButton.on("pointerdown", () => {
             if (!this.isFading) {
