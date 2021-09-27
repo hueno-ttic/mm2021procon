@@ -42,12 +42,12 @@ export default class TotalResultObject {
             param.posX + 300,
             param.posY,
             param.dispPercentage
-                ? `${(param.totalResult * 100).toFixed(1)}%`
+                ? `${(param.totalResult * 100).toFixed(2)}%`
                 : param.totalResult.toString(),
             GameResultScene.SCORE_TEXT_STYLE
         );
         this._totalResutlText
-            .setDepth(param.depth ? param.depth : 0)
+            .setDepth(1 + (param.depth ? param.depth : 0))
             .setOrigin(1, 0.5)
             .setAlpha(0);
 

@@ -82,7 +82,8 @@ export default class ResultScoreObject {
                 param.laneScores[i].toString(),
                 GameResultScene.SCORE_TEXT_STYLE
             );
-            text.setDepth(param.depth ? param.depth : 0).setOrigin(1, 0.5);
+            text.setDepth(1 + (param.depth ? param.depth : 0));
+            text.setOrigin(1, 0.5);
             text.setAlpha(0);
             this._laneScoreTexts[i] = text;
             param.scene.tweens.add({
