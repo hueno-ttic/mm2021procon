@@ -197,7 +197,7 @@ export default class GameMain extends Phaser.Scene {
         this.lyricLineObject = new LyricLineObject(this);
 
         // Visualizer
-        this.visualizer = new Visualizer(this);
+        this.visualizer = new Visualizer(this, this.selectedMusic);
 
         // 歌詞の色付けロジック
         this.lyricLogicObject = new LyricLogicObject(this.api);

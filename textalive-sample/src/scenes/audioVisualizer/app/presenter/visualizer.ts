@@ -1,6 +1,7 @@
 import visualizerService from "../../domain/service/visualizerService";
 import * as Phaser from "phaser";
 import { POINT_SIZE } from "../constants/constants";
+import { MusicInfo } from "../../../../interface/MusicInfo";
 
 class Position {
     x: number;
@@ -22,9 +23,9 @@ export default class Visualizer {
     private floor: Phaser.GameObjects.Graphics[];
     private readonly screen: Phaser.GameObjects.Rectangle[];
 
-    constructor(scene: Phaser.Scene) {
+    constructor(scene: Phaser.Scene, musicInfo: MusicInfo) {
         this.scene = scene;
-        this.service = new visualizerService(POINT_SIZE);
+        this.service = new visualizerService(POINT_SIZE, musicInfo);
         this.screen = [];
         this.floor = [];
     }
