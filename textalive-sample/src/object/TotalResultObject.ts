@@ -35,6 +35,7 @@ export default class TotalResultObject {
             param.totalImageKey
         );
         this._totalImage
+            .setScale(25 / this._totalImage.displayHeight)
             .setDepth(param.depth ? param.depth : 0)
             .setOrigin(0, 0.5);
 
