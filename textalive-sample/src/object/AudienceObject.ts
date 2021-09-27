@@ -45,19 +45,19 @@ export default class AudienceObject {
     }
 
     addAudience(laneAudience, baseX, baseY) {
-        let diffY = 25;
+        let diffY = 25 - RANDOM_RANGE / AUDIENCE_SET_SIZE_Y; // 下に突き抜けないように補正
         let diffX = 30;
         for (let i = 0; i < AUDIENCE_SET_SIZE_Y; i++) {
             for (let j = 0; j < AUDIENCE_SET_SIZE_X; j++) {
                 let audience = this.getAudienceType();
 
                 // 基準の位置からのズレ
-                const rand_x = (Math.random() - 0.5) * RANDOM_RANGE;
-                const rand_y = (Math.random() - 0.5) * RANDOM_RANGE;
+                const rand_x = Math.random() * RANDOM_RANGE; // 左方向へのズレ
+                const rand_y = Math.random() * RANDOM_RANGE; // 下方向へのズレ
 
                 laneAudience[i][j] = this.gameMain.add
                     .image(
-                        baseX - j * diffX + rand_x,
+                        baseX - j * diffX - rand_x,
                         baseY + i * diffY + rand_y,
                         audience
                     )
@@ -153,6 +153,10 @@ export default class AudienceObject {
             .reduce((prev, current) => prev.concat(current), [])
             .reduce((prev, current) => prev.concat(current), [])
             .filter((v) => v.alpha > 0.5);
+
+        if (activeAudience.length <= 0) {
+            return;
+        }
 
         const index = Math.floor(activeAudience.length * Math.random());
         const target = activeAudience[index];
