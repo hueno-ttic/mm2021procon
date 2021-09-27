@@ -4,12 +4,13 @@ import DepthDefine from "../object/DepthDefine";
 
 const AUDIENCE_SET_SIZE_X = 25;
 const AUDIENCE_SET_SIZE_Y = 5;
+const RANDOM_RANGE = 10;
 
 export default class AudienceObject {
-    private gameMain;
-    private firstLane;
-    private secondLane;
-    private thirdLane;
+    private gameMain: GameMain;
+    private firstLane: Phaser.GameObjects.Image[][];
+    private secondLane: Phaser.GameObjects.Image[][];
+    private thirdLane: Phaser.GameObjects.Image[][];
     private firstLaneCounter;
     private secondLaneCounter;
     private thirdLaneCounter;
@@ -18,19 +19,13 @@ export default class AudienceObject {
         this.gameMain = gameMain;
 
         this.firstLane = Array.from(new Array(AUDIENCE_SET_SIZE_Y), () => {
-            return Array.from(new Array(AUDIENCE_SET_SIZE_Y), () =>
-                new Array(AUDIENCE_SET_SIZE_X).fill(null)
-            );
+            return Array.from(new Array(AUDIENCE_SET_SIZE_Y), () => null);
         });
         this.secondLane = Array.from(new Array(AUDIENCE_SET_SIZE_Y), () => {
-            return Array.from(new Array(AUDIENCE_SET_SIZE_Y), () =>
-                new Array(AUDIENCE_SET_SIZE_X).fill(null)
-            );
+            return Array.from(new Array(AUDIENCE_SET_SIZE_Y), () => null);
         });
         this.thirdLane = Array.from(new Array(AUDIENCE_SET_SIZE_Y), () => {
-            return Array.from(new Array(AUDIENCE_SET_SIZE_Y), () =>
-                new Array(AUDIENCE_SET_SIZE_X).fill(null)
-            );
+            return Array.from(new Array(AUDIENCE_SET_SIZE_Y), () => null);
         });
         this.firstLaneCounter = 0;
         this.secondLaneCounter = 0;
@@ -50,13 +45,22 @@ export default class AudienceObject {
     }
 
     addAudience(laneAudience, baseX, baseY) {
-        let diffY = 25;
+        let diffY = 25 - RANDOM_RANGE / AUDIENCE_SET_SIZE_Y; // 下に突き抜けないように補正
         let diffX = 30;
         for (let i = 0; i < AUDIENCE_SET_SIZE_Y; i++) {
             for (let j = 0; j < AUDIENCE_SET_SIZE_X; j++) {
                 let audience = this.getAudienceType();
+
+                // 基準の位置からのズレ
+                const rand_x = Math.random() * RANDOM_RANGE; // 左方向へのズレ
+                const rand_y = Math.random() * RANDOM_RANGE; // 下方向へのズレ
+
                 laneAudience[i][j] = this.gameMain.add
-                    .image(baseX - j * diffX, baseY + i * diffY, audience)
+                    .image(
+                        baseX - j * diffX - rand_x,
+                        baseY + i * diffY + rand_y,
+                        audience
+                    )
                     .setDepth(DepthDefine.OBJECT + i);
                 laneAudience[i][j].alpha = 0.0;
             }
@@ -97,7 +101,7 @@ export default class AudienceObject {
         }
     }
 
-    updateAudience(laneAudience, counter) {
+    updateAudience(laneAudience: Phaser.GameObjects.Image[][], counter) {
         let numX = 0;
         // 前から詰めるように修正
         let counterX = counter / 5;
@@ -135,9 +139,40 @@ export default class AudienceObject {
 
         let numY = Math.floor(Math.random() * AUDIENCE_SET_SIZE_Y);
         if (laneAudience[numY][numX].alpha === 0) {
-            laneAudience[numY][numX].alpha = 0.5;
+            laneAudience[numY][numX].alpha = 0.8;
             return;
         }
         this.updateAudience(laneAudience, counter);
+    }
+
+    jump() {
+        // 表示されている観客
+        const activeAudience: Phaser.GameObjects.Image[] = this.firstLane
+            .concat(this.secondLane)
+            .concat(this.thirdLane)
+            .reduce((prev, current) => prev.concat(current), [])
+            .reduce((prev, current) => prev.concat(current), [])
+            .filter((v) => v.alpha > 0.5);
+
+        if (activeAudience.length <= 0) {
+            return;
+        }
+
+        const index = Math.floor(activeAudience.length * Math.random());
+        const target = activeAudience[index];
+        const y = target.y;
+
+        // ジャンプさせるtweenを登録
+        this.gameMain.tweens.add({
+            targets: target,
+            duration: 100,
+            y: y - 25,
+        });
+        this.gameMain.tweens.add({
+            targets: target,
+            delay: 105,
+            duration: 100,
+            y: y,
+        });
     }
 }

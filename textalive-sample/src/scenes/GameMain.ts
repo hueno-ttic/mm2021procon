@@ -601,17 +601,25 @@ export default class GameMain extends Phaser.Scene {
                     this.isSuccessLyric(lyricIndex)
                 ) {
                     this.audienceObject.update("first");
+                    this.audienceObject.jump();
                 } else if (
                     this.lyricY === this.secondLane &&
                     this.isSuccessLyric(lyricIndex)
                 ) {
                     this.audienceObject.update("second");
+                    this.audienceObject.jump();
                 } else if (
                     this.lyricY === this.thirdLane &&
                     this.isSuccessLyric(lyricIndex)
                 ) {
                     this.audienceObject.update("third");
+                    this.audienceObject.jump();
                 }
+            }
+
+            // 1% のフレームで観客をジャンプさせる
+            if (Math.random() < 0.01) {
+                this.audienceObject.jump();
             }
 
             // 歌詞の更新にズレがある場合に歌詞を最初から表示し直す
