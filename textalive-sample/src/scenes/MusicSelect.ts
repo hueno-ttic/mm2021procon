@@ -28,6 +28,8 @@ export default class MusicSelectScene extends Phaser.Scene {
 
     private isFading: Boolean = false;
 
+    private readonly musicBoxScale: number = 0.5;
+
     init(): void {
         SceneManager.setCurrentScene(this);
     }
@@ -85,16 +87,19 @@ export default class MusicSelectScene extends Phaser.Scene {
             .setStroke("#000000", 2)
             .setFontSize(40);
 
-        this.thumbnail = this.add
-            .image(
-                420,
-                350,
-                this.textures.get(`${defaultMusic.label}_thumbnail`) ===
-                    this.textures.get("__MISSING")
-                    ? "no_image"
-                    : `${defaultMusic.label}_thumbnail`
-            )
-            .setDisplaySize(790, 440);
+        this.thumbnail = this.add.image(
+            420,
+            350,
+            this.textures.get(`${defaultMusic.label}_thumbnail`) ===
+                this.textures.get("__MISSING")
+                ? "no_image"
+                : `${defaultMusic.label}_thumbnail`
+        );
+        // サムネイルのアスペクト比を保つために一度addした後にスケールをかける
+        this.thumbnail.setDisplaySize(
+            this.thumbnail.width * 0.6,
+            this.thumbnail.height * 0.6
+        );
 
         this.menuMusic = this.sound.add("menu_music", {
             loop: true,
@@ -114,7 +119,7 @@ export default class MusicSelectScene extends Phaser.Scene {
                 defaultSelectedFramePosition.displayY,
                 "selected_frame"
             )
-            .setScale(1.05);
+            .setScale(0.9);
         this.tweens.add({
             targets: this.selectedFrame,
             alpha: 0,
@@ -131,7 +136,7 @@ export default class MusicSelectScene extends Phaser.Scene {
                 musicPosition.displayY,
                 music.label
             );
-            image.setScale(0.6);
+            image.setScale(this.musicBoxScale);
             image.setInteractive();
 
             image.on("pointerdown", () => {
@@ -143,7 +148,10 @@ export default class MusicSelectScene extends Phaser.Scene {
                         ? "no_image"
                         : `${music.label}_thumbnail`
                 );
-                this.thumbnail.setDisplaySize(790, 440);
+                this.thumbnail.setDisplaySize(
+                    this.thumbnail.width * 0.6,
+                    this.thumbnail.height * 0.6
+                );
                 this.selectedFrame.setPosition(
                     musicPosition.displayX,
                     musicPosition.displayY
@@ -184,10 +192,16 @@ export default class MusicSelectScene extends Phaser.Scene {
     }
 
     private calcMusicPosition(index: number): displayPosition {
-        var dispBoxX = 1000;
-        var additionalBoxX = 0;
-        var dispBoxY = 40;
-        var additionalBoxY = 85;
+        let dispBoxX = 1000;
+        let additionalBoxX = 0;
+        let dispBoxY =
+            this.thumbnail.y -
+            this.thumbnail.displayHeight / 2 -
+            (129 * this.musicBoxScale) / 2 -
+            10;
+        let additionalBoxY =
+            (this.thumbnail.displayHeight - 129 * this.musicBoxScale) /
+            (this.musics.length - 1);
         switch (index) {
             case 0:
             case 5:

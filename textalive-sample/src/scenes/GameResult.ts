@@ -154,8 +154,8 @@ export default class GameResultScene extends Phaser.Scene {
         this._backgroundImage.setDepth(DepthDefine.BACK_GROUND);
 
         // キャプチャ
-        this._resultImage = this.add.image(100, 50, "result_image");
-        this._resultImage.setDepth(DepthDefine.OBJECT);
+        this._resultImage = this.add.image(45, 70, "result_image");
+        this._resultImage.setOrigin(0.0, 0.5).setDepth(DepthDefine.OBJECT);
 
         // サムネイル
         const isNoImage =
@@ -167,8 +167,11 @@ export default class GameResultScene extends Phaser.Scene {
                 350,
                 !isNoImage ? `${this._musicInfo.label}_thumbnail` : "no_image"
             )
-            .setDepth(DepthDefine.OBJECT)
-            .setScale(0.6, 0.6);
+            .setDepth(DepthDefine.OBJECT);
+        this._thumbnailImage.setDisplaySize(
+            this._thumbnailImage.width * 0.6,
+            this._thumbnailImage.height * 0.6
+        );
 
         // スコア画像と背景
         const scoreDepth = DepthDefine.OBJECT;
@@ -202,7 +205,7 @@ export default class GameResultScene extends Phaser.Scene {
         ];
         const resultNameKeys = ["score_excellent", "score_bad"];
         const laneKeys = [["lane_1", "lane_2", "lane_3"], ["count"]];
-        var scoreDelay = 1000;
+        let scoreDelay = 1000;
         for (let i = 0; i < this._resultScores.length; i++) {
             scoreDelay += 1500 * i;
             this._resultScores[i].create({
@@ -264,7 +267,7 @@ export default class GameResultScene extends Phaser.Scene {
         this.tweens.add({
             targets: this._playResultImage,
             alpha: 1,
-            duration: 1000,
+            duration: 800,
             ease: "Power0",
             repeat: 0,
             delay: scoreDelay,
@@ -309,7 +312,7 @@ export default class GameResultScene extends Phaser.Scene {
                 this._moveSelectMusicButtonBgImage,
             ],
             alpha: 1,
-            duration: 1000,
+            duration: 800,
             ease: "Power0",
             repeat: 0,
             delay: scoreDelay,
