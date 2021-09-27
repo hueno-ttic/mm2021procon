@@ -30,6 +30,7 @@ export default class GameResultScene extends Phaser.Scene {
     private _scoreImage: Phaser.GameObjects.Image;
     private _resultScores: ResultScoreObject[];
     private _total: TotalResultObject;
+    private _excellentRate: TotalResultObject;
 
     // 楽曲情報テキスト
     private _selectSongText: Phaser.GameObjects.Text;
@@ -84,6 +85,7 @@ export default class GameResultScene extends Phaser.Scene {
             this._resultScores[i] = new ResultScoreObject();
         }
         this._total = new TotalResultObject();
+        this._excellentRate = new TotalResultObject();
 
         // 楽曲情報テキスト
         this._selectSongText = null;
@@ -118,7 +120,11 @@ export default class GameResultScene extends Phaser.Scene {
         this.load.image("score_image", imageResult.result_score);
         this.load.image("score_excellent", imageResult.result_score_excellent);
         this.load.image("score_bad", imageResult.result_score_bad);
-        this.load.image("score_total", imageResult.result_score_total);
+        this.load.image("score_score", imageResult.result_score_score);
+        this.load.image(
+            "score_excellent_rate",
+            imageResult.result_score_excellent_rate
+        );
         this.load.image("line", imageResult.result_line);
         this.load.image("lane_1", imageResult.result_lane_1);
         this.load.image("lane_2", imageResult.result_lane_2);
@@ -163,10 +169,11 @@ export default class GameResultScene extends Phaser.Scene {
             this.textures.get("__MISSING");
         this._thumbnailImage = this.add
             .image(
-                420,
+                45,
                 350,
                 !isNoImage ? `${this._musicInfo.label}_thumbnail` : "no_image"
             )
+            .setOrigin(0.0, 0.5)
             .setDepth(DepthDefine.OBJECT);
         this._thumbnailImage.setDisplaySize(
             this._thumbnailImage.width * 0.6,
@@ -229,7 +236,7 @@ export default class GameResultScene extends Phaser.Scene {
         // スコア
         this._total.create({
             scene: this,
-            totalImageKey: "score_total",
+            totalImageKey: "score_score",
             underLineKey: "line",
             totalResult: result.totalScore,
             depth: scoreDepth,
@@ -239,14 +246,39 @@ export default class GameResultScene extends Phaser.Scene {
                 this._scoreImage.height +
                 30 +
                 200 * this._resultScores.length +
-                -60,
+                -100,
+            animsDelay: scoreDelay,
+        });
+        scoreDelay += 1500;
+
+        // Excellent率
+        const excellentCount = result.laneScore.reduce((sum, value) => {
+            return sum + value.success;
+        }, 0);
+        const noteCount = result.laneScore.reduce((sum, value) => {
+            return sum + value.total;
+        }, 0);
+        this._excellentRate.create({
+            scene: this,
+            totalImageKey: "score_excellent_rate",
+            underLineKey: "line",
+            totalResult: 0 < noteCount ? excellentCount / noteCount : 0,
+            dispPercentage: true,
+            depth: scoreDepth,
+            posX: this._scoreBackgroundImage.x - 180,
+            posY:
+                this._scoreBackgroundImage.y +
+                this._scoreImage.height +
+                30 +
+                200 * this._resultScores.length +
+                -40,
             animsDelay: scoreDelay,
         });
 
         // 楽曲情報
         this._selectSongText = this.add.text(
             45,
-            this.game.scale.gameSize.height - 100,
+            600,
             `${this._musicInfo.title}/${this._musicInfo.author}`,
             { fontFamily: "GenEiLateGoN" }
         );
@@ -263,7 +295,6 @@ export default class GameResultScene extends Phaser.Scene {
         );
         this._playResultImage.setDepth(DepthDefine.OBJECT + 1);
         this._playResultImage.setAlpha(0);
-        scoreDelay += 500;
         this.tweens.add({
             targets: this._playResultImage,
             alpha: 1,
@@ -277,7 +308,7 @@ export default class GameResultScene extends Phaser.Scene {
         const buttonDepth = DepthDefine.UI_OBJECT;
         this._moveSelectMusicButtonBgImage = this.add.image(
             this._scoreBackgroundImage.x,
-            this._selectSongText.y + this._selectSongText.height / 2,
+            this._selectSongText.y + this._selectSongText.height / 2 + 20,
             "button_select_music_bg"
         );
         this._moveSelectMusicButtonBgImage.setDepth(buttonDepth - 1);
@@ -300,8 +331,8 @@ export default class GameResultScene extends Phaser.Scene {
         this._moveSelectMusicButtonBgImage.setAlpha(0);
 
         this._moveSelectMusicButtonImage = this.add.image(
-            this._scoreBackgroundImage.x,
-            this._selectSongText.y + this._selectSongText.height / 2,
+            this._moveSelectMusicButtonBgImage.x,
+            this._moveSelectMusicButtonBgImage.y,
             "button_select_music_image"
         );
         this._moveSelectMusicButtonImage.setDepth(buttonDepth);
@@ -335,7 +366,7 @@ export default class GameResultScene extends Phaser.Scene {
             return sum + value.total;
         }, 0);
 
-        const successRate = successCount / totalCount;
+        const successRate = 0 < totalCount ? successCount / totalCount : 1.0;
         // 60%以上成功していたらクリア
         return !(successRate < 0.6);
     }

@@ -17,7 +17,6 @@ export default class CharText {
 
     setIndex(index) {
         this.index = index;
-        // console.log("index : " + index + " text : "+ this.text + "startTime : " +this.startTime + " endtime : "+ this.endTime)
     }
 
     getIndex() {

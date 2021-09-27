@@ -142,7 +142,6 @@ export default class GameMain extends Phaser.Scene {
     init(): void {
         SceneManager.setCurrentScene(this);
         this.selectedMusicId = this.registry.get("selectedMusic");
-        console.log(`選択楽曲id ${this.selectedMusicId}`);
 
         this.selectedMusic = this.musics
             .filter((music) => music.id === this.selectedMusicId)
@@ -215,8 +214,6 @@ export default class GameMain extends Phaser.Scene {
     }
 
     preload(): void {
-        console.log("preload()");
-
         // 背景画像
         this.load.image("backImg", gameImage["whiteback"]);
         this.load.image("stage", gameImage["Stage"]);
@@ -274,7 +271,6 @@ export default class GameMain extends Phaser.Scene {
     }
 
     create(): void {
-        console.log("create()");
         // --------------------------------
         // オブジェクトの生成
         // 背景
@@ -549,7 +545,6 @@ export default class GameMain extends Phaser.Scene {
             // (曲が開始しないと曲データがうまくとってこれないため)
             if (this.initFlag) {
                 this.lyrics = this.api.getLyrics();
-                console.log(this.lyrics);
                 // 最初に表示する分の歌詞だけ表示状態にする
                 this.lyricLineObject.initLyricLine(this.lyrics);
                 // 初期化処理の終了フラグ
@@ -770,18 +765,15 @@ export default class GameMain extends Phaser.Scene {
     private changeNextScene(): void {
         switch (this.sceneChangeStatus) {
             case "":
-                console.log("完了画面へ");
                 this.registry.set("gameResult", {
                     laneScore: this.laneScoreArray,
                     totalScore: this.score,
                 });
 
                 if (this.game.scene.getScene("GameResult")) {
-                    console.log("GameResult remove");
                     this.scene.remove("GameResult");
                     this.sceneChangeStatus = "Request_Remove";
                 } else {
-                    console.log("既に removed");
                     this.sceneChangeStatus = "Removed";
                 }
                 break;

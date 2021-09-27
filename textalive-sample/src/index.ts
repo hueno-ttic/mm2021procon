@@ -45,7 +45,6 @@ class Main {
     initialize() {
         // windowイベントで、ロードされたらゲーム開始
         window.addEventListener("load", () => {
-            console.log("start");
             this.game = new Game();
         });
 
