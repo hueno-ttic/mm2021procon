@@ -57,7 +57,6 @@ export default class TextaliveApiManager {
             onVideoReady: (v) => this.onVideoReady(v),
             onThrottledTimeUpdate: (pos) => this.onThrottledTimeUpdate(pos),
         });
-        console.log(this.player);
         this.excludeLyricList = [
             " ",
             "　",
@@ -76,8 +75,6 @@ export default class TextaliveApiManager {
 
     // APIへのアクセス準備
     private onAppReady(app): void {
-        console.log("onAppReady");
-
         if (!app.songUrl) {
             // 再生対象となる楽曲URLをセット
             this.player.createFromSongUrl(this.musicUrl, this.options);
@@ -133,7 +130,7 @@ export default class TextaliveApiManager {
 
     // APIアクセス後に動画情報設定
     onTimerReady(): void {
-        console.log("onTimerReady");
+        // pass
     }
 
     // 再生中に呼び出され続けて画面の状態をupdateする
@@ -145,7 +142,6 @@ export default class TextaliveApiManager {
         }
 
         // サビかどうかを取得(サビならtrue)
-        // console.log(this.player.findBeat(position));
         this.isChorus = this.player.findChorus(position) != null;
     }
 
@@ -153,15 +149,7 @@ export default class TextaliveApiManager {
         return this.lyrics;
     }
 
-    getCurrentLyric2(positoinTime: number): Lyric {
-        console.log(this.lyrics);
-
-        // 見つからない場合は空文字
-        return null;
-    }
-
     getCurrentLyric(positoinTime: number): Lyric {
-        // console.log(this.lyrics);
         for (let i = 0; i < this.lyrics.length; i++) {
             if (
                 positoinTime > this.lyrics[i].startTime &&
@@ -214,14 +202,6 @@ export default class TextaliveApiManager {
     getLyricsLength(): number {
         return this.lyrics.length;
     }
-
-    getMusicLength(): number {
-        return 0;
-    }
-
-    // public isVideoSeeking() : boolean {
-    //     return this.player.isVideoSeeking();
-    // }
 
     /**
      * 楽曲ががしていたポジションならTrueを返す
