@@ -617,6 +617,11 @@ export default class GameMain extends Phaser.Scene {
                 }
             }
 
+            // 1% のフレームで観客をジャンプさせる
+            if (Math.random() < 0.01) {
+                this.audienceObject.jump();
+            }
+
             // 歌詞の更新にズレがある場合に歌詞を最初から表示し直す
             if (this.preCurrentLyricIndex != lyricIndex) {
                 this.preCurrentLyricIndex =
