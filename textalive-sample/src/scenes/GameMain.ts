@@ -445,15 +445,11 @@ export default class GameMain extends Phaser.Scene {
 
         // キー入力で移動する
         const currentLaneIndex = this.getLaneIndex(this.lyricY);
-        if (
-            this.input.keyboard.checkDown(this.keys.W, GameMain.KEY_DELAY)
-        ) {
+        if (this.input.keyboard.checkDown(this.keys.W, GameMain.KEY_DELAY)) {
             const nextLaneIndex = Math.max(currentLaneIndex - 1, 0);
             this.lyricY = moveLanePos[nextLaneIndex];
         }
-        if (
-            this.input.keyboard.checkDown(this.keys.S, GameMain.KEY_DELAY)
-        ) {
+        if (this.input.keyboard.checkDown(this.keys.S, GameMain.KEY_DELAY)) {
             const nextLaneIndex = Math.min(
                 currentLaneIndex + 1,
                 GameMain.LANE_SIZE - 1
