@@ -58,5 +58,24 @@ export default class SplashScene extends Phaser.Scene {
                 );
             }
         );
+        let linkText = this.add
+            .text(50, 670, "本アプリは TextAlive App API を利用しています ")
+            .setDepth(500);
+        let link = this.add
+            .text(450, 670, "https://developer.textalive.jp/")
+            .setInteractive()
+            .setDepth(500);
+        link.on("pointerup", this.openLink, this);
+        this;
+    }
+    openLink(): void {
+        let url = "https://developer.textalive.jp/";
+        var s = window.open(url, "_blank");
+
+        if (s && s.focus) {
+            s.focus();
+        } else if (!s) {
+            window.location.href = url;
+        }
     }
 }

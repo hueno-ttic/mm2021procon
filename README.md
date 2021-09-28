@@ -1,7 +1,7 @@
-# 『Voice Shooting』
-## Voice Shootingについて
+# 『Voice Shooter』
+## Voice Shooterについて
 ### 概要
-Voice Shootingはレーンの色と歌詞の色が一致するようにステージ上のミクやルカを移動させて観客に歌詞を届けてスコアを伸ばしていくゲームです。
+Voice Shooterはレーンの色と歌詞の色が一致するようにステージ上のミクやルカを移動させて観客に歌詞を届けてスコアを伸ばしていくゲームです。
 
 ### 遊び方の流れ
 1. アプリ起動後に注意事項が出ますので確認する
@@ -80,17 +80,51 @@ Github Actionsでlintが成功していることを確認してください。
 
 
 ## 使用パッケージのライセンス
-- @types/node: MIT https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/LICENSE
-- axios: MIT https://github.com/axios/axios/blob/HEAD/LICENSE
-- phaser: MIT  https://phaser.io/download/license
-- textalive-app-api: view-license https://developer.textalive.jp/terms/
-- ts-node: MIT https://github.com/TypeStrong/ts-node/blob/main/LICENSE
-- del-cli: MIT https://github.com/sindresorhus/del-cli/blob/main/license
-- husky:  MIT https://github.com/typicode/husky/blob/main/LICENSE
-- lint-staged: MIT https://github.com/okonet/lint-staged/blob/master/LICENSE
-- parcel-buncler: MIT https://github.com/parcel-bundler/parcel/blob/v2/LICENSE
-- prettier: MIT https://github.com/prettier/prettier/blob/main/LICENSE
-- typescript: Apache License 2.0 https://github.com/microsoft/TypeScript/blob/main/LICENS
+- @types/node</br>
+Copyrights are respective of each contributor listed at the beginning of each definition file.</br>
+https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/LICENSE</br>
+
+- axios</br>
+Copyright (c) 2014-present Matt Zabriskie</br>
+https://github.com/axios/axios/blob/HEAD/LICENSE</br>
+
+- phaser</br>
+Copyright © 2021 Richard Davey, Photon Storm Ltd.</br>
+https://phaser.io/download/license</br>
+
+- textalive-app-api</br>
+https://github.com/TextAliveJp/textalive-app-api/blob/master/LICENSE.md</br>
+
+- ts-node</br>
+Copyright (c) 2014 Blake Embrey (hello@blakeembrey.com)</br>
+https://github.com/TypeStrong/ts-node/blob/main/LICENSE</br>
+
+- del-cli</br>
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)</br>
+https://github.com/sindresorhus/del-cli/blob/main/license</br>
+
+- husky</br>
+Copyright (c) 2021 typicode</br>
+https://github.com/typicode/husky/blob/main/LICENSE</br>
+
+- lint-staged</br>
+Copyright (c) 2016 Andrey Okonetchnikov</br>
+https://github.com/okonet/lint-staged/blob/master/LICENSE</br>
+
+- parcel-buncler</br>
+Copyright (c) 2017-present Devon Govett</br>
+https://github.com/parcel-bundler/parcel/blob/v2/LICENSE</br>
+
+
+- prettier</br>
+Copyright © James Long and contributors</br>
+https://github.com/prettier/prettier/blob/main/LICENSE</br>
+
+- typescript</br>
+本アプリではApach License 2.0 のライセンスで配布されているパッケージがインストールされます</br>
+Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0</br>
+https://github.com/microsoft/TypeScript/blob/main/LICENSE.txt</br>
+
 
 ## 開発メンバー
 - さくらもどき
