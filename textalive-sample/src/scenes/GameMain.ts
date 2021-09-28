@@ -65,7 +65,7 @@ export default class GameMain extends Phaser.Scene {
     // 流れる歌詞を走査するときの出発点(計算時間短縮のため)
     public indexStart: number = 0;
     // 歌詞の進むスピード
-    public counter = 30;
+    public counter = 1.5;
 
     // 歌詞の出現するY座標(キャラの位置と同意)
     public lyricY;
@@ -632,7 +632,7 @@ export default class GameMain extends Phaser.Scene {
         for (let i = this.indexStart; i < this.textData.length; i++) {
             // 文字を移動させる
             if (typeof this.textData[i] !== "undefined") {
-                this.textData[i].x -= this.counter;
+                this.textData[i].x -= this.counter * this.game.loop.delta;
 
                 // 一定区間移動したら歌詞を非表示する
                 if (this.textData[i].x < this.heartX) {
