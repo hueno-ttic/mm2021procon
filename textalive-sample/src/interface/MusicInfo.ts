@@ -8,4 +8,5 @@ export class MusicInfo {
     url: string;
     playerVideoOptions?: PlayerVideoOptions;
     image: string;
+    key: string;
 }
