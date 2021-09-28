@@ -11,6 +11,7 @@ import imageResult from "../assets/result/*.png";
 import music from "../assets/sound/music/*.wav";
 import sounds from "../assets/sound/se/*.wav";
 import no_image from "../assets/thumbnail/no_image_thumbnail.png";
+import thumbnailImage from "../assets/thumbnail/*.png";
 
 export default class GameResultScene extends Phaser.Scene {
     // 選曲情報
@@ -111,7 +112,7 @@ export default class GameResultScene extends Phaser.Scene {
         // サムネイル
         this.load.image(
             `${this._musicInfo.label}_thumbnail`,
-            `http://img.youtube.com/vi/${this._musicInfo.youTubeKey}/maxresdefault.jpg`
+            thumbnailImage[`${this._musicInfo.image}`]
         );
         this.load.image("no_image", no_image);
 
@@ -168,11 +169,7 @@ export default class GameResultScene extends Phaser.Scene {
             this.textures.get(`${this._musicInfo.label}_thumbnail`) ==
             this.textures.get("__MISSING");
         this._thumbnailImage = this.add
-            .image(
-                45,
-                350,
-                !isNoImage ? `${this._musicInfo.label}_thumbnail` : "no_image"
-            )
+            .image(45, 350, `${this._musicInfo.label}_thumbnail`)
             .setOrigin(0.0, 0.5)
             .setDepth(DepthDefine.OBJECT);
         this._thumbnailImage.setDisplaySize(
