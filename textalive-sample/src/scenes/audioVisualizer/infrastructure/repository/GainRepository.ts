@@ -19,7 +19,9 @@ export default class GainRepository {
 
         // TODO: 一旦固定のJSON 実際は曲ごとにJSONを読み分ける
         (async () => {
-            const files: string[] = json[musicInfo.youTubeKey + ".data"];
+            let name = musicInfo.key + ".data";
+            console.log(name);
+            const files: string[] = json[musicInfo.key + ".data"];
             for (const idx in files) {
                 const file = files[idx].replace(".data", "");
                 const response = await axios.get<
