@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import images from "../assets/music_select/*.png";
 import no_image from "../assets/thumbnail/no_image_thumbnail.png";
+import thumbnailImage from "../assets/thumbnail/*.png";
 import { buildMusicInfo } from "../factory/MusicFactory";
 import GameMain from "./GameMain";
 import music from "../assets/sound/music/*.wav";
@@ -48,11 +49,12 @@ export default class MusicSelectScene extends Phaser.Scene {
         this.load.image("decide", images["decide"]);
         this.load.audio("menu_music", music.menu);
         this.load.image("no_image", no_image);
+
         this.load.image("selected_frame", images["selected_frame"]);
         this.musics.forEach((music) => {
             this.load.image(
                 `${music.label}_thumbnail`,
-                `http://img.youtube.com/vi/${music.youTubeKey}/maxresdefault.jpg`
+                thumbnailImage[`${music.image}`]
             );
         });
         this.load.audio("select_sound", sounds["decide"]);
@@ -90,10 +92,7 @@ export default class MusicSelectScene extends Phaser.Scene {
         this.thumbnail = this.add.image(
             45,
             350,
-            this.textures.get(`${defaultMusic.label}_thumbnail`) ===
-                this.textures.get("__MISSING")
-                ? "no_image"
-                : `${defaultMusic.label}_thumbnail`
+            `${defaultMusic.label}_thumbnail`
         );
         this.thumbnail.setOrigin(0.0, 0.5);
         // サムネイルのアスペクト比を保つために一度addした後にスケールをかける

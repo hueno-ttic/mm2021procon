@@ -7,5 +7,5 @@ export class MusicInfo {
     author: string;
     url: string;
     playerVideoOptions?: PlayerVideoOptions;
-    youTubeKey: string;
+    image: string;
 }
