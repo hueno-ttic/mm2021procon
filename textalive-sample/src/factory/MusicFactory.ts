@@ -17,7 +17,7 @@ export function buildMusicInfo(): MusicInfo[] {
                 lyricDiffId: 5133,
             },
         },
-        image: "image1",
+        image: "thumb_natsu",
     };
 
     let first_note: MusicInfo = {
@@ -36,7 +36,7 @@ export function buildMusicInfo(): MusicInfo[] {
                 lyricDiffId: 5093,
             },
         },
-        image: "image2",
+        image: "thumb_first_note",
     };
 
     let kokoro: MusicInfo = {
@@ -55,7 +55,7 @@ export function buildMusicInfo(): MusicInfo[] {
                 lyricDiffId: 5177,
             },
         },
-        image: "image3",
+        image: "thumb_sonokokoro",
     };
 
     let freedom: MusicInfo = {
@@ -74,7 +74,7 @@ export function buildMusicInfo(): MusicInfo[] {
                 lyricDiffId: 5171,
             },
         },
-        image: "image4",
+        image: "thumb_freedom",
     };
 
     let hisoka: MusicInfo = {
@@ -93,7 +93,7 @@ export function buildMusicInfo(): MusicInfo[] {
                 lyricDiffId: 5149,
             },
         },
-        image: "image5",
+        image: "thumb_hisoka",
     };
 
     let usomo: MusicInfo = {
@@ -112,7 +112,7 @@ export function buildMusicInfo(): MusicInfo[] {
                 lyricDiffId: 5123,
             },
         },
-        image: "image6",
+        image: "thumb_usomo",
     };
 
     return [natsu, first_note, kokoro, freedom, hisoka, usomo];
