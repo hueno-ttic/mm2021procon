@@ -69,7 +69,7 @@ export default class AudienceObject {
 
     getAudienceType(): string {
         let audience;
-        const num = Math.floor(Math.random() * 3);
+        const num = Math.floor(Math.random() * 4);
         switch (num) {
             case 0:
                 audience = "audience_a";

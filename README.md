@@ -80,18 +80,17 @@ Github Actionsでlintが成功していることを確認してください。
 
 
 ## 使用パッケージのライセンス
-@types/node: MIT https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/LICENSE
-axios: MIT https://github.com/axios/axios/blob/HEAD/LICENSE
-phaser: MIT  https://phaser.io/download/license
-textalive-app-api: view-license https://developer.textalive.jp/terms/
-ts-node: MIT https://github.com/TypeStrong/ts-node/blob/main/LICENSE
-
-del-cli: MIT https://github.com/sindresorhus/del-cli/blob/main/license
-husky:  MIT https://github.com/typicode/husky/blob/main/LICENSE
-lint-staged: MIT https://github.com/okonet/lint-staged/blob/master/LICENSE
-parcel-buncler: MIT https://github.com/parcel-bundler/parcel/blob/v2/LICENSE
-prettier: MIT https://github.com/prettier/prettier/blob/main/LICENSE
-typescript: Apache License 2.0 https://github.com/microsoft/TypeScript/blob/main/LICENS
+- @types/node: MIT https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/LICENSE
+- axios: MIT https://github.com/axios/axios/blob/HEAD/LICENSE
+- phaser: MIT  https://phaser.io/download/license
+- textalive-app-api: view-license https://developer.textalive.jp/terms/
+- ts-node: MIT https://github.com/TypeStrong/ts-node/blob/main/LICENSE
+- del-cli: MIT https://github.com/sindresorhus/del-cli/blob/main/license
+- husky:  MIT https://github.com/typicode/husky/blob/main/LICENSE
+- lint-staged: MIT https://github.com/okonet/lint-staged/blob/master/LICENSE
+- parcel-buncler: MIT https://github.com/parcel-bundler/parcel/blob/v2/LICENSE
+- prettier: MIT https://github.com/prettier/prettier/blob/main/LICENSE
+- typescript: Apache License 2.0 https://github.com/microsoft/TypeScript/blob/main/LICENS
 
 ## 開発メンバー
 - さくらもどき
