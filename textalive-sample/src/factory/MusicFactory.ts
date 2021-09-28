@@ -18,6 +18,7 @@ export function buildMusicInfo(): MusicInfo[] {
             },
         },
         image: "thumb_natsu",
+        key: "3wbZUkPxHEg",
     };
 
     let first_note: MusicInfo = {
@@ -37,6 +38,7 @@ export function buildMusicInfo(): MusicInfo[] {
             },
         },
         image: "thumb_first_note",
+        key: "0XG_isaNVRA",
     };
 
     let kokoro: MusicInfo = {
@@ -56,6 +58,7 @@ export function buildMusicInfo(): MusicInfo[] {
             },
         },
         image: "thumb_sonokokoro",
+        key: "bMtYf3R0zhY",
     };
 
     let freedom: MusicInfo = {
@@ -75,6 +78,7 @@ export function buildMusicInfo(): MusicInfo[] {
             },
         },
         image: "thumb_freedom",
+        key: "pAaD4Hta0ns",
     };
 
     let hisoka: MusicInfo = {
@@ -94,6 +98,7 @@ export function buildMusicInfo(): MusicInfo[] {
             },
         },
         image: "thumb_hisoka",
+        key: "Ch4RQPG1Tmo",
     };
 
     let usomo: MusicInfo = {
@@ -113,6 +118,7 @@ export function buildMusicInfo(): MusicInfo[] {
             },
         },
         image: "thumb_usomo",
+        key: "Se89rQPp5tk",
     };
 
     return [natsu, first_note, kokoro, freedom, hisoka, usomo];
