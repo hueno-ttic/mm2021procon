@@ -169,11 +169,7 @@ export default class GameResultScene extends Phaser.Scene {
             this.textures.get(`${this._musicInfo.label}_thumbnail`) ==
             this.textures.get("__MISSING");
         this._thumbnailImage = this.add
-            .image(
-                45,
-                350,
-                 `${this._musicInfo.label}_thumbnail`
-            )
+            .image(45, 350, `${this._musicInfo.label}_thumbnail`)
             .setOrigin(0.0, 0.5)
             .setDepth(DepthDefine.OBJECT);
         this._thumbnailImage.setDisplaySize(
