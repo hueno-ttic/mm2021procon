@@ -12,7 +12,7 @@ Voice Shooterはレーンの色と歌詞の色が一致するようにステー�
 1. キャラクターが発話した歌詞の色とレーンの色が同じになるとExcellentととなりより多くの点数がもらえる
 1. Excellentが全体の60%を超えるとゲームクリアになる
 
-![チュートリアル](textalive-sample/src/assets/TutorialDescription.png)
+![チュートリアル](voice-shooter/src/assets/TutorialDescription.png)
 
 ### 説明動画
 todo 用意してYoutubeに上げたものを参照する
