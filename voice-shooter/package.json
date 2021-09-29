@@ -2,7 +2,7 @@
     "name": "voice-shooter",
     "private": true,
     "version": "1.0.0",
-    "description": "Voice Shootingはレーンの色と歌詞の色が一致するようにステージ上のライブアーティスト(ミク、ルカ)を移動させて観客に歌詞を届けてスコアを伸ばしていくゲームです。",
+    "description": "Voice Shooterはレーンの色と歌詞の色が一致するようにステージ上のライブアーティスト(ミク、ルカ)を移動させて観客に歌詞を届けてスコアを伸ばしていくゲームです。",
     "scripts": {
         "predev": "ts-node ./src/scripts/build_fft.ts",
         "dev": "parcel src/index.html --out-dir dev",

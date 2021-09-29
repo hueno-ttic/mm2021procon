@@ -12,7 +12,7 @@ Voice Shooterはレーンの色と歌詞の色が一致するようにステー�
 1. キャラクターが発話した歌詞の色とレーンの色が同じになるとExcellentととなりより多くの点数がもらえる
 1. Excellentが全体の60%を超えるとゲームクリアになる
 
-![チュートリアル](textalive-sample/src/assets/TutorialDescription.png)
+![チュートリアル](voice-shooter/src/assets/TutorialDescription.png)
 
 ### 説明動画
 todo 用意してYoutubeに上げたものを参照する
@@ -72,7 +72,7 @@ config.jsonのなかのdebug_modeをtrueにすることでTextAliveAPIで取得�
 ```
 
 ### コミット前にやること
-textalive-sampleディレクトリで `npm run lint:write` を実行してください。
+voice-shooterディレクトリで `npm run lint:write` を実行してください。
 差分があればコミットしてください。
 
 ### PRマージ前にやること
@@ -131,7 +131,7 @@ https://github.com/microsoft/TypeScript/blob/main/LICENSE.txt</br>
 - すぱりだ
 - ななしお
 - HiroyukiIsoe
-- やつはし
+- ya2ha4
 - りおんぬ
 
     (五十音順敬称略)
