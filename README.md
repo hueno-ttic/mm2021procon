@@ -72,7 +72,7 @@ config.jsonのなかのdebug_modeをtrueにすることでTextAliveAPIで取得�
 ```
 
 ### コミット前にやること
-textalive-sampleディレクトリで `npm run lint:write` を実行してください。
+voice-shooterディレクトリで `npm run lint:write` を実行してください。
 差分があればコミットしてください。
 
 ### PRマージ前にやること
