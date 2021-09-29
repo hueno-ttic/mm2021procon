@@ -131,7 +131,7 @@ https://github.com/microsoft/TypeScript/blob/main/LICENSE.txt</br>
 - すぱりだ
 - ななしお
 - HiroyukiIsoe
-- やつはし
+- ya2ha4
 - りおんぬ
 
     (五十音順敬称略)
