@@ -127,7 +127,7 @@ https://github.com/microsoft/TypeScript/blob/main/LICENSE.txt</br>
 
 
 ## 開発メンバー
-- さくらもどき
+- 
 - すぱりだ
 - ななしお
 - HiroyukiIsoe
