@@ -1,6 +1,6 @@
 import Lyric from "./Lyric";
 import CharText from "./CharText";
-import config = require("./config.json");
+import config from "./config.json";
 
 import {
     Ease,

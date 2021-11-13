@@ -6,3 +6,4 @@ docs/
 .cache/
 .idea/
 voice-shooter/src/assets/fft/build/*
+.parcel-cache

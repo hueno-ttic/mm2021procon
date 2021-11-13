@@ -23,7 +23,7 @@ import gameImage from "../assets/game_main/*.png";
 import uiImage from "../assets/ui/*.png";
 import soundSe from "../assets/sound/se/*.wav";
 import Visualizer from "./audioVisualizer/app/presenter/visualizer";
-import config = require("../config.json");
+import config from "../config.json";
 import SceneManager from "./SceneManager";
 
 export default class GameMain extends Phaser.Scene {
