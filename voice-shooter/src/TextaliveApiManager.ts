@@ -118,7 +118,6 @@ export default class TextaliveApiManager {
             }
 
             // 単語情報を格納
-            console.log(w);
             this.lyrics.push(new Lyric(w, wordIndex, valenceArousal, beat));
             // 次の単語へ
             w = w.next;
