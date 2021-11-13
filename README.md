@@ -36,12 +36,7 @@ todo 用意してYoutubeに上げたものを参照する
 - Freedom!
 
 ### 対応環境
-こちらのアプリは以下の環境での動作が可能です。
-|デバイス|対応ブラウザ|
-|:--|:--|
-|PC|Firefox<br>Chrome<br>Safari|
-|iOS|Safari|
-|Android|Chrome<br>Firefox|
+- Chrome 95以降
 
 ### 注意事項
 こちらのアプリで遊ぶ際には以下の点に注意してください。
