@@ -23,7 +23,6 @@ import gameImage from "../assets/game_main/*.png";
 import uiImage from "../assets/ui/*.png";
 import soundSe from "../assets/sound/se/*.wav";
 import Visualizer from "./audioVisualizer/app/presenter/visualizer";
-import config = require("../config.json");
 import SceneManager from "./SceneManager";
 
 export default class GameMain extends Phaser.Scene {
@@ -205,7 +204,7 @@ export default class GameMain extends Phaser.Scene {
 
         // --------------------------------
         // デバッグ用
-        this.enableDebugInfo = config.debug_mode;
+        this.enableDebugInfo = false;
         if (this.enableDebugInfo) {
             this.debugInfo = new DebugInfo();
         } else {

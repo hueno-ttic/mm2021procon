@@ -1,6 +1,5 @@
 import Lyric from "./Lyric";
 import CharText from "./CharText";
-import config = require("./config.json");
 
 import {
     Ease,
@@ -21,7 +20,7 @@ export default class TextaliveApiManager {
     private lyrics: Lyric[] = [];
     private charText: CharText[] = [];
 
-    private positionTime: number = 0;
+    private positionTime: number;
 
     videoEnd: boolean = false;
 
@@ -41,7 +40,7 @@ export default class TextaliveApiManager {
             app: {
                 appAuthor: "TTIC",
                 appName: "VoiceShooter",
-                token: config.textalive_token,
+                token: "GYtUEuVODFiceV7w",
             },
             mediaElement: document.querySelector<HTMLElement>("#media"),
             valenceArousalEnabled: true, // 覚醒度と感情価の取得
@@ -119,6 +118,7 @@ export default class TextaliveApiManager {
             }
 
             // 単語情報を格納
+            console.log(w);
             this.lyrics.push(new Lyric(w, wordIndex, valenceArousal, beat));
             // 次の単語へ
             w = w.next;
