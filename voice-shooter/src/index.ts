@@ -7,7 +7,7 @@ import GameResult from "./scenes/GameResult";
 import MusicSelectScene from "./scenes/MusicSelect";
 import CriticalError from "./scenes/CriticalError";
 import SceneManager from "./scenes/SceneManager";
-import whitListError = require("./whitListError.json");
+import whitListError from "./whitListError.json";
 
 // ゲームの基本設定
 const config: Phaser.Types.Core.GameConfig = {
