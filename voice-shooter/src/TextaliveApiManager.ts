@@ -20,7 +20,7 @@ export default class TextaliveApiManager {
     private lyrics: Lyric[] = [];
     private charText: CharText[] = [];
 
-    private positionTime: number;
+    private positionTime: number = 0;
 
     videoEnd: boolean = false;
 
