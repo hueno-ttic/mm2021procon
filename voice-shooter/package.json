@@ -7,7 +7,7 @@
         "start": "parcel src/index.html --open",
         "predev": "ts-node ./src/scripts/build_fft.ts",
         "dev:nocache": "parcel src/index.html --dist-dir docs --open",
-
+        "prebuild": "ts-node ./src/scripts/build_fft.ts",
         "build": "parcel build src/index.html --public-url ./ --dist-dir docs --no-source-maps",
         "clean": "del-cli .parcel-cache dev docs",
         "precommit": "lint-staged",
